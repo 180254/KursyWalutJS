@@ -4,14 +4,14 @@ var Progress = WinJS.Class.define(
     function(maxValue, parent) {
         this.maxValue = maxValue;
         this._parent = parent;
-        this._lastResported = 0;
+        this._lastReported = 0;
         this._lastNotified = 0;
     },
     {
         reportProgress: function(percent) {
             if (percent < 0) this._notifyChange(-1);
             var computePercentVal = this._computePercent(percent);
-            var incrValue = computePercentVal - this._lastResported;
+            var incrValue = computePercentVal - this._lastReported;
             if (incrValue <= 0) this.incrValue = 0;
 
             this._incrementProgress(incrValue);
@@ -44,6 +44,17 @@ var Progress = WinJS.Class.define(
 
         _computePercent: function(percent) {
             return Math.round(this.maxValue * percent);
+        },
+
+        toString: function() {
+            return "maxValue: " +
+                this.maxValue +
+                ", _parent: " +
+                this._parent +
+                ", _lastResported: " +
+                this._lastResported +
+                ", _lastNotified: " +
+                this._lastNotified;
         }
     },
     {

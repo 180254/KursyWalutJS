@@ -1,4 +1,5 @@
-﻿"use strict";
+﻿/*global moment*/
+"use strict";
 
 var NbpExtractor = WinJS.Class.define(
     function() {

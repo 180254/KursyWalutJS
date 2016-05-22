@@ -60,12 +60,13 @@
         })
         .then(function(days) {
             console.log(days);
-            return nbpProvider.getExchangeRatesAsync(days[0], new Progress(1000));
+            return nbpProvider.getExchangeRatesAsync(days[0], progress);
         })
         .done(function(exchangeRates) {
-            console.log(exchangeRates);
-        },
-        function(e) {
-            console.log(e);
-        });
+                console.log(progress);
+                console.log(exchangeRates);
+            },
+            function(e) {
+                console.log(e);
+            });
 }());

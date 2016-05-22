@@ -13,7 +13,7 @@ var Currency = WinJS.Class.define(
     },
     {
         dummyForCode: function(code) {
-            return new Currency(code, "", 1);
+            return new this.Currency(code, "", 1);
         }
     }
 );
