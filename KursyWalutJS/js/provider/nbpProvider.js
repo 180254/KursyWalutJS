@@ -21,19 +21,13 @@ var NbpProvider = WinJS.Class.define(
         flushCacheAsync: function(progress) {
             var basePromise = this._dayToFilenameChanged
                 ? this._cache.storeAsync()
-                : new WinJS.Promise.as(0);
+                : new WinJS.Promise.wrap(0);
 
-            return basePromise(function() {
-                this._dayToFilenameChanged = false;
+            var self = this;
+            return basePromise.then(function() {
+                self._dayToFilenameChanged = false;
                 progress.reportProgress(1.00);
             });
-        },
-
-        _range: function(start, count) {
-            return Array.apply(0, Array(count))
-                .map(function(element, index) {
-                    return index + start;
-                });
         },
 
         getAvailableYearsAsync: function(progress) {
@@ -60,7 +54,7 @@ var NbpProvider = WinJS.Class.define(
                     var result = self._parseAndCacheDates(avgFilenames);
                     progress.reportProgress(1.00);
 
-                    return new WinJS.Promise.as(result);
+                    return new WinJS.Promise.wrap(result);
                 });
 
         },
@@ -80,7 +74,7 @@ var NbpProvider = WinJS.Class.define(
                     var result = self._extractor.parseExchangeRates($xml, day);
                     progress.reportProgress(1.00);
 
-                    return new WinJS.Promise.as(result);
+                    return new WinJS.Promise.wrap(result);
                 });
         },
 
@@ -91,7 +85,7 @@ var NbpProvider = WinJS.Class.define(
             var self = this;
             return this._extractor.getHttpResponseAsync(url, "utf-8")
                 .then(function(response) {
-                    return new WinJS.Promise.as(self._extractor.parseFilenames(response));
+                    return new WinJS.Promise.wrap(self._extractor.parseFilenames(response));
                 });
         },
 
@@ -106,6 +100,13 @@ var NbpProvider = WinJS.Class.define(
             }
 
             return result;
+        },
+
+        _range: function(start, count) {
+            return Array.apply(0, Array(count))
+                .map(function(element, index) {
+                    return index + start;
+                });
         },
 
         _startsWith: function(string, searchString, position) {

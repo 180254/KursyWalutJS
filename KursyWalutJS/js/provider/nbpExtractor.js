@@ -53,6 +53,7 @@ var NbpExtractor = WinJS.Class.define(
                 parseFloat($xml.find("kurs_sredni").text().replace(",", "."))
             );
         },
+
         parseCurrency: function($xml) {
             return new Currency(
                 $xml.find("kod_waluty").text(),

@@ -8,7 +8,7 @@ var ExchangeRate = WinJS.Class.define(
     },
     {
         toString: function() {
-            return "Day: " + this.day + ", Currency" + this.currency + ", AverageRate: " + this.averageRate;
+            return "day: " + this.day + ", currency" + this.currency + ", averageRate: " + this.averageRate;
         }
     },
     {

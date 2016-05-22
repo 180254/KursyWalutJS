@@ -8,7 +8,7 @@ var Currency = WinJS.Class.define(
     },
     {
         toString: function() {
-            return "Code: " + this.code + ", Name" + this.name + ", Multiplier: " + this.multiplier;
+            return "code: " + this.code + ", name" + this.name + ", multiplier: " + this.multiplier;
         }
     },
     {

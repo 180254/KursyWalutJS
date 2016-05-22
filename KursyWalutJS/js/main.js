@@ -62,10 +62,12 @@
             console.log(days);
             return nbpProvider.getExchangeRatesAsync(days[0], progress);
         })
-        .done(function(exchangeRates) {
-                console.log(progress);
-                console.log(exchangeRates);
-            },
+        .then(function(exchangeRates) {
+            console.log(progress);
+            console.log(exchangeRates);
+            return nbpProvider.flushCacheAsync(new Progress(1000));
+        })
+        .done(function() { console.log("OK") },
             function(e) {
                 console.log(e);
             });
