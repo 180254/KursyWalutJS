@@ -9,12 +9,12 @@ var Progress = WinJS.Class.define(
     },
     {
         reportProgress: function(percent) {
-            if (percent < 0) this.notifyChange(-1);
-            var computePercentVal = this.computePercent(percent);
+            if (percent < 0) this._notifyChange(-1);
+            var computePercentVal = this._computePercent(percent);
             var incrValue = computePercentVal - this._lastResported;
             if (incrValue <= 0) this.incrValue = 0;
 
-            this.incrementProgress(incrValue);
+            this._incrementProgress(incrValue);
         },
 
         subPercent: function(percentFrom, percentTo) {
@@ -25,13 +25,13 @@ var Progress = WinJS.Class.define(
             return this.subPercent(0, 1.0 / partCount);
         },
 
-        incrementProgress: function(incrValue) {
+        _incrementProgress: function(incrValue) {
             var currentValue = this._lastReported += incrValue;
-            if (parent == null) this.notifyChange(currentValue);
-            else this._parent.incrementProgress(incrValue);
+            if (parent == null) this._notifyChange(currentValue);
+            else this._parent._incrementProgress(incrValue);
         },
 
-        notifyChange: function(value) {
+        _notifyChange: function(value) {
             var change = value - this._lastNotified;
             var percentageChange = change / this.maxValue * 100;
             var isMaxNotNotified = (value === this.maxValue) && (this._lastNotified !== value);
@@ -42,7 +42,7 @@ var Progress = WinJS.Class.define(
             }
         },
 
-        computePercent: function(percent) {
+        _computePercent: function(percent) {
             return Math.round(this.maxValue * percent);
         }
     },

@@ -5,7 +5,7 @@ var NbpExtractor = WinJS.Class.define(
         this._hc = new Windows.Web.Http.HttpClient();
     },
     {
-        _iBufferToString: function(buffer, encoding) {
+        _iBufferToStringAsync: function(buffer, encoding) {
             var uint8Array = Windows.Security.Cryptography.CryptographicBuffer.copyToByteArray(buffer);
             var blob = new Blob([uint8Array], { type: "text/plain" });
 
@@ -18,12 +18,12 @@ var NbpExtractor = WinJS.Class.define(
             });
         },
 
-        getHttpResponse: function(requestUri, encoding) {
+        getHttpResponseAsync: function(requestUri, encoding) {
             var self = this;
             var uri = new Windows.Foundation.Uri(requestUri);
             return this._hc.getBufferAsync(uri)
                 .then(function(buffer) {
-                    return self._iBufferToString(buffer, encoding);
+                    return self._iBufferToStringAsync(buffer, encoding);
                 });
         },
 

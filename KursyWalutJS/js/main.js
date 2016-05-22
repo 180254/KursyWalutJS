@@ -27,16 +27,16 @@
 
     app.start();
 
-//    var cache = new InMemCache();
-//    cache.store("alamakota", { "a": 2, "XXX": { "b": 3 } })
-//        .then(function() {
-//            return cache.get("alamakota");
-//        })
-//        .done(function(value) {
-//            console.log(value);
-//        });
+    var cache = new InMemCache();
+    cache.storeAsync("alamakota", { "a": 2, "XXX": { "b": 3 } })
+        .then(function() {
+            return cache.getAsync("alamakota");
+        })
+        .done(function(value) {
+            console.log(value);
+        });
     var nbpExtractor = new NbpExtractor();
-    nbpExtractor.getHttpResponse("http://www.nbp.pl/kursy/xml/a001z160104.xml", "iso-8859-2")
+    nbpExtractor.getHttpResponseAsync("http://www.nbp.pl/kursy/xml/a001z160104.xml", "iso-8859-2")
         .done(function(response) {
             var document = nbpExtractor.parseXml(response);
             var exchangeRates = nbpExtractor.parseExchangeRates(document);

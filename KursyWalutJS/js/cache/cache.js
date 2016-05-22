@@ -4,12 +4,12 @@ var LsCache = WinJS.Class.define(
     function() {
     },
     {
-        localFolder: function() {
+        _localFolder: function() {
             return Windows.Storage.ApplicationData.current.localFolder;
         },
 
-        get: function(key) {
-            return this.localFolder()
+        getAsync: function(key) {
+            return this._localFolder()
                 .getFileAsync(key)
                 .then(function(file) {
                     return Windows.Storage.FileIO.readTextAsync(file);
@@ -19,8 +19,8 @@ var LsCache = WinJS.Class.define(
                 });
         },
 
-        store: function(key, value) {
-            return this.localFolder()
+        storeAsync: function(key, value) {
+            return this._localFolder()
                 .createFileAsync(key, Windows.Storage.CreationCollisionOption.replaceExisting)
                 .then(function(file) {
                     return Windows.Storage.FileIO.writeTextAsync(file, JSON.stringify(value));
@@ -37,14 +37,11 @@ var InMemCache = WinJS.Class.define(
         this._dict = {};
     },
     {
-        localFolder: function() {
-            return Windows.Storage.ApplicationData.current.localFolder;
-        },
-        get: function(key) {
+        getAsync: function(key) {
             return WinJS.Promise.wrap(this._dict[key]);
         },
 
-        store: function(key, value) {
+        storeAsync: function(key, value) {
             this._dict[key] = value;
             return WinJS.Promise.wrap(0);
         }
