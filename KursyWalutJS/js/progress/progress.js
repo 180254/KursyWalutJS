@@ -27,8 +27,8 @@ var Progress = WinJS.Class.define(
 
         _incrementProgress: function(incrValue) {
             var currentValue = this._lastReported += incrValue;
-            if (parent == null) this._notifyChange(currentValue);
-            else this._parent._incrementProgress(incrValue);
+            if (this._parent) this._parent._incrementProgress(incrValue);
+            else this._notifyChange(currentValue);
         },
 
         _notifyChange: function(value) {

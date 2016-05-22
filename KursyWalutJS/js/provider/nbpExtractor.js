@@ -9,7 +9,6 @@ var NbpExtractor = WinJS.Class.define(
             var uint8Array = Windows.Security.Cryptography.CryptographicBuffer.copyToByteArray(buffer);
             var blob = new Blob([uint8Array], { type: "text/plain" });
 
-            // blob to text with given encoding
             return new WinJS.Promise(function(complete, error) {
                 var reader = new FileReader();
                 reader.onload = function(event) { complete(event.target.result); };

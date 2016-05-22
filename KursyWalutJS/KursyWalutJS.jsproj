@@ -594,7 +594,8 @@
     <Content Include="js\model\currency.js" />
     <Content Include="js\model\exchangeRate.js" />
     <Content Include="js\progress\progress.js" />
-    <Content Include="js\provider\extractor.js" />
+    <Content Include="js\provider\nbpExtractor.js" />
+    <Content Include="js\provider\nbpProvider.js" />
     <None Include="KursyWalutJS_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

@@ -42,4 +42,30 @@
             var exchangeRates = nbpExtractor.parseExchangeRates(document);
             console.log(exchangeRates);
         });
+
+    var progress = new Progress(1000);
+    var nbpProvider = new NbpProvider(cache);
+
+    nbpProvider.initCacheAsync(new Progress(1000))
+        .then(function() {
+            return nbpProvider.getAvailableYearsAsync(new Progress(1000));
+        })
+        .then(function(years) {
+            console.log(years);
+            return nbpProvider.getAvailableDaysAsync(2016, new Progress(1000));
+        })
+        .then(function(days) {
+            console.log(days);
+            return nbpProvider.getAvailableDaysAsync(2016, new Progress(1000));
+        })
+        .then(function(days) {
+            console.log(days);
+            return nbpProvider.getExchangeRatesAsync(days[0], new Progress(1000));
+        })
+        .done(function(exchangeRates) {
+            console.log(exchangeRates);
+        },
+        function(e) {
+            console.log(e);
+        });
 }());
