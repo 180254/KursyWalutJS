@@ -46,6 +46,6 @@ var Progress = WinJS.Class.define(
         }
     },
     {
-        
+    
     }
 );

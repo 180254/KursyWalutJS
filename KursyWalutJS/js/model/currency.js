@@ -1,5 +1,4 @@
 ﻿/// <reference path="~/bower_components/winjs/js/base.js" />
-
 var Currency = WinJS.Class.define(
     function(code, name, multiplier) {
         this.code = code;
@@ -13,7 +12,7 @@ var Currency = WinJS.Class.define(
     },
     {
         dummyForCode: function(code) {
-            return new Progress(code, "", 1);
+            return new Currency(code, "", 1);
         }
     }
 );
