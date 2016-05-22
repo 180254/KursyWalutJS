@@ -1,0 +1,16 @@
+{
+  "name": "kursy.walut.js",
+  "license": "MIT",
+  "private": "true",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "winjs": "^4.4.0",
+    "knockout-winjs": "^2.4.0"
+  }
+}

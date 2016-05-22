@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+      <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+      <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+      <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+      <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>aba83cb2-36bd-4d51-8075-414fbc1dab82</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0'">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).Default.props" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).props" />
+  <PropertyGroup>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>$(VersionNumberMajor).$(VersionNumberMinor)</MinimumVisualStudioVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageCertificateKeyFile>KursyWalutJS_TemporaryKey.pfx</PackageCertificateKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppxManifest Include="package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <Content Include="bower_components\knockout-winjs\.bower.json" />
+    <Content Include="bower_components\knockout-winjs\bower.json" />
+    <Content Include="bower_components\knockout-winjs\js\knockout-winjs.js" />
+    <Content Include="bower_components\knockout-winjs\karma.config.js" />
+    <Content Include="bower_components\knockout-winjs\LICENSE" />
+    <Content Include="bower_components\knockout-winjs\README.md" />
+    <Content Include="bower_components\knockout-winjs\tasks\check-bom.js" />
+    <Content Include="bower_components\knockout\.bower.json" />
+    <Content Include="bower_components\knockout\bower.json" />
+    <Content Include="bower_components\knockout\build\fragments\amd-post.js" />
+    <Content Include="bower_components\knockout\build\fragments\amd-pre.js" />
+    <Content Include="bower_components\knockout\build\fragments\extern-post.js" />
+    <Content Include="bower_components\knockout\build\fragments\extern-pre.js" />
+    <Content Include="bower_components\knockout\build\fragments\source-references.js" />
+    <Content Include="bower_components\knockout\build\knockout-raw.js" />
+    <Content Include="bower_components\knockout\dist\knockout.debug.js" />
+    <Content Include="bower_components\knockout\dist\knockout.js" />
+    <Content Include="bower_components\knockout\Gruntfile.js" />
+    <Content Include="bower_components\knockout\LICENSE" />
+    <Content Include="bower_components\knockout\package.json" />
+    <Content Include="bower_components\knockout\README.md" />
+    <Content Include="bower_components\knockout\src\binding\bindingAttributeSyntax.js" />
+    <Content Include="bower_components\knockout\src\binding\bindingProvider.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\attr.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\checked.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\click.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\css.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\enableDisable.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\event.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\foreach.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\hasfocus.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\html.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\ifIfnotWith.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\options.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\selectedOptions.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\style.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\submit.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\text.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\textInput.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\uniqueName.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\value.js" />
+    <Content Include="bower_components\knockout\src\binding\defaultBindings\visible.js" />
+    <Content Include="bower_components\knockout\src\binding\editDetection\arrayToDomNodeChildren.js" />
+    <Content Include="bower_components\knockout\src\binding\editDetection\compareArrays.js" />
+    <Content Include="bower_components\knockout\src\binding\expressionRewriting.js" />
+    <Content Include="bower_components\knockout\src\binding\selectExtensions.js" />
+    <Content Include="bower_components\knockout\src\components\componentBinding.js" />
+    <Content Include="bower_components\knockout\src\components\customElements.js" />
+    <Content Include="bower_components\knockout\src\components\defaultLoader.js" />
+    <Content Include="bower_components\knockout\src\components\loaderRegistry.js" />
+    <Content Include="bower_components\knockout\src\google-closure-compiler-utils.js" />
+    <Content Include="bower_components\knockout\src\memoization.js" />
+    <Content Include="bower_components\knockout\src\namespace.js" />
+    <Content Include="bower_components\knockout\src\options.js" />
+    <Content Include="bower_components\knockout\src\subscribables\dependencyDetection.js" />
+    <Content Include="bower_components\knockout\src\subscribables\dependentObservable.js" />
+    <Content Include="bower_components\knockout\src\subscribables\extenders.js" />
+    <Content Include="bower_components\knockout\src\subscribables\mappingHelpers.js" />
+    <Content Include="bower_components\knockout\src\subscribables\observable.js" />
+    <Content Include="bower_components\knockout\src\subscribables\observableArray.changeTracking.js" />
+    <Content Include="bower_components\knockout\src\subscribables\observableArray.js" />
+    <Content Include="bower_components\knockout\src\subscribables\subscribable.js" />
+    <Content Include="bower_components\knockout\src\tasks.js" />
+    <Content Include="bower_components\knockout\src\templating\jquery.tmpl\jqueryTmplTemplateEngine.js" />
+    <Content Include="bower_components\knockout\src\templating\native\nativeTemplateEngine.js" />
+    <Content Include="bower_components\knockout\src\templating\templateEngine.js" />
+    <Content Include="bower_components\knockout\src\templating\templateRewriting.js" />
+    <Content Include="bower_components\knockout\src\templating\templateSources.js" />
+    <Content Include="bower_components\knockout\src\templating\templating.js" />
+    <Content Include="bower_components\knockout\src\utils.domData.js" />
+    <Content Include="bower_components\knockout\src\utils.domManipulation.js" />
+    <Content Include="bower_components\knockout\src\utils.domNodeDisposal.js" />
+    <Content Include="bower_components\knockout\src\utils.js" />
+    <Content Include="bower_components\knockout\src\version.js" />
+    <Content Include="bower_components\knockout\src\virtualElements.js" />
+    <Content Include="bower_components\winjs\.bower.json" />
+    <Content Include="bower_components\winjs\bower.json" />
+    <Content Include="bower_components\winjs\css\ui-dark.css" />
+    <Content Include="bower_components\winjs\css\ui-dark.min.css" />
+    <Content Include="bower_components\winjs\css\ui-light.css" />
+    <Content Include="bower_components\winjs\css\ui-light.min.css" />
+    <Content Include="bower_components\winjs\fonts\Symbols.ttf" />
+    <Content Include="bower_components\winjs\js\base.js" />
+    <Content Include="bower_components\winjs\js\base.min.js" />
+    <Content Include="bower_components\winjs\js\base.min.js.map" />
+    <Content Include="bower_components\winjs\js\en-US\ui.strings.js" />
+    <Content Include="bower_components\winjs\js\ui.js" />
+    <Content Include="bower_components\winjs\js\ui.min.js" />
+    <Content Include="bower_components\winjs\js\ui.min.js.map" />
+    <Content Include="bower_components\winjs\js\WinJS.intellisense-setup.js" />
+    <Content Include="bower_components\winjs\js\WinJS.intellisense.js" />
+    <Content Include="bower_components\winjs\License.txt" />
+    <Content Include="bower_components\winjs\README.md" />
+    <Content Include="index.html" />
+    <Content Include="images\LockScreenLogo.scale-200.png" />
+    <Content Include="images\SplashScreen.scale-200.png" />
+    <Content Include="images\Square150x150Logo.scale-200.png" />
+    <Content Include="images\Square44x44Logo.scale-200.png" />
+    <Content Include="images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="images\StoreLogo.png" />
+    <Content Include="images\Wide310x150Logo.scale-200.png" />
+    <Content Include="js\main.js" />
+    <Content Include="css\default.css" />
+    <None Include="KursyWalutJS_TemporaryKey.pfx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
+  <!-- To modify your build process, add your task inside one of the targets below then uncomment
+       that target and the DisableFastUpToDateCheck PropertyGroup. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+  -->
+</Project>

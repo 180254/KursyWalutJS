@@ -244,3 +244,7 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Node/Bower
+node_modules
+bower_components
