@@ -52,7 +52,7 @@
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>$(VersionNumberMajor).$(VersionNumberMinor)</MinimumVisualStudioVersion>
-    <DefaultLanguage>pl-PL</DefaultLanguage>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>KursyWalutJS_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <ItemGroup>
