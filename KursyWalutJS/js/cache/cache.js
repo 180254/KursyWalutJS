@@ -1,6 +1,4 @@
-﻿/// <reference path="~/bower_components/winjs/js/base.js" />
-/* global Windows, WinJS */
-"use strict";
+﻿"use strict";
 
 var LsCache = WinJS.Class.define(
     function() {
@@ -9,6 +7,7 @@ var LsCache = WinJS.Class.define(
         localFolder: function() {
             return Windows.Storage.ApplicationData.current.localFolder;
         },
+
         get: function(key) {
             return this.localFolder()
                 .getFileAsync(key)
