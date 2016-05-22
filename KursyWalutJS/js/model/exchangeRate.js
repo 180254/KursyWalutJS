@@ -1,4 +1,5 @@
-﻿/// <reference path="~/bower_components/winjs/js/base.js" />
+﻿"use strict";
+
 var ExchangeRate = WinJS.Class.define(
     function(day, currency, averageRate) {
         this.day = day;

@@ -1,4 +1,5 @@
-﻿/// <reference path="~/bower_components/winjs/js/base.js" />
+﻿"use strict";
+
 var Currency = WinJS.Class.define(
     function(code, name, multiplier) {
         this.code = code;

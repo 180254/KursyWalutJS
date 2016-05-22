@@ -1,10 +1,9 @@
 ﻿/// <reference path="~/bower_components/winjs/js/base.js" />
 /* global Windows, WinJS */
-var Cache = WinJS.Class.define(
+"use strict";
+
+var LsCache = WinJS.Class.define(
     function() {
-    },
-    {
-    
     },
     {
         localFolder: function() {
@@ -28,5 +27,30 @@ var Cache = WinJS.Class.define(
                     return Windows.Storage.FileIO.writeTextAsync(file, JSON.stringify(value));
                 });
         }
+    },
+    {
+    
+    }
+);
+
+var InMemCache = WinJS.Class.define(
+    function() {
+        this._dict = {};
+    },
+    {
+        localFolder: function() {
+            return Windows.Storage.ApplicationData.current.localFolder;
+        },
+        get: function(key) {
+            return WinJS.Promise.wrap(this._dict[key]);
+        },
+
+        store: function(key, value) {
+            this._dict[key] = value;
+            return WinJS.Promise.wrap(0);
+        }
+    },
+    {
+    
     }
 );

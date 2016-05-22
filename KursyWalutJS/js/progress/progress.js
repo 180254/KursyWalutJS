@@ -1,4 +1,5 @@
-﻿/// <reference path="~/bower_components/winjs/js/base.js" />
+﻿"use strict";
+
 var Progress = WinJS.Class.define(
     function(maxValue, parent) {
         this.maxValue = maxValue;
