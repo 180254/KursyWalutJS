@@ -45,9 +45,25 @@ var Utils = WinJS.Class.define(
             return array.slice(-1)[0];
         },
 
-        averaged: function(list, expectedSize) {
-            return list;
+        averaged: function(list, expectedLength) {
+            if (list.length <= expectedLength) return list;
 
+            var incr = Math.round(list.length / expectedLength);
+            var nextSize = Math.floor(list.length / incr);
+
+            var indexes =
+                Utils.rangeEx(0, nextSize)
+                    .map(function(value, index) {
+                        return index * incr;
+                    });
+
+            if (nextSize * incr !== list.length - 1)
+                indexes.push(list.length - 1);
+
+            console.log(indexes);
+            return list.filter(function(value, index) {
+                return indexes.indexOf(index) > -1;
+            });
         }
     }
 );
