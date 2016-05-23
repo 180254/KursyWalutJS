@@ -595,6 +595,7 @@
     <Content Include="css\default.css" />
     <Content Include="js\model\currency.js" />
     <Content Include="js\model\exchangeRate.js" />
+    <Content Include="js\provider\cacheErProvider.js" />
     <Content Include="js\provider\erService.js" />
     <Content Include="js\provider\nbpErExtractor.js" />
     <Content Include="js\provider\nbpErProvider.js" />

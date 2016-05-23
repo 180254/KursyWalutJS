@@ -77,7 +77,8 @@
 
     var cache = new InMemCache();
     var provider = new NbpErProvider(cache);
-    var service = new ErService(provider);
+    var cacheProvider = new CacheErProvider(provider, cache);
+    var service = new ErService(cacheProvider);
 
     var lastDej;
     var timeStart;
