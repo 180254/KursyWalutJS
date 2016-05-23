@@ -63,6 +63,20 @@ var Utils = WinJS.Class.define(
             return list.filter(function(value, index) {
                 return indexes.indexOf(index) > -1;
             });
+        },
+
+        getElements: function(xml, tagName) {
+            return xml.getElementsByTagName(tagName);
+        },
+
+        getElement: function(xml, tagName) {
+            return this.getElements(xml, tagName)[0];
+        },
+
+
+        getElementValue: function(xml, tagName) {
+            var element = this.getElement(xml, tagName);
+            return element ? element.childNodes[0].nodeValue : null;
         }
     }
 );

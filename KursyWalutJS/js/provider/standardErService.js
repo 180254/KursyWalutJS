@@ -154,7 +154,7 @@ var ErService = WinJS.Class.define(
         _getExchangeRatesInDaysAsync: function(days, currency, progress) {
             var self = this;
 
-            var waitFor = 300;
+            var waitFor = 20;
 
             var loop = function(iStart, prevResult) {
                 prevResult = prevResult || [];

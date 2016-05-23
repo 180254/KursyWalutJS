@@ -75,6 +75,9 @@
 
             */
 
+
+
+    /*
     var cache = new InMemCache();
     var provider = new NbpErProvider(cache);
     var cacheProvider = new CacheErProvider(provider, cache);
@@ -84,26 +87,26 @@
     var timeStart;
     var dejs;
     service.initCacheAsync(new Progress(1000))
-//        .then(function() {
-//            return service.getFirstAvailableDayAsync(new Progress(1000));
-//        })
-//        .then(function(firstDay) {
-//            console.log(firstDay);
-//            return service.getLastAvailableDayAsync(new Progress(1000));
-//        })
-//        .then(function(lastDay) {
-//            lastDej = lastDay;
-//            console.log(lastDay);
-//            return service.getAllAvailableDaysAsync(new Progress(1000));
-//        })
-//        .then(function(allDays) {
-//            console.log(allDays);
-//            return service.getExchangeRatesAsync(lastDej, new Progress(1000));
-//        })
-//        .then(function(ers) {
-//            console.log(ers);
-//            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
-//        })
+        .then(function() {
+            return service.getFirstAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(firstDay) {
+            console.log(firstDay);
+            return service.getLastAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(lastDay) {
+            lastDej = lastDay;
+            console.log(lastDay);
+            return service.getAllAvailableDaysAsync(new Progress(1000));
+        })
+        .then(function(allDays) {
+            console.log(allDays);
+            return service.getExchangeRatesAsync(lastDej, new Progress(1000));
+        })
+        .then(function(ers) {
+            console.log(ers);
+            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
+        })
         .then(function (er) {
             console.log("10----------------------------------------")
             console.log(er);
@@ -151,6 +154,34 @@
              console.log("DONE");
         }, function(e) {
             console.log(e);
+        });
+    */
+
+    var cache = new InMemCache();
+    var provider = new NbpErProvider(cache);
+    var cacheProvider = new CacheErProvider(provider, cache);
+    var service = new ErService(cacheProvider);
+
+    var timeStart;
+    service.initCacheAsync(new Progress(1000))
+        .then(function() {
+
+            var start = moment().subtract(2, "years");
+            var stop = moment();
+
+            timeStart = moment();
+
+            return service.getExchangeRateAvaragedHistoryAsync(
+                Currency.dummyForCode("USD"),
+                start, stop,
+                10000, new Progress(1000));
+        })
+        .then(function(result) {
+            var timeStop = moment();
+            console.log(result);
+
+            var time = (timeStop - timeStart) / 100;
+            console.log("OK1/" + time + "s");
         });
 
     //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/

@@ -74,13 +74,13 @@ var NbpErProvider = WinJS.Class.define(
                 .then(function(response) {
                     progress.reportProgress(0.60);
 
-                    var $xml = self._extractor.parseXml(response);
+                    var xml = self._extractor.parseXml(response);
                     progress.reportProgress(0.70);
 
-                    return new WinJS.Promise.wrap($xml);
+                    return new WinJS.Promise.wrap(xml);
                 })
-                .then(function($xml) {
-                    var result = self._extractor.parseExchangeRates($xml, day);
+                .then(function(xml) {
+                    var result = self._extractor.parseExchangeRates(xml, day);
                     progress.reportProgress(1.00);
 
                     return new WinJS.Promise.wrap(result);

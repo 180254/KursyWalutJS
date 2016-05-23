@@ -4,6 +4,7 @@
 var NbpErExtractor = WinJS.Class.define(
     function() {
         this._hc = new Windows.Web.Http.HttpClient();
+        this._dp = new window.DOMParser();
     },
     {
         _iBufferToStringAsync: function(buffer, encoding) {
@@ -37,31 +38,37 @@ var NbpErExtractor = WinJS.Class.define(
         },
 
         parseXml: function(response) {
-            return $($.parseXML(response));
+            return this._dp.parseFromString(response, "text/xml");;
         },
 
-        parseExchangeRates: function($xml, day) {
+        parseExchangeRates: function(xml, day) {
             var self = this;
 
-            var $xmlErs = $xml.find("tabela_kursow").find("pozycja");
-            return $.map($xmlErs, function(xmlEr) {
-                return self.parseExchangeRate($(xmlEr), day);
-            });
+            var ers = [];
+            var xmlErs = Utils.getElements(xml, "pozycja");
+
+            for (var i = 0; i < xmlErs.length; i++) {
+                var xmlEr = xmlErs[i];
+                var er = self.parseExchangeRate(xmlEr, day);
+                ers.push(er);
+            }
+
+            return ers;
         },
 
-        parseExchangeRate: function($xml, day) {
+        parseExchangeRate: function(xml, day) {
             return new ExchangeRate(
                 day,
-                this.parseCurrency($xml),
-                parseFloat($xml.find("kurs_sredni").text().replace(",", "."))
+                this.parseCurrency(xml),
+                parseFloat(Utils.getElementValue(xml, "kurs_sredni").replace(",", "."))
             );
         },
 
-        parseCurrency: function($xml) {
+        parseCurrency: function(xml) {
             return new Currency(
-                $xml.find("kod_waluty").text(),
-                ($xml.find("nazwa_waluty") || $xml.find("nazwa_kraju")).text(),
-                parseInt($xml.find("przelicznik").text())
+                Utils.getElementValue(xml, "kod_waluty"),
+                Utils.getElementValue(xml, "nazwa_waluty") || Utils.getElementValue(xml, "nazwa_kraju"),
+                parseInt(Utils.getElementValue(xml, "przelicznik"))
             );
         }
     },

@@ -39,7 +39,7 @@ var Progress = WinJS.Class.define(
 
             if (percentageChange > 1.00 || isMaxNotNotified) {
                 this._lastNotified = value;
-                console.log(value);
+//                console.log(value);
             }
         },
 
