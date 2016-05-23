@@ -2,6 +2,7 @@
 
 var Currency = WinJS.Class.define(
     function(code, name, multiplier) {
+        this.__type = "Currency";
         this.code = code;
         this.name = name;
         this.multiplier = multiplier;

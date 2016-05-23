@@ -154,9 +154,9 @@
         }, function(e) {
             console.log(e);
         });
+    
     */
-
-    var cache = new InMemCache();
+    var cache = new LsCache();
     var provider = new NbpErProvider(cache);
     var cacheProvider = new CacheErProvider(provider, cache);
     var service = new ErService(cacheProvider);
@@ -181,7 +181,47 @@
 
             var time = (timeStop - timeStart) / 100;
             console.log("OK1/" + time + "s");
+            return service.flushCacheAsync(new Progress(1000));
+        })
+        .done(function(e) {
+            console.log(e);
+        }, function(e) {
+            console.log(e);
         });
 
+    /*
+    var cache = new LsCache();
+    var provider = new NbpErProvider(cache);
+    var cacheProvider = new CacheErProvider(provider, cache);
+    var service = new ErService(cacheProvider);
+
+    service.initCacheAsync(new Progress(1000))
+        .then(function() {
+            return service.getLastAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(lastDay) {
+            console.log(lastDay);
+            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDay, new Progress(1000));
+        })
+        .then(function(ers) {
+            console.log(ers);
+            return service.flushCacheAsync(new Progress(1000));
+        })
+        .then(function() {
+            return service.initCacheAsync(new Progress(1000));
+        })
+        .then(function() {
+            return service.getLastAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(lastDay) {
+            console.log(lastDay);
+            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDay, new Progress(1000));
+        })
+        .done(function(ers) {
+            console.log(ers);
+        }, function(e) {
+            console.log(e);
+        });
+        */
     //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/
 }());

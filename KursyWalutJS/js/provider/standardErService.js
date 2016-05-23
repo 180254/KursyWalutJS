@@ -22,7 +22,7 @@ var ErService = WinJS.Class.define(
                 ? this._erProvider.flushCacheAsync(progress)
                 : WinJS.Promise.wrap(0);
 
-            return basePromise .then(function() {
+            return basePromise.then(function() {
                 progress.reportProgress(1.00);
                 return WinJS.Promise.wrap(0);
             });

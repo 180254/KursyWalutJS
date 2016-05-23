@@ -26,7 +26,7 @@ var NbpErProvider = WinJS.Class.define(
             var self = this;
 
             var basePromise = self._dayToFilenameChanged
-                ? self._cache.storeAsync()
+                ? self._cache.storeAsync("_dayToFilename", self._dayToFilename)
                 : WinJS.Promise.wrap(0);
 
             return basePromise.then(function() {
@@ -42,8 +42,6 @@ var NbpErProvider = WinJS.Class.define(
             return new WinJS.Promise(function(complete) {
                 complete(Utils.rangeEx2(startYear, endYear + 1));
                 progress.reportProgress(1.00);
-
-                return WinJS.Promise.wrap(0);
             });
         },
 
@@ -70,7 +68,7 @@ var NbpErProvider = WinJS.Class.define(
         getExchangeRatesAsync: function(day, progress) {
             var self = this;
 
-            var filename = this._dayToFilename[day];
+            var filename = this._dayToFilename[day.toJSON()];
             var url = "http://www.nbp.pl/kursy/xml/" + filename + ".xml";
 
             return self._extractor
@@ -115,7 +113,7 @@ var NbpErProvider = WinJS.Class.define(
                 var filename = filenames[i];
                 var day = self._extractor.parseDateTime(filename);
 
-                self._dayToFilename[day] = filename;
+                self._dayToFilename[day.toJSON()] = filename;
                 result.push(day);
             }
 

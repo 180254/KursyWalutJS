@@ -41,6 +41,7 @@ var CacheErProvider = WinJS.Class.define(
                 })
                 .then(function() {
                     progress.reportProgress(1.00);
+                    return WinJS.Promise.wrap(0);
                 });
 
         },
@@ -72,10 +73,16 @@ var CacheErProvider = WinJS.Class.define(
         getAvailableYearsAsync: function(progress) {
             var self = this;
 
-            if (self._availYears) {
+            if (self._availYears.length > 0) {
                 return WinJS.Promise.wrap(self._availYears);
             } else {
-                return self._calculateAvailableYearsAsync(progress);
+                return self._erProvider
+                    .getAvailableYearsAsync(progress)
+                    .then(function(availYears) {
+                        self._cacheChanged["_availYears"] = true;
+                        self._availYears = availYears;
+                        return WinJS.Promise.wrap(self._availYears);
+                    });
             }
         },
 
@@ -94,18 +101,11 @@ var CacheErProvider = WinJS.Class.define(
             var self = this;
 
             return self._getOrCalculateAsync(
-                "_dayToEr", self._dayToEr, day,
+                "_dayToEr", self._dayToEr, day.toJSON(),
                 function() {
                     return self._erProvider.getExchangeRatesAsync(day, progress);
                 },
                 progress);
-        },
-
-        _calculateAvailableYearsAsync: function(progress) {
-            var self = this;
-
-            this._cacheChanged["_availYears"] = true;
-            return self._erProvider.getAvailableYearsAsync(progress);
         },
 
         _getOrCalculateAsync: function(dictName, dict, key, valuePromiseFunc, progress) {
