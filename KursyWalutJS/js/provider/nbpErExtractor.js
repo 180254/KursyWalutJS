@@ -38,7 +38,7 @@ var NbpErExtractor = WinJS.Class.define(
         },
 
         parseXml: function(response) {
-            return this._dp.parseFromString(response, "text/xml");;
+            return this._dp.parseFromString(response, "text/xml");
         },
 
         parseExchangeRates: function(xml, day) {

@@ -17,6 +17,8 @@ var NbpErProvider = WinJS.Class.define(
                 .then(function(value) {
                     self._dayToFilename = value || {};
                     progress.reportProgress(1.00);
+
+                    return WinJS.Promise.wrap(0);
                 });
         },
 
@@ -25,7 +27,7 @@ var NbpErProvider = WinJS.Class.define(
 
             var basePromise = self._dayToFilenameChanged
                 ? self._cache.storeAsync()
-                : new WinJS.Promise.wrap(0);
+                : WinJS.Promise.wrap(0);
 
             return basePromise.then(function() {
                 self._dayToFilenameChanged = false;
@@ -40,6 +42,8 @@ var NbpErProvider = WinJS.Class.define(
             return new WinJS.Promise(function(complete) {
                 complete(Utils.rangeEx2(startYear, endYear + 1));
                 progress.reportProgress(1.00);
+
+                return WinJS.Promise.wrap(0);
             });
         },
 
@@ -58,7 +62,7 @@ var NbpErProvider = WinJS.Class.define(
                     var result = self._parseAndCacheDates(avgFilenames);
                     progress.reportProgress(1.00);
 
-                    return new WinJS.Promise.wrap(result);
+                    return WinJS.Promise.wrap(result);
                 });
 
         },
@@ -77,13 +81,13 @@ var NbpErProvider = WinJS.Class.define(
                     var xml = self._extractor.parseXml(response);
                     progress.reportProgress(0.70);
 
-                    return new WinJS.Promise.wrap(xml);
+                    return WinJS.Promise.wrap(xml);
                 })
                 .then(function(xml) {
                     var result = self._extractor.parseExchangeRates(xml, day);
                     progress.reportProgress(1.00);
 
-                    return new WinJS.Promise.wrap(result);
+                    return WinJS.Promise.wrap(result);
                 });
         },
 
@@ -97,7 +101,7 @@ var NbpErProvider = WinJS.Class.define(
                 .getHttpResponseAsync(url, "utf-8")
                 .then(function(response) {
                     var filenames = self._extractor.parseFilenames(response);
-                    return new WinJS.Promise.wrap(filenames);
+                    return WinJS.Promise.wrap(filenames);
                 });
         },
 

@@ -35,7 +35,7 @@ var CacheErProvider = WinJS.Class.define(
 
                     var promise = (typeof self._erProvider.initCacheAsync === "function")
                         ? self._erProvider.initCacheAsync(progress.subPercent(0.50, 1.00))
-                        : new WinJS.Promise.wrap(0);
+                        : WinJS.Promise.wrap(0);
 
                     return promise;
                 })
@@ -63,7 +63,7 @@ var CacheErProvider = WinJS.Class.define(
 
             var promise = (typeof self._erProvider.flushCacheAsync === "function")
                 ? this._erProvider.flushCacheAsync(progress.subPercent(0.50, 1.00))
-                : new WinJS.Promise.wrap(0);
+                : WinJS.Promise.wrap(0);
             promises.push(promise);
 
             return WinJS.Promise.join(promises);
@@ -73,7 +73,7 @@ var CacheErProvider = WinJS.Class.define(
             var self = this;
 
             if (self._availYears) {
-                return new WinJS.Promise.wrap(self._availYears);
+                return WinJS.Promise.wrap(self._availYears);
             } else {
                 return self._calculateAvailableYearsAsync(progress);
             }
@@ -113,14 +113,14 @@ var CacheErProvider = WinJS.Class.define(
 
             if (dict[key]) {
                 progress.reportProgress(1.00);
-                return new WinJS.Promise.wrap(dict[key]);
+                return WinJS.Promise.wrap(dict[key]);
             }
 
             self._cacheChanged[dictName] = true;
 
             return valuePromiseFunc().then(function(value) {
                 dict[key] = value;
-                return new WinJS.Promise.wrap(value);
+                return WinJS.Promise.wrap(value);
             });
         },
 
