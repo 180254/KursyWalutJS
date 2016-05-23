@@ -7,13 +7,17 @@ var Currency = WinJS.Class.define(
         this.multiplier = multiplier;
     },
     {
+        equals: function(currency) {
+            return this.code === currency.code;
+        },
+
         toString: function() {
-            return "code: " + this.code + ", name" + this.name + ", multiplier: " + this.multiplier;
+            return "[code: " + this.code + ", name: " + this.name + ", multiplier: " + this.multiplier + "]";
         }
     },
     {
         dummyForCode: function(code) {
-            return new this.Currency(code, "", 1);
+            return new Currency(code, "", 1);
         }
     }
 );

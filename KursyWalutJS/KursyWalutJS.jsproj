@@ -588,14 +588,16 @@
     <Content Include="images\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="images\StoreLogo.png" />
     <Content Include="images\Wide310x150Logo.scale-200.png" />
-    <Content Include="js\cache\cache.js" />
+    <Content Include="js\helper\cache.js" />
+    <Content Include="js\helper\progress.js" />
+    <Content Include="js\helper\utils.js" />
     <Content Include="js\main.js" />
     <Content Include="css\default.css" />
     <Content Include="js\model\currency.js" />
     <Content Include="js\model\exchangeRate.js" />
-    <Content Include="js\progress\progress.js" />
-    <Content Include="js\provider\nbpExtractor.js" />
-    <Content Include="js\provider\nbpProvider.js" />
+    <Content Include="js\provider\erService.js" />
+    <Content Include="js\provider\nbpErExtractor.js" />
+    <Content Include="js\provider\nbpErProvider.js" />
     <None Include="KursyWalutJS_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

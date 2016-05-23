@@ -34,13 +34,11 @@ var NbpErProvider = WinJS.Class.define(
         },
 
         getAvailableYearsAsync: function(progress) {
-            var self = this;
-
             var startYear = 2002;
             var endYear = moment().year();
 
             return new WinJS.Promise(function(complete) {
-                complete(self._range(startYear, endYear - startYear + 1));
+                complete(Utils.rangeEx2(startYear, endYear + 1));
                 progress.reportProgress(1.00);
             });
         },
@@ -54,7 +52,7 @@ var NbpErProvider = WinJS.Class.define(
                     progress.reportProgress(0.70);
 
                     var avgFilenames = filenames.filter(function(element) {
-                        return self._startsWith(element, "a");
+                        return Utils.startsWith(element, "a");
                     });
 
                     var result = self._parseAndCacheDates(avgFilenames);
@@ -112,18 +110,6 @@ var NbpErProvider = WinJS.Class.define(
             }
 
             return result;
-        },
-
-        _range: function(start, count) {
-            return Array.apply(0, Array(count))
-                .map(function(element, index) {
-                    return index + start;
-                });
-        },
-
-        _startsWith: function(string, searchString, position) {
-            position = position || 0;
-            return string.substr(position, searchString.length) === searchString;
         }
     },
     {

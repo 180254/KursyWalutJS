@@ -18,7 +18,7 @@ var Progress = WinJS.Class.define(
         },
 
         subPercent: function(percentFrom, percentTo) {
-            return new Progress(this.conputePercent(percentFrom, percentTo), this);
+            return new Progress(this._computePercent(percentFrom, percentTo), this);
         },
 
         subPart: function(partIndex, partCount) {
@@ -51,8 +51,8 @@ var Progress = WinJS.Class.define(
                 this.maxValue +
                 ", _parent: " +
                 this._parent +
-                ", _lastResported: " +
-                this._lastResported +
+                ", _lastReported: " +
+                this._lastReported +
                 ", _lastNotified: " +
                 this._lastNotified;
         }

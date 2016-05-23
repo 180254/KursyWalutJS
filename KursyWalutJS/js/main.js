@@ -27,6 +27,7 @@
 
     app.start();
 
+    /*
     var cache = new InMemCache();
     cache.storeAsync("alamakota", { "a": 2, "XXX": { "b": 3 } })
         .then(function() {
@@ -71,6 +72,50 @@
             function(e) {
                 console.log(e);
             });
+
+            */
+
+    var cache = new InMemCache();
+    var provider = new NbpErProvider(cache);
+    var service = new ErService(provider);
+
+    var lastDej;
+    service.initCacheAsync(new Progress(1000))
+        .then(function() {
+            return service.getFirstAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(firstDay) {
+            console.log(firstDay);
+            return service.getLastAvailableDayAsync(new Progress(1000));
+        })
+        .then(function(lastDay) {
+            lastDej = lastDay;
+            console.log(lastDay);
+            return service.getAllAvailableDaysAsync(new Progress(1000));
+        })
+        .then(function(allDays) {
+            console.log(allDays);
+            return service.getExchangeRatesAsync(lastDej, new Progress(1000));
+        })
+        .then(function(ers) {
+            console.log(ers);
+            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
+        })
+        .then(function(er) {
+            console.log(er);
+            return service.getAvailableDaysAsync(2015, new Progress(1000));
+        })
+        .then(function(days) {
+            console.log(days);
+            return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), days[0], days.slice(-1)[0],
+                100, new Progress(1000));
+        })
+        .done(function (result) {
+            console.log(result);
+            console.log("OK");
+        }, function(e) {
+            console.log(e);
+        });
 
     //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/
 }());
