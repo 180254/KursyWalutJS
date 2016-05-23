@@ -1,7 +1,7 @@
 ﻿/*global moment*/
 "use strict";
 
-var NbpExtractor = WinJS.Class.define(
+var NbpErExtractor = WinJS.Class.define(
     function() {
         this._hc = new Windows.Web.Http.HttpClient();
     },
@@ -20,8 +20,9 @@ var NbpExtractor = WinJS.Class.define(
 
         getHttpResponseAsync: function(requestUri, encoding) {
             var self = this;
+
             var uri = new Windows.Foundation.Uri(requestUri);
-            return this._hc.getBufferAsync(uri)
+            return self._hc.getBufferAsync(uri)
                 .then(function(buffer) {
                     return self._iBufferToStringAsync(buffer, encoding);
                 });
@@ -41,8 +42,10 @@ var NbpExtractor = WinJS.Class.define(
 
         parseExchangeRates: function($xml, day) {
             var self = this;
-            return $.map($xml.find("tabela_kursow").find("pozycja"), function(xmlOne) {
-                return self.parseExchangeRate($(xmlOne), day);
+
+            var $xmlErs = $xml.find("tabela_kursow").find("pozycja");
+            return $.map($xmlErs, function(xmlEr) {
+                return self.parseExchangeRate($(xmlEr), day);
             });
         },
 

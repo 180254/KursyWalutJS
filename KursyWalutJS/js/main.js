@@ -35,7 +35,7 @@
         .done(function(value) {
             console.log(value);
         });
-    var nbpExtractor = new NbpExtractor();
+    var nbpExtractor = new NbpErExtractor();
     nbpExtractor.getHttpResponseAsync("http://www.nbp.pl/kursy/xml/a001z160104.xml", "iso-8859-2")
         .done(function(response) {
             var document = nbpExtractor.parseXml(response);
@@ -44,7 +44,7 @@
         });
 
     var progress = new Progress(1000);
-    var nbpProvider = new NbpProvider(cache);
+    var nbpProvider = new NbpErProvider(cache);
 
     nbpProvider.initCacheAsync(new Progress(1000))
         .then(function() {
@@ -71,4 +71,6 @@
             function(e) {
                 console.log(e);
             });
+
+    //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/
 }());

@@ -1,9 +1,9 @@
 ﻿"use strict";
 
-var NbpProvider = WinJS.Class.define(
+var NbpErProvider = WinJS.Class.define(
     function(cache) {
         this._cache = cache;
-        this._extractor = new NbpExtractor();
+        this._extractor = new NbpErExtractor();
         this._dayToFilename = null;
         this._dayToFilenameChanged = null;
 
@@ -11,7 +11,9 @@ var NbpProvider = WinJS.Class.define(
     {
         initCacheAsync: function(progress) {
             var self = this;
-            return this._cache.getAsync("_dayToFilename")
+
+            return self._cache
+                .getAsync("_dayToFilename")
                 .then(function(value) {
                     self._dayToFilename = value || {};
                     progress.reportProgress(1.00);
@@ -19,11 +21,12 @@ var NbpProvider = WinJS.Class.define(
         },
 
         flushCacheAsync: function(progress) {
-            var basePromise = this._dayToFilenameChanged
-                ? this._cache.storeAsync()
+            var self = this;
+
+            var basePromise = self._dayToFilenameChanged
+                ? self._cache.storeAsync()
                 : new WinJS.Promise.wrap(0);
 
-            var self = this;
             return basePromise.then(function() {
                 self._dayToFilenameChanged = false;
                 progress.reportProgress(1.00);
@@ -31,10 +34,11 @@ var NbpProvider = WinJS.Class.define(
         },
 
         getAvailableYearsAsync: function(progress) {
+            var self = this;
+
             var startYear = 2002;
             var endYear = moment().year();
 
-            var self = this;
             return new WinJS.Promise(function(complete) {
                 complete(self._range(startYear, endYear - startYear + 1));
                 progress.reportProgress(1.00);
@@ -43,7 +47,9 @@ var NbpProvider = WinJS.Class.define(
 
         getAvailableDaysAsync: function(year, progress) {
             var self = this;
-            return this._downloadFilenamesForYearAsync(year)
+
+            return self
+                ._downloadFilenamesForYearAsync(year)
                 .then(function(filenames) {
                     progress.reportProgress(0.70);
 
@@ -60,11 +66,13 @@ var NbpProvider = WinJS.Class.define(
         },
 
         getExchangeRatesAsync: function(day, progress) {
+            var self = this;
+
             var filename = this._dayToFilename[day];
             var url = "http://www.nbp.pl/kursy/xml/" + filename + ".xml";
 
-            var self = this;
-            return this._extractor.getHttpResponseAsync(url, "iso-8859-2")
+            return self._extractor
+                .getHttpResponseAsync(url, "iso-8859-2")
                 .then(function(response) {
                     progress.reportProgress(0.60);
 
@@ -79,22 +87,26 @@ var NbpProvider = WinJS.Class.define(
         },
 
         _downloadFilenamesForYearAsync: function(year) {
+            var self = this;
+
             var urlYear = year === moment().year() ? "" : year;
             var url = "http://www.nbp.pl/kursy/xml/dir" + urlYear + ".txt";
 
-            var self = this;
-            return this._extractor.getHttpResponseAsync(url, "utf-8")
+            return self._extractor
+                .getHttpResponseAsync(url, "utf-8")
                 .then(function(response) {
                     return new WinJS.Promise.wrap(self._extractor.parseFilenames(response));
                 });
         },
 
         _parseAndCacheDates: function(filenames) {
-            this._dayToFilenameChanged = true;
+            var self = this;
 
+            this._dayToFilenameChanged = true;
             var result = [];
+
             for (var i = 0; i < filenames.length; i++) {
-                var day = this._extractor.parseDateTime(filenames[i]);
+                var day = self._extractor.parseDateTime(filenames[i]);
                 this._dayToFilename[day] = filenames[i];
                 result.push(day);
             }
