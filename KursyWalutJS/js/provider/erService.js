@@ -42,8 +42,7 @@ var ErService = WinJS.Class.define(
             return self
                 .getAvailableYearsAsync(progress.subPercent(0.00, 0.40))
                 .then(function(years) {
-                    var firstYear = years[0];
-                    return self.getAvailableDaysAsync(firstYear, progress.subPercent(0.40, 1.00));
+                    return self.getAvailableDaysAsync(Utils.first(years), progress.subPercent(0.40, 1.00));
                 })
                 .then(function(days) {
                     progress.reportProgress(1.00);
@@ -57,8 +56,7 @@ var ErService = WinJS.Class.define(
             return self
                 .getAvailableYearsAsync(progress.subPercent(0.00, 0.40))
                 .then(function(years) {
-                    var lastYear = years.slice(-1)[0];
-                    return self.getAvailableDaysAsync(lastYear, progress.subPercent(0.40, 1.00));
+                    return self.getAvailableDaysAsync(Utils.last(years), progress.subPercent(0.40, 1.00));
                 })
                 .then(function(days) {
                     var lastDay = days.slice(-1)[0];
@@ -73,8 +71,8 @@ var ErService = WinJS.Class.define(
             return self
                 .getAvailableYearsAsync(progress.subPercent(0.00, 0.05))
                 . then(function(years) {
-                    var firstYear = years[0];
-                    var lastYear = years.slice(-1)[0];
+                    var firstYear = Utils.first(years);
+                    var lastYear = Utils.last(years);
 
                     return self._getDaysBetweenYearsAsync(firstYear, lastYear, progress.subPercent(0.05, 1.00));
                 })
@@ -144,7 +142,7 @@ var ErService = WinJS.Class.define(
         _getExchangeRatesInDaysAsync: function(days, currency, progress) {
             var self = this;
 
-            var waitFor = 10;
+            var waitFor = 300;
 
             var loop = function(iStart, prevResult) {
                 prevResult = prevResult || [];
@@ -161,63 +159,28 @@ var ErService = WinJS.Class.define(
 
                     WinJS.Promise.join(work)
                         .done(function(args) {
-                            var flattenArgs = Utils.flatArray([iEnd, args, prevResult]);
+                            var flattenArgs = Utils.flatArray([args, prevResult]);
                             complete(flattenArgs);
+                            console.log("DL-" + days.length + "-" + iEnd);
                         }, function(e) {
                             error(e);
                         });
                 });
             };
 
-            return loop(0);
+            var promise = new WinJS.Promise.wrap();
 
-//            var loop2 = function() {
-//                return new WinJS.Promise(function(complete, error) {
-//                    loop(0).then(function(args) {
-//                        if (args[0] !== days.length) {
-//                            return loop(args[0] + 1, args.slice(1));
-//                        }
-//                    });
-//                });
-//            };
-//            
-//            loop(0).then(function (args) {
-//                if (args[0] !== days.length) {
-//                    return loop(args[0] + 1, args.slice(1));
-//                }
-//            });}
+            console.log("DL-" + days.length + "-" + 0);
+            for (var i = 0; i < days.length; i += waitFor) {
+                (function(iStart) {
+                    promise = promise.then(function(result) {
+                        return loop(iStart, result);
+                    });
+                }(i));
+            }
 
-//            for (var i = 0; i < days.length; i++) {
-//                var day = days[i];
-//                var prog = progress.subPart(i, days.length);
-//                var isCheckpoint = ((i % waitFor === 0) || (i === day.length - 1));
-//
-//                work.push(self.getExchangeRateAsync(currency, day, prog));
-//
-//                if (isCheckpoint) {
-//                    var workClone = Utils.cloneArray(work);
-//                    var progressPoint = (i + 1.00) / days.length;
-//
-//                    promises = promises.then(function() {
-//                        return WinJS.Promise.join(workClone)
-//                            .then(function(args) {
-//                                progress.reportProgress(progressPoint);
-//                                var flattenArgs = [].concat.apply([], args);
-//                                return new WinJS.Promise.wrap(flattenArgs);
-//                            });
-//                    });
-//
-//                }
-//
-//                if ((days.length > 10) && (i % (days.length / 10) === 0)) {
-//                    console.log("DL-" + days.length + "-" + i);
-//                }
-//            }
-
-
+            return promise;
         }
-
-
     },
     {
     

@@ -80,42 +80,59 @@
     var service = new ErService(provider);
 
     var lastDej;
+    var timeStart;
+    var dejs;
     service.initCacheAsync(new Progress(1000))
-        .then(function() {
-            return service.getFirstAvailableDayAsync(new Progress(1000));
-        })
-        .then(function(firstDay) {
-            console.log(firstDay);
-            return service.getLastAvailableDayAsync(new Progress(1000));
-        })
-        .then(function(lastDay) {
-            lastDej = lastDay;
-            console.log(lastDay);
-            return service.getAllAvailableDaysAsync(new Progress(1000));
-        })
-        .then(function(allDays) {
-            console.log(allDays);
-            return service.getExchangeRatesAsync(lastDej, new Progress(1000));
-        })
-        .then(function(ers) {
-            console.log(ers);
-            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
-        })
+//        .then(function() {
+//            return service.getFirstAvailableDayAsync(new Progress(1000));
+//        })
+//        .then(function(firstDay) {
+//            console.log(firstDay);
+//            return service.getLastAvailableDayAsync(new Progress(1000));
+//        })
+//        .then(function(lastDay) {
+//            lastDej = lastDay;
+//            console.log(lastDay);
+//            return service.getAllAvailableDaysAsync(new Progress(1000));
+//        })
+//        .then(function(allDays) {
+//            console.log(allDays);
+//            return service.getExchangeRatesAsync(lastDej, new Progress(1000));
+//        })
+//        .then(function(ers) {
+//            console.log(ers);
+//            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
+//        })
         .then(function(er) {
             console.log(er);
             return service.getAvailableDaysAsync(2015, new Progress(1000));
         })
         .then(function(days) {
             console.log(days);
-            return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), days[0], days.slice(-1)[0],
+            dejs = days;
+            timeStart = moment();
+            return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
                 100, new Progress(1000));
         })
-        .done(function (result) {
+        .then(function(result) {
+            var timeStop = moment();
             console.log(result);
-            console.log("OK");
-        }, function(e) {
-            console.log(e);
-        });
+
+            var time = (timeStop - timeStart) / 100;
+            console.log("OK1/" + time + "s");
+            timeStart = moment();
+
+            return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
+                100, new Progress(1000));
+        })
+        .done(function() {
+            var timeStop = moment();
+            var time = (timeStop - timeStart) / 100;
+            console.log("OK2/" + time + "s");
+            },
+            function(e) {
+                console.log(e);
+            });
 
     //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/
 }());

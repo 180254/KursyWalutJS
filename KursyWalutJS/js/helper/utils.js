@@ -37,6 +37,14 @@ var Utils = WinJS.Class.define(
             return a;
         },
 
+        first: function(array) {
+            return array[0];
+        },
+
+        last: function(array) {
+            return array.slice(-1)[0];
+        },
+
         averaged: function(list, expectedSize) {
             return list;
 
