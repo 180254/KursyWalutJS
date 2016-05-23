@@ -42,7 +42,7 @@ var Utils = WinJS.Class.define(
         },
 
         last: function(array) {
-            return array.slice(-1)[0];
+            return (array.slice(-1))[0];
         },
 
         averaged: function(list, expectedLength) {
@@ -60,7 +60,6 @@ var Utils = WinJS.Class.define(
             if (nextSize * incr !== list.length - 1)
                 indexes.push(list.length - 1);
 
-            console.log(indexes);
             return list.filter(function(value, index) {
                 return indexes.indexOf(index) > -1;
             });

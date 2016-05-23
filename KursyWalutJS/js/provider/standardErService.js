@@ -42,11 +42,14 @@ var ErService = WinJS.Class.define(
             return self
                 .getAvailableYearsAsync(progress.subPercent(0.00, 0.40))
                 .then(function(years) {
-                    return self.getAvailableDaysAsync(Utils.first(years), progress.subPercent(0.40, 1.00));
+                    var firstYear = Utils.first(years);
+                    return self.getAvailableDaysAsync(firstYear, progress.subPercent(0.40, 1.00));
                 })
                 .then(function(days) {
+                    var firstDay = Utils.first(days);
                     progress.reportProgress(1.00);
-                    return new WinJS.Promise.wrap(days[0]);
+
+                    return new WinJS.Promise.wrap(firstDay);
                 });
         },
 
@@ -56,11 +59,13 @@ var ErService = WinJS.Class.define(
             return self
                 .getAvailableYearsAsync(progress.subPercent(0.00, 0.40))
                 .then(function(years) {
-                    return self.getAvailableDaysAsync(Utils.last(years), progress.subPercent(0.40, 1.00));
+                    var lastYear = Utils.last(years);
+                    return self.getAvailableDaysAsync(lastYear, progress.subPercent(0.40, 1.00));
                 })
                 .then(function(days) {
-                    var lastDay = days.slice(-1)[0];
+                    var lastDay = Utils.last(days);
                     progress.reportProgress(1.00);
+
                     return new WinJS.Promise.wrap(lastDay);
                 });
         },
@@ -110,8 +115,14 @@ var ErService = WinJS.Class.define(
                         return (day >= startDay) && (day <= endDay);
                     });
 
-                    var averaged = Utils.averaged(properDays, expectedSize);
-                    return self._getExchangeRatesInDaysAsync(averaged, currency, progress.subPercent(0.20, 1.00));
+                    return WinJS.Promise.wrap(properDays);
+                })
+                .then(function(properDays) {
+                    var averagedDays = Utils.averaged(properDays, expectedSize);
+                    return WinJS.Promise.wrap(averagedDays);
+                })
+                .then(function(averagedDays) {
+                    return self._getExchangeRatesInDaysAsync(averagedDays, currency, progress.subPercent(0.20, 1.00));
                 })
                 .then(function(erInDays) {
                     progress.reportProgress(1.00);
@@ -132,10 +143,11 @@ var ErService = WinJS.Class.define(
             }
 
             return WinJS.Promise.join(promises)
-                .then(function(args) {
+                .then(function(days) {
+                    var flattenDays = Utils.flatArray(days);
                     progress.reportProgress(1.00);
-                    var flattenArgs = Utils.flatArray(args);
-                    return new WinJS.Promise.wrap(flattenArgs);
+
+                    return new WinJS.Promise.wrap(flattenDays);
                 });
         },
 
@@ -158,10 +170,11 @@ var ErService = WinJS.Class.define(
                     }
 
                     WinJS.Promise.join(work)
-                        .done(function(args) {
-                            var flattenArgs = Utils.flatArray([args, prevResult]);
-                            complete(flattenArgs);
+                        .done(function(result) {
+                            var flattenResult = Utils.flatArray([result, prevResult]);
                             console.log("DL-" + days.length + "-" + iEnd);
+                            complete(flattenResult);
+
                         }, function(e) {
                             error(e);
                         });
@@ -174,6 +187,7 @@ var ErService = WinJS.Class.define(
             for (var i = 0; i < days.length; i += waitFor) {
                 (function(iStart) {
                     promise = promise.then(function(result) {
+                        progress.reportProgress((iStart + 1.0) / days.length);
                         return loop(iStart, result);
                     });
                 }(i));

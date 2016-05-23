@@ -104,18 +104,21 @@
 //            console.log(ers);
 //            return service.getExchangeRateAsync(Currency.dummyForCode("USD"), lastDej, new Progress(1000));
 //        })
-        .then(function(er) {
+        .then(function (er) {
+            console.log("10----------------------------------------")
             console.log(er);
             return service.getAvailableDaysAsync(2015, new Progress(1000));
         })
-        .then(function(days) {
+        .then(function (days) {
+            console.log("11----------------------------------------")
             console.log(days);
             dejs = days;
             timeStart = moment();
             return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
                 100, new Progress(1000));
         })
-        .then(function(result) {
+        .then(function (result) {
+            console.log("12----------------------------------------")
             var timeStop = moment();
             console.log(result);
 
@@ -126,14 +129,29 @@
             return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
                 100, new Progress(1000));
         })
-        .done(function() {
+        .then(function () {
+            console.log("13----------------------------------------")
             var timeStop = moment();
             var time = (timeStop - timeStart) / 100;
             console.log("OK2/" + time + "s");
-            },
-            function(e) {
-                console.log(e);
-            });
+
+            return service.flushCacheAsync(new Progress(1000));
+        })
+        .then(function () {
+            console.log("14----------------------------------------")
+            return service.initCacheAsync(new Progress(1000));
+        })
+        .then(function () {
+            console.log("15----------------------------------------")
+            return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
+                100, new Progress(1000));
+        })
+        .done(function () {
+            console.log("16----------------------------------------")
+             console.log("DONE");
+        }, function(e) {
+            console.log(e);
+        });
 
     //https://fknet.wordpress.com/2013/02/08/winjs-promises-lessons-learned/
 }());

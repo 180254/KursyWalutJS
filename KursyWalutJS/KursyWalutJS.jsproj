@@ -596,7 +596,7 @@
     <Content Include="js\model\currency.js" />
     <Content Include="js\model\exchangeRate.js" />
     <Content Include="js\provider\cacheErProvider.js" />
-    <Content Include="js\provider\erService.js" />
+    <Content Include="js\provider\standardErService.js" />
     <Content Include="js\provider\nbpErExtractor.js" />
     <Content Include="js\provider\nbpErProvider.js" />
     <None Include="KursyWalutJS_TemporaryKey.pfx" />

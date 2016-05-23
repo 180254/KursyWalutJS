@@ -12,8 +12,7 @@ var CacheErProvider = WinJS.Class.define(
         this._resetCacheChanges();
     },
     {
-        initCacheAsync: function (progress) {
-            console.log("INIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        initCacheAsync: function(progress) {
             var self = this;
 
             return self
@@ -79,7 +78,7 @@ var CacheErProvider = WinJS.Class.define(
                 return self._calculateAvailableYearsAsync(progress);
             }
         },
-            
+
         getAvailableDaysAsync: function(year, progress) {
             var self = this;
 

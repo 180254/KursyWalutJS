@@ -16,8 +16,9 @@ var LsCache = WinJS.Class.define(
                 .then(function(file) {
                     return Windows.Storage.FileIO.readTextAsync(file);
                 })
-                .then(function(value) {
-                    return WinJS.Promise.wrap(JSON.parse(value));
+                .then(function(json) {
+                    var value = JSON.parse(json);
+                    return WinJS.Promise.wrap(value);
                 });
         },
 
@@ -27,7 +28,8 @@ var LsCache = WinJS.Class.define(
             return self._localFolder()
                 .createFileAsync(key, Windows.Storage.CreationCollisionOption.replaceExisting)
                 .then(function(file) {
-                    return Windows.Storage.FileIO.writeTextAsync(file, JSON.stringify(value));
+                    var json = JSON.stringify(value);
+                    return Windows.Storage.FileIO.writeTextAsync(file, json);
                 });
         }
     },

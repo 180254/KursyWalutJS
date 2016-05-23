@@ -10,15 +10,16 @@ var Progress = WinJS.Class.define(
     {
         reportProgress: function(percent) {
             if (percent < 0) this._notifyChange(-1);
-            var computePercentVal = this._computePercent(percent);
-            var incrValue = computePercentVal - this._lastReported;
+
+            var percentAsVal = this._computePercent(percent);
+            var incrValue = percentAsVal - this._lastReported;
             if (incrValue <= 0) this.incrValue = 0;
 
             this._incrementProgress(incrValue);
         },
 
         subPercent: function(percentFrom, percentTo) {
-            return new Progress(this._computePercent(percentFrom, percentTo), this);
+            return new Progress(this._computePercent(percentTo - percentFrom), this);
         },
 
         subPart: function(partIndex, partCount) {

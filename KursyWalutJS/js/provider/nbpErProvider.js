@@ -77,6 +77,9 @@ var NbpErProvider = WinJS.Class.define(
                     var $xml = self._extractor.parseXml(response);
                     progress.reportProgress(0.70);
 
+                    return new WinJS.Promise.wrap($xml);
+                })
+                .then(function($xml) {
                     var result = self._extractor.parseExchangeRates($xml, day);
                     progress.reportProgress(1.00);
 
@@ -93,19 +96,22 @@ var NbpErProvider = WinJS.Class.define(
             return self._extractor
                 .getHttpResponseAsync(url, "utf-8")
                 .then(function(response) {
-                    return new WinJS.Promise.wrap(self._extractor.parseFilenames(response));
+                    var filenames = self._extractor.parseFilenames(response);
+                    return new WinJS.Promise.wrap(filenames);
                 });
         },
 
         _parseAndCacheDates: function(filenames) {
             var self = this;
 
-            this._dayToFilenameChanged = true;
+            self._dayToFilenameChanged = true;
             var result = [];
 
             for (var i = 0; i < filenames.length; i++) {
-                var day = self._extractor.parseDateTime(filenames[i]);
-                this._dayToFilename[day] = filenames[i];
+                var filename = filenames[i];
+                var day = self._extractor.parseDateTime(filename);
+
+                self._dayToFilename[day] = filename;
                 result.push(day);
             }
 
