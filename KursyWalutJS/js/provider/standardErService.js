@@ -98,7 +98,7 @@ var ErService = WinJS.Class.define(
                 .getExchangeRatesAsync(day, progress)
                 .then(function(erList) {
                     var firstOrDefault = erList.filter(function(er) {
-                        return er.currency.equals(currency);
+                        return Currency.equals(er.currency, currency);
                     })[0];
 
                     return WinJS.Promise.wrap(firstOrDefault);
@@ -154,7 +154,7 @@ var ErService = WinJS.Class.define(
         _getExchangeRatesInDaysAsync: function(days, currency, progress) {
             var self = this;
 
-            var waitFor = 30;
+            var waitFor = 100;
 
             var loop = function(iStart, prevResult) {
                 prevResult = prevResult || [];

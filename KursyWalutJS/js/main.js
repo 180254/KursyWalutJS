@@ -124,7 +124,7 @@
             var timeStop = moment();
             console.log(result);
 
-            var time = (timeStop - timeStart) / 100;
+            var time = (timeStop - timeStart) / 1000;
             console.log("OK1/" + time + "s");
             timeStart = moment();
 
@@ -134,7 +134,7 @@
         .then(function () {
             console.log("13----------------------------------------")
             var timeStop = moment();
-            var time = (timeStop - timeStart) / 100;
+            var time = (timeStop - timeStart) / 1000;
             console.log("OK2/" + time + "s");
 
             return service.flushCacheAsync(new Progress(1000));
@@ -165,26 +165,37 @@
     service.initCacheAsync(new Progress(1000))
         .then(function() {
 
-            var start = moment().subtract(2, "years");
+            var start = moment().subtract(14, "years");
             var stop = moment();
 
             timeStart = moment();
-
             return service.getExchangeRateAvaragedHistoryAsync(
                 Currency.dummyForCode("USD"),
                 start, stop,
-                10000, new Progress(1000));
+                100000, new Progress(1000));
         })
         .then(function(result) {
             var timeStop = moment();
-            console.log(result);
+            var time = (timeStop - timeStart) / 1000;
+            console.log("OK-FETCH-TIME-/" + time + "s");
 
-            var time = (timeStop - timeStart) / 100;
-            console.log("OK1/" + time + "s");
+            //            console.log(result);
+
+            timeStart = moment();
             return service.flushCacheAsync(new Progress(1000));
         })
+        .then(function(e) {
+            var timeStop = moment();
+            var time = (timeStop - timeStart) / 1000;
+            console.log("OK-FLUSH-TIME-/" + time + "s");
+
+            timeStart = moment();
+            return service.initCacheAsync(new Progress(1000));
+        })
         .done(function(e) {
-            console.log(e);
+            var timeStop = moment();
+            var time = (timeStop - timeStart) / 1000;
+            console.log("OK-INIT-TIME-/" + time + "s");
         }, function(e) {
             console.log(e);
         });
