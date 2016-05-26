@@ -115,25 +115,25 @@
             console.log("11----------------------------------------")
             console.log(days);
             dejs = days;
-            timeStart = moment();
+            timeStart = moment().toDate()
             return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
                 100, new Progress(1000));
         })
         .then(function (result) {
             console.log("12----------------------------------------")
-            var timeStop = moment();
+            var timeStop = moment().toDate()
             console.log(result);
 
             var time = (timeStop - timeStart) / 1000;
             console.log("OK1/" + time + "s");
-            timeStart = moment();
+            timeStart = moment().toDate()
 
             return service.getExchangeRateAvaragedHistoryAsync(Currency.dummyForCode("USD"), dejs[0], dejs.slice(-1)[0],
                 100, new Progress(1000));
         })
         .then(function () {
             console.log("13----------------------------------------")
-            var timeStop = moment();
+            var timeStop = moment().toDate()
             var time = (timeStop - timeStart) / 1000;
             console.log("OK2/" + time + "s");
 
@@ -165,35 +165,35 @@
     service.initCacheAsync(new Progress(1000))
         .then(function() {
 
-            var start = moment().subtract(14, "years");
-            var stop = moment();
+            var start = moment().subtract(14, "years").toDate();
+            var stop = moment().toDate();
 
-            timeStart = moment();
+            timeStart = moment().toDate();
             return service.getExchangeRateAvaragedHistoryAsync(
                 Currency.dummyForCode("USD"),
                 start, stop,
                 100000, new Progress(1000));
         })
         .then(function(result) {
-            var timeStop = moment();
+            var timeStop = moment().toDate();
             var time = (timeStop - timeStart) / 1000;
             console.log("OK-FETCH-TIME-/" + time + "s");
 
             //            console.log(result);
 
-            timeStart = moment();
+            timeStart = moment().toDate();
             return service.flushCacheAsync(new Progress(1000));
         })
         .then(function(e) {
-            var timeStop = moment();
+            var timeStop = moment().toDate();
             var time = (timeStop - timeStart) / 1000;
             console.log("OK-FLUSH-TIME-/" + time + "s");
 
-            timeStart = moment();
+            timeStart = moment().toDate();
             return service.initCacheAsync(new Progress(1000));
         })
         .done(function(e) {
-            var timeStop = moment();
+            var timeStop = moment().toDate();
             var time = (timeStop - timeStart) / 1000;
             console.log("OK-INIT-TIME-/" + time + "s");
         }, function(e) {

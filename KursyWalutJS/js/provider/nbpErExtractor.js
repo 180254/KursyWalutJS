@@ -34,7 +34,7 @@ var NbpErExtractor = WinJS.Class.define(
         },
 
         parseDateTime: function(filename) {
-            return moment(filename.substr(5, 6), "YYMMDD");
+            return moment(filename.substr(5, 6), "YYMMDD").toDate();
         },
 
         parseXml: function(response) {

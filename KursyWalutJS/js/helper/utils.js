@@ -20,11 +20,7 @@ var Utils = WinJS.Class.define(
 
         startsWith: function(string, searchString, position) {
             position = position || 0;
-            return string.lastIndexOf(searchString, position) === 0;
-        },
-
-        cloneArray: function(array) {
-            return array.slice(0);
+            return string.lastIndexOf(searchString, position) === position;
         },
 
         flatArray: function(array) {

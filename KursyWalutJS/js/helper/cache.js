@@ -20,7 +20,7 @@ var LsCache = WinJS.Class.define(
                 .then(function(json) {
                     var value = self._cacheUtils.deserialize(json);
                     return WinJS.Promise.wrap(value);
-                }, function(e) {
+                }, function() {
                     return WinJS.Promise.wrap();
                 });
         },
@@ -66,13 +66,15 @@ var InMemCache = WinJS.Class.define(
 
 var CacheUtils = WinJS.Class.define(
     function() {
-        // Storing moment dates:
-        // - serialized as unix timestamp(miliseconds),
+        // Storing dates:
+        // - serialize as unix timestamp (miliseconds),
         // assumption[0]: large numbers (>=946681200000) are only used to store date,
         // assumption[1]: only dates with year >= 2000 are used,
         // - it's not the best solution for storing dates,
         // but deserializing is the fastest, of tested ways.
 
+        // ReSharper disable once NativeTypePrototypeExtending
+        Date.prototype.toJSON = Date.prototype.valueOf;
         moment.prototype.toJSON = moment.prototype.valueOf;
         this._valueOf2000 = moment(2000, "YYYY").valueOf();
     },
@@ -85,8 +87,8 @@ var CacheUtils = WinJS.Class.define(
             var self = this;
 
             return JSON.parse(json || null, function(k, v) {
-                var probablyMoment = typeof v === "number" && v >= self._valueOf2000;
-                return probablyMoment ? moment(v) : v;
+                var probablyDate = typeof v === "number" && v >= self._valueOf2000;
+                return probablyDate ? new Date(v) : v;
             });
         }
     },

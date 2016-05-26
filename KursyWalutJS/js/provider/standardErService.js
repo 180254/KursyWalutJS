@@ -109,7 +109,7 @@ var ErService = WinJS.Class.define(
             var self = this;
 
             return self.
-                _getDaysBetweenYearsAsync(startDay.year(), endDay.year(), progress.subPercent(0.00, 0.20))
+                _getDaysBetweenYearsAsync(startDay.getFullYear(), endDay.getFullYear(), progress.subPercent(0.00, 0.20))
                 .then(function(availableDays) {
                     var properDays = availableDays.filter(function(day) {
                         return (day >= startDay) && (day <= endDay);
