@@ -534,6 +534,7 @@
     <Content Include="images\Wide310x150Logo.scale-200.png" />
     <Content Include="js\helper\cache.js" />
     <Content Include="js\helper\progress.js" />
+    <Content Include="js\helper\providerh.js" />
     <Content Include="js\helper\utils.js" />
     <Content Include="js\main.js" />
     <Content Include="css\default.css" />

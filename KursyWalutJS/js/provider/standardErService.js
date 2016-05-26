@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-var ErService = WinJS.Class.define(
+var StandardErService = WinJS.Class.define(
     function(erProvider) {
         this._erProvider = erProvider;
 

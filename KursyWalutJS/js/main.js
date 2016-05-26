@@ -80,7 +80,7 @@
     var cache = new InMemCache();
     var provider = new NbpErProvider(cache);
     var cacheProvider = new CacheErProvider(provider, cache);
-    var service = new ErService(cacheProvider);
+    var service = new StandardErService(cacheProvider);
 
     var lastDej;
     var timeStart;
@@ -159,7 +159,7 @@
     var cache = new LsCache();
     var provider = new NbpErProvider(cache);
     var cacheProvider = new CacheErProvider(provider, cache);
-    var service = new ErService(cacheProvider);
+    var service = new StandardErService(cacheProvider);
 
     var timeStart;
     service.initCacheAsync(new Progress(1000))
@@ -205,7 +205,7 @@
     var cache = new LsCache();
     var provider = new NbpErProvider(cache);
     var cacheProvider = new CacheErProvider(provider, cache);
-    var service = new ErService(cacheProvider);
+    var service = new StandardErService(cacheProvider);
 
     service.initCacheAsync(new Progress(1000))
         .then(function() {
