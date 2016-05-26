@@ -153,47 +153,53 @@ var ErService = WinJS.Class.define(
 
         _getExchangeRatesInDaysAsync: function(days, currency, progress) {
             var self = this;
+            var waitFor = 30;
+            var waitForMax = 150;
+            var timePerLoopMs = 3000;
+            var waitForMultiplier = 1.3;
 
-            var waitFor = 100;
-
-            var loop = function(iStart, prevResult) {
-                prevResult = prevResult || [];
-
-                return new WinJS.Promise(function(complete, error) {
-                    var work = [];
-                    var iEnd = Math.min(iStart + waitFor, days.length);
-
-                    for (var d = 0; d < iEnd; d++) {
-                        var day = days[d];
-                        var prog = progress.subPart(d, days.length);
-                        work.push(self.getExchangeRateAsync(currency, day, prog));
-                    }
-
-                    WinJS.Promise.join(work)
-                        .done(function(result) {
-                            var flattenResult = Utils.flatArray([result, prevResult]);
-                            console.log("DL-" + days.length + "-" + iEnd);
-                            complete(flattenResult);
-
-                        }, function(e) {
-                            error(e);
-                        });
-                });
+            var logDownloadProgress = function(iDone) {
+                console.log("DL-" + days.length + "-" + iDone);
+                progress.reportProgress(iDone / days.length);
             };
 
-            var promise = WinJS.Promise.wrap(0);
+            var timeStart = null;
+            var adjustWaitFor = function() {
+                if (new Date() - timeStart < timePerLoopMs) {
+                    waitFor = Math.round(waitFor * waitForMultiplier);
+                    waitFor = Math.min(waitForMax, waitFor);
+                }
+                timeStart = new Date();
+            };
 
-            console.log("DL-" + days.length + "-" + 0);
-            for (var i = 0; i < days.length; i += waitFor) {
-                (function(iStart) {
-                    promise = promise.then(function(result) {
-                        progress.reportProgress((iStart + 1.0) / days.length);
-                        return loop(iStart, result);
+            var results = [];
+            var loop = function(iStart) {
+                var work = [];
+                var iEnd = Math.min(iStart + waitFor, days.length);
+
+                for (var d = iStart; d < iEnd; d++) {
+                    var prog = progress.subPart(d, days.length);
+                    work.push(self.getExchangeRateAsync(currency, days[d], prog));
+                }
+
+                return WinJS.Promise.join(work)
+                    .then(function(result) {
+                        results.push(result);
+                        logDownloadProgress(iEnd);
+                        adjustWaitFor();
+
+                        if (iEnd !== days.length) {
+                            return loop(iEnd);
+                        } else {
+                            var flattenResults = Utils.flatArray(results);
+                            return WinJS.Promise.wrap(flattenResults);
+                        }
                     });
-                }(i));
-            }
+            };
 
-            return promise;
+            logDownloadProgress(0);
+            timeStart = new Date();
+            return loop(0);
         }
     },
     {
