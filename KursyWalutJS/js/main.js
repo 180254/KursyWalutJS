@@ -174,7 +174,7 @@
                 start, stop,
                 100000, new Progress(1000));
         })
-        .then(function (result) {
+        .then(function(result) {
             console.log(result.length);
             var timeStop = moment().toDate();
             var time = (timeStop - timeStart) / 1000;

@@ -4,7 +4,7 @@ var ProviderHelper = WinJS.Class.define(
     function(cache, progressMax) {
         var nbpProvider = new NbpErProvider(cache);
         var cacheProvider = new CacheErProvider(nbpProvider, cache);
-        this._erService = new StnadardErService(cacheProvider);
+        this._erService = new StandardErService(cacheProvider);
         this._progressMax = progressMax;
         this._cacheAlreadyInit = false;
     },
@@ -30,34 +30,30 @@ var ProviderHelper2 = WinJS.Class.define(
     {
         initCacheAsync: function() {
             var self = this;
-            var promise = WinJS.Promise.wrap();
+            var promise = WinJS.Promise.wrap(0);
 
-            if (self._providerHelper._cacheAlreadyInit) {
-                if (typeof self.erService.initCacheAsync === "function") {
-                    var subProgress = self._progress.subPercent(0.00, 0.05);
-                    promise = self.erService.initCacheAsync(subProgress);
-                }
+            if (!self._providerHelper._cacheAlreadyInit) {
+                var subProgress = self._progress.subPercent(0.00, 0.05);
+                promise = self.erService.initCacheAsync(subProgress);
+
                 self._providerHelper._cacheAlreadyInit = true;
             }
 
             return promise.then(function() {
                 self._progress.reportProgress(0.05);
-                return WinJS.Promise.wrap();
+                return WinJS.Promise.wrap(0);
             });
         },
 
         flushCacheAsync: function() {
             var self = this;
-            var promise = WinJS.Promise.wrap();
 
-            if (typeof self.erService.flushCacheAsync === "function") {
-                var subProgress = self._progress.subPercent(0.95, 1.00);
-                promise = self.erService.flushCacheAsync(subProgress);
-            }
+            var subProgress = self._progress.subPercent(0.95, 1.00);
+            var promise = self.erService.flushCacheAsync(subProgress);
 
             return promise.then(function() {
                 self._progress.reportProgress(1.00);
-                return WinJS.Promise.wrap();
+                return WinJS.Promise.wrap(0);
             });
         }
     },

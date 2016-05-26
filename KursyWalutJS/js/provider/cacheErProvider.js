@@ -14,36 +14,24 @@ var CacheErProvider = WinJS.Class.define(
     {
         initCacheAsync: function(progress) {
             var self = this;
+            var promises = [];
 
-            return self
-                ._cache.getAsync("_availYears")
-                .then(function(availYears) {
-                    self._availYears = availYears || [];
-                    progress.reportProgress(0.10);
+            promises.push(self._cache.getAsync("_availYears"));
+            promises.push(self._cache.getAsync("_yearToDays"));
+            promises.push(self._cache.getAsync("_dayToEr"));
 
-                    return self._cache.getAsync("_yearToDays");
-                })
-                .then(function(yearToDays) {
-                    self._yearToDays = yearToDays || {};
-                    progress.reportProgress(0.20);
+            var subProgress = progress.subPercent(0.50, 1.00);
+            promises.push(self._erProvider.initCacheAsync(subProgress));
 
-                    return self._cache.getAsync("_dayToEr");
-                })
-                .then(function(dayToEr) {
-                    self._dayToEr = dayToEr || {};
-                    progress.reportProgress(0.50);
+            return WinJS.Promise.join(promises)
+                .then(function(result) {
+                    self._availYears = result[0] || [];
+                    self._yearToDays = result[1] || {};
+                    self._dayToEr = result[2] || {};
 
-                    var promise = (typeof self._erProvider.initCacheAsync === "function")
-                        ? self._erProvider.initCacheAsync(progress.subPercent(0.50, 1.00))
-                        : WinJS.Promise.wrap(0);
-
-                    return promise;
-                })
-                .then(function() {
                     progress.reportProgress(1.00);
                     return WinJS.Promise.wrap(0);
                 });
-
         },
 
         flushCacheAsync: function(progress) {
@@ -62,12 +50,14 @@ var CacheErProvider = WinJS.Class.define(
                 promises.push(self._cache.storeAsync("_dayToEr", self._dayToEr));
             }
 
-            var promise = (typeof self._erProvider.flushCacheAsync === "function")
-                ? this._erProvider.flushCacheAsync(progress.subPercent(0.50, 1.00))
-                : WinJS.Promise.wrap(0);
-            promises.push(promise);
+            var subProgress = progress.subPercent(0.50, 1.00);
+            promises.push(this._erProvider.flushCacheAsync(subProgress));
 
-            return WinJS.Promise.join(promises);
+            return WinJS.Promise.join(promises)
+                .then(function() {
+                    progress.reportProgress(1.00);
+                    return WinJS.Promise.wrap(0);
+                });
         },
 
         getAvailableYearsAsync: function(progress) {

@@ -7,25 +7,19 @@ var StandardErService = WinJS.Class.define(
     },
     {
         initCacheAsync: function(progress) {
-            var basePromise = (typeof this._erProvider.initCacheAsync === "function")
-                ? this._erProvider.initCacheAsync(progress)
-                : WinJS.Promise.wrap(0);
-
-            return basePromise.then(function() {
-                progress.reportProgress(1.00);
-                return WinJS.Promise.wrap(0);
-            });
+            return this._erProvider.initCacheAsync(progress)
+                .then(function() {
+                    progress.reportProgress(1.00);
+                    return WinJS.Promise.wrap(0);
+                });
         },
 
         flushCacheAsync: function(progress) {
-            var basePromise = (typeof this._erProvider.flushCacheAsync === "function")
-                ? this._erProvider.flushCacheAsync(progress)
-                : WinJS.Promise.wrap(0);
-
-            return basePromise.then(function() {
-                progress.reportProgress(1.00);
-                return WinJS.Promise.wrap(0);
-            });
+            return this._erProvider.flushCacheAsync(progress)
+                .then(function() {
+                    progress.reportProgress(1.00);
+                    return WinJS.Promise.wrap(0);
+                });
         },
 
         getAvailableYearsAsync: function(progress) {
@@ -154,8 +148,8 @@ var StandardErService = WinJS.Class.define(
         _getExchangeRatesInDaysAsync: function(days, currency, progress) {
             var self = this;
             var waitFor = 30;
-            var waitForMax = 150;
-            var timePerLoopMs = 3000;
+            var waitForMax = 100;
+            var timePerLoopMs = 2500;
             var waitForMultiplier = 1.3;
 
             var logDownloadProgress = function(iDone) {

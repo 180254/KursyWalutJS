@@ -21,7 +21,7 @@ var LsCache = WinJS.Class.define(
                     var value = self._cacheUtils.deserialize(json);
                     return WinJS.Promise.wrap(value);
                 }, function() {
-                    return WinJS.Promise.wrap();
+                    return WinJS.Promise.wrap(0);
                 });
         },
 
