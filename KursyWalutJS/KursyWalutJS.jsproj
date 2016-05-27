@@ -852,6 +852,7 @@
     <Content Include="js\model\currency.js" />
     <Content Include="js\model\exchangeRate.js" />
     <Content Include="js\page\page.js" />
+    <Content Include="js\page\vm.js" />
     <Content Include="js\provider\cacheErProvider.js" />
     <Content Include="js\provider\standardErService.js" />
     <Content Include="js\provider\nbpErExtractor.js" />

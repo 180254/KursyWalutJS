@@ -6,24 +6,54 @@
 	color: #d1b280 !important;
 }
 
+.win-container {
+	height: auto !important;
+}
+
+.win-itembox {
+	background-color: inherit !important;
+	padding: 5px 5px 5px 20px;
+}
+
+.win-itembox:hover {
+	background-color: #333333 !important;
+}
+
 /* ----------------------------------------------------- */
 
-#avg .row-1 {
+#avgPivot .row-1 {
 	height: auto;
 }
 
-#avg .row-2 {
+#avgPivot .row-2 {
 	height: 40px;
 }
 
-#avg .row-3 {
+#avgPivot .row-3 {
 	height: 15px;
 	padding-top: 5px;
 }
 
 
-#avg .row-4 {
+#avgPivot .row-4 {
 	height: 5px;
+}
+
+.avgItem {
+	display: flex;
+	width: 100%;
+}
+
+.avgItem .col-1 {
+	width: 30px;
+}
+
+.avgItem .col-2 {
+	width: calc(70% - 15px);
+}
+
+.avgItem .col-3 {
+	width: calc(30% - 15px);
 }
 
 /* ----------------------------------------------------- */

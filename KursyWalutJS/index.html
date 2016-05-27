@@ -11,13 +11,24 @@
 
 	<body class="win-type-body">
 
+		<div class="avgItemTemplate" data-win-control="WinJS.Binding.Template" style="display: none">
+			<div class="avgItem">
+				<span class="col-1" ><img src="#" alt="EUR" data-win-bind="src: currency Converters.getFlagPath"/></span>
+				<span class="col-2" data-win-bind="textContent: currency.code" ></span>
+				<span class="col-3" data-win-bind="textContent: averageRate" ></span>
+			</div>
+		</div>
+
 		<div data-win-control="WinJS.UI.Pivot" data-win-options="{ selectedIndex: 0 }">
-			<div id="avg"class="pivotItem" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Średnie kursy' }">
+			<div id="avgPivot" class="pivotItem" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Średnie kursy' }">
 				<div class="row-1">
-					<div data-win-control="WinJS.UI.ListView"></div>
+					<div data-win-control="WinJS.UI.ListView"
+					     data-win-options="{
+	itemDataSource: Vm.ExchangeRates.dataSource,	itemTemplate: select('.avgItemTemplate'),	selectionMode: 'none',	tapBehavior: 'none',	layout: { type: WinJS.UI.ListLayout }}">
+					</div>
 				</div>
 				<div class="row-2">
-					<input type="text" class="form-control calendar-date-picker">
+					<input type="text" class="form-control calendar-date-picker" readonly="readonly">
 				</div>
 				<div class="row-3">
 					<div class="progress">
@@ -54,6 +65,7 @@
 			<script src="js/provider/cacheErProvider.js"></script>
 			<script src="js/provider/standardErService.js"></script>
 
+			<script src="js/page/vm.js"></script>
 			<script src="js/page/page.js"></script>
 			<script src="js/main.js"></script>
 		</div>

@@ -1,4 +1,4 @@
-﻿/// <reference group="Dedicated Worker" />
+﻿"use strict";
 
 var AppGo = function() {
 
@@ -18,11 +18,11 @@ var AppGo = function() {
                     return false;
                 case 12:
                     return "green";
+                default:
+                    return true;
                 }
-        }
-    });
 
-    $(".calendar-date-picker").on("keydown", function(event) {
-        event.preventDefault();
+            return true;
+        }
     });
 };
