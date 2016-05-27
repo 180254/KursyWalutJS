@@ -18,6 +18,18 @@ var Utils = WinJS.Class.define(
             return Utils.rangeEx(start, end - start);
         },
 
+        getRandomArbitrary: function(min, max) {
+            return Math.random() * (max - min) + min;
+        },
+
+        getRandomInt: function(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        },
+
+        getRandomIntInclusive: function(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        },
+
         startsWith: function(string, searchString, position) {
             position = position || 0;
             return string.lastIndexOf(searchString, position) === position;
@@ -61,6 +73,18 @@ var Utils = WinJS.Class.define(
             });
         },
 
+        // credits: friends@stackoverflow; http://stackoverflow.com/posts/14811679/revisions
+        waitFor: function(test, expectedValue, msec, callback) {
+            // Check if condition met. If not, re-check later (msec).
+            if (test() !== expectedValue) {
+                setTimeout(function() {
+                    Utils.waitFor(test, expectedValue, msec, callback);
+                }, msec);
+            } else {
+                callback();
+            }
+        },
+
         getElements: function(xml, tagName) {
             return xml.getElementsByTagName(tagName);
         },
@@ -80,5 +104,5 @@ var Utils = WinJS.Class.define(
 var using = function(arg, func) {
     setTimeout(function() {
         func(arg);
-    }, 5000);
+    }, 1000);
 };

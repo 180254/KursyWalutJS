@@ -1,6 +1,7 @@
 ﻿"use strict";
 
 WinJS.Namespace.define("Vm", {
+    AvgPivotOptions: { 'header': 'Średnie kursy' },
     ExchangeRates: new WinJS.Binding.List(),
     AllDays: [],
 
@@ -23,11 +24,11 @@ WinJS.Namespace.define("Vm", {
     },
 
     enableAll: function() {
-        $("#avg-picker").prop("disabled", false);
+        $(".disableable").removeClass("disabled");
     },
 
     disableAll: function() {
-        $("#avg-picker").prop("disabled", true);
+        $(".disableable").addClass("disabled");
     }
 });
 

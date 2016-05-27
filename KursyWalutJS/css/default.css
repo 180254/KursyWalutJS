@@ -25,39 +25,39 @@
 
 /* ----------------------------------------------------- */
 
-#avgPivot .row-1 {
+#avg-pivot .row-1 {
 	height: calc(100% - 85px);
 	padding-top: 5px;
 }
 
-#avgPivot .row-2 {
+#avg-pivot .row-2 {
 	height: 40px;
 	padding-top: 5px;
 }
 
-#avgPivot .row-3 {
+#avg-pivot .row-3 {
 	height: 15px;
 	padding-top: 5px;
 }
 
-#avgPivot .row-4 {
+#avg-pivot .row-4 {
 	height: 15px;
 }
 
-.avgItem {
+.avg-item {
 	display: flex;
 	width: 100%;
 }
 
-.avgItem .col-1 {
+.avg-item .col-1 {
 	width: 30px;
 }
 
-.avgItem .col-2 {
+.avg-item .col-2 {
 	width: calc(50% - 15px);
 }
 
-.avgItem .col-3 {
+.avg-item .col-3 {
 	width: calc(50% - 15px);
 }
 
@@ -78,7 +78,6 @@
 
 /* ----------------------------------------------------- */
 
-
 .calendar-date-picker {
 	background-color: #141414;
 	border: 1px groove #ece3e3;
@@ -88,4 +87,13 @@
 	font-weight: normal;
 	padding: 5px 5px 5px 12px;
 	width: 100%;
+}
+
+.calendar-date-picker:disabled {
+	color: gray;
+}
+
+.disabled {
+	opacity: 0.4;
+	pointer-events: none;
 }

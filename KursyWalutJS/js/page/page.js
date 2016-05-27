@@ -13,19 +13,30 @@ var AppGo = function() {
         console.log("AvgReload.Init");
         Vm.disableAll();
 
+        var erRandomizer = new ErRandomizer(Vm.ExchangeRates);
+        erRandomizer.start();
+
+        var newErs = null;
+
         using(pHelper.helper(), function(pHelp) {
             pHelp.initCacheAsync()
                 .then(function() {
                     return pHelp.erService.getExchangeRatesAsync(date, pHelp.progress);
                 })
                 .then(function(ers) {
-                    Vm.replace("ExchangeRates", ers);
+                    newErs = ers;
+                    erRandomizer.stop();
+                    return erRandomizer.waitUntilStopped();
+                })
+                .then(function() {
+                    Vm.replace("ExchangeRates", newErs);
                     return pHelp.flushCacheAsync();
                 })
                 .done(function() {
                     Vm.enableAll();
                     console.log("AvgReload.Done");
                 }, function(e) {
+                    erRandomizer.stop();
                     console.log("AvgReload.Fail");
                     console.log(e);
                 });
