@@ -38,9 +38,12 @@ var Progress = WinJS.Class.define(
         _notifyChange: function(value) {
             var change = value - this._lastNotified;
             var percentageChange = change / this.maxValue * 100;
+
+            var isInit = value === 0;
+            var isEnoughChange = percentageChange > 1.00;
             var isMaxNotNotified = (value === this.maxValue) && (this._lastNotified !== value);
 
-            if (percentageChange > 1.00 || isMaxNotNotified) {
+            if (isInit || isEnoughChange || isMaxNotNotified) {
                 this._lastNotified = value;
                 this._callback(this, value);
             }

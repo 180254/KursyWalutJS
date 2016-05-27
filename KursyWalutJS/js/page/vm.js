@@ -4,11 +4,6 @@ WinJS.Namespace.define("Vm", {
     ExchangeRates: new WinJS.Binding.List(),
     AllDays: [],
 
-    updateProgressBar: function(progress, value) {
-        var valuePercent = (value / progress.maxValue * 100) + "%";
-        $(".progress > .bar").css("width", valuePercent);
-    },
-
     replace: function(listName, newList) {
         var list = Vm[listName];
 
@@ -16,6 +11,23 @@ WinJS.Namespace.define("Vm", {
         newList.forEach(function(item) {
             list.push(item);
         });
+    },
+
+    isProperDay: function(date) {
+        return Vm.AllDays.map(Number).indexOf(+date) > -1;
+    },
+
+    updateProgressBar: function(progress, value) {
+        var valuePercent = (value / progress.maxValue * 100) + "%";
+        $(".progress > .bar").css("width", valuePercent);
+    },
+
+    enableAll: function() {
+        $("#avg-picker").prop("disabled", false);
+    },
+
+    disableAll: function() {
+        $("#avg-picker").prop("disabled", true);
     }
 });
 

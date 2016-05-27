@@ -19,14 +19,20 @@
 	background-color: #333333 !important;
 }
 
+.win-listview {
+	height: 99% !important;
+}
+
 /* ----------------------------------------------------- */
 
 #avgPivot .row-1 {
-	height: auto;
+	height: calc(100% - 85px);
+	padding-top: 5px;
 }
 
 #avgPivot .row-2 {
 	height: 40px;
+	padding-top: 5px;
 }
 
 #avgPivot .row-3 {
@@ -34,9 +40,8 @@
 	padding-top: 5px;
 }
 
-
 #avgPivot .row-4 {
-	height: 5px;
+	height: 15px;
 }
 
 .avgItem {

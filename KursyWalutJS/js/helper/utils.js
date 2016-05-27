@@ -78,7 +78,7 @@ var Utils = WinJS.Class.define(
 );
 
 var using = function(arg, func) {
-    setImmediate(function() {
+    setTimeout(function() {
         func(arg);
-    });
+    }, 5000);
 };
