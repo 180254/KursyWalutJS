@@ -5,11 +5,8 @@
 		<meta charset="utf-8" />
 		<title>KursyWalutJS</title>
 		<link href="bower_components/winjs/css/ui-dark.css" rel="stylesheet" />
+		<link href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css" rel="stylesheet" />
 		<link href="css/default.css" rel="stylesheet" />
-
-		<script src="bower_components/winjs/js/base.js"></script>
-		<script src="bower_components/winjs/js/ui.js"></script>
-		<script src="bower_components/moment/moment.js"></script>
 	</head>
 
 	<body class="win-type-body">
@@ -20,7 +17,7 @@
 					<div data-win-control="WinJS.UI.ListView"></div>
 				</div>
 				<div class="row-2">
-					<input class="calendarDatePicker" type="date" />
+					<input type="text" class="form-control calendar-date-picker">
 				</div>
 				<div class="row-3">
 					<div class="progress">
@@ -36,21 +33,30 @@
 			</div>
 		</div>
 
+		<div id="scripts">
+			<script src="bower_components/winjs/js/base.js"></script>
+			<script src="bower_components/winjs/js/ui.js"></script>
+			<script src="bower_components/moment/moment.js"></script>
+			<script src="bower_components/jquery/dist/jquery.js"></script>
+			<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+			<script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
 
-		<script src="js/model/currency.js"></script>
-		<script src="js/model/exchangeRate.js"></script>
+			<script src="js/model/currency.js"></script>
+			<script src="js/model/exchangeRate.js"></script>
 
-		<script src="js/helper/utils.js"></script>
-		<script src="js/helper/progress.js"></script>
-		<script src="js/helper/cache.js"></script>
-		<script src="js/helper/providerh.js"></script>
+			<script src="js/helper/utils.js"></script>
+			<script src="js/helper/progress.js"></script>
+			<script src="js/helper/cache.js"></script>
+			<script src="js/helper/providerh.js"></script>
 
-		<script src="js/provider/nbpErExtractor.js"></script>
-		<script src="js/provider/nbpErProvider.js"></script>
-		<script src="js/provider/cacheErProvider.js"></script>
-		<script src="js/provider/standardErService.js"></script>
+			<script src="js/provider/nbpErExtractor.js"></script>
+			<script src="js/provider/nbpErProvider.js"></script>
+			<script src="js/provider/cacheErProvider.js"></script>
+			<script src="js/provider/standardErService.js"></script>
 
-		<script src="js/main.js"></script>
+			<script src="js/page/page.js"></script>
+			<script src="js/main.js"></script>
+		</div>
 	</body>
 
 </html>

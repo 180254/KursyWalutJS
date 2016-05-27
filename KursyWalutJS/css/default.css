@@ -30,7 +30,7 @@
 
 .progress {
 	background: #03589a;
-	border-radius: 1px;
+	border-radius: 2px;
 	height: 10px;
 	position: relative;
 }
@@ -44,13 +44,13 @@
 /* ----------------------------------------------------- */
 
 
-.calendarDatePicker {
+.calendar-date-picker {
 	background-color: #141414;
 	border: 1px groove #ece3e3;
 	box-sizing: border-box;
 	color: ghostwhite;
 	font-family: Verdana, Geneva, sans-serif;
 	font-weight: normal;
-	padding: 4px 4px 4px 7px;
+	padding: 5px 5px 5px 12px;
 	width: 100%;
 }
