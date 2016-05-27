@@ -15,7 +15,7 @@
 			<div class="avgItem">
 				<span class="col-1" ><img src="#" alt="EUR" data-win-bind="src: currency Converters.getFlagPath"/></span>
 				<span class="col-2" data-win-bind="textContent: currency.code" ></span>
-				<span class="col-3" data-win-bind="textContent: averageRate" ></span>
+				<span class="col-3" data-win-bind="textContent: averageRate Converters.getNumberFixed" ></span>
 			</div>
 		</div>
 
@@ -32,7 +32,7 @@
 				</div>
 				<div class="row-3">
 					<div class="progress">
-						<div class="bar" style="width: 90%;"></div>
+						<div class="bar" style="width: 0%;"></div>
 					</div>
 				</div>
 

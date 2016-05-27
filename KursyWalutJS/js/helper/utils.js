@@ -76,3 +76,9 @@ var Utils = WinJS.Class.define(
         }
     }
 );
+
+var using = function(arg, func) {
+    setImmediate(function() {
+        func(arg);
+    });
+};

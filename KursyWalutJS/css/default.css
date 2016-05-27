@@ -49,11 +49,11 @@
 }
 
 .avgItem .col-2 {
-	width: calc(70% - 15px);
+	width: calc(50% - 15px);
 }
 
 .avgItem .col-3 {
-	width: calc(30% - 15px);
+	width: calc(50% - 15px);
 }
 
 /* ----------------------------------------------------- */

@@ -1,11 +1,12 @@
 ﻿"use strict";
 
 var ProviderHelper = WinJS.Class.define(
-    function(cache, progressMax) {
+    function(cache, progressParams) {
         var nbpProvider = new NbpErProvider(cache);
         var cacheProvider = new CacheErProvider(nbpProvider, cache);
+
         this._erService = new StandardErService(cacheProvider);
-        this._progressMax = progressMax;
+        this._progressParams = progressParams;
         this._cacheAlreadyInit = false;
     },
     {
@@ -21,7 +22,10 @@ var ProviderHelper2 = WinJS.Class.define(
     function(providerHelper) {
         this._providerHelper = providerHelper;
 
-        this._progress = new Progress(this._providerHelper._progressMax);
+        this._progress = new Progress(
+            this._providerHelper._progressParams.max,
+            this._providerHelper._progressParams.callback
+        );
         this._progress.reportProgress(0.00);
 
         this.erService = this._providerHelper._erService;
