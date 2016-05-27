@@ -1,2 +1,56 @@
-﻿body {
+﻿.win-pivot-header {
+	color: #6c4a15 !important;
+}
+
+.win-pivot-header-selected {
+	color: #d1b280 !important;
+}
+
+/* ----------------------------------------------------- */
+
+#avg .row-1 {
+	height: auto;
+}
+
+#avg .row-2 {
+	height: 40px;
+}
+
+#avg .row-3 {
+	height: 15px;
+	padding-top: 5px;
+}
+
+
+#avg .row-4 {
+	height: 5px;
+}
+
+/* ----------------------------------------------------- */
+
+.progress {
+	background: #03589a;
+	border-radius: 1px;
+	height: 10px;
+	position: relative;
+}
+
+.bar {
+	background: #2997ee;
+	font-size: 0.95em;
+	height: 10px;
+}
+
+/* ----------------------------------------------------- */
+
+
+.calendarDatePicker {
+	background-color: #141414;
+	border: 1px groove #ece3e3;
+	box-sizing: border-box;
+	color: ghostwhite;
+	font-family: Verdana, Geneva, sans-serif;
+	font-weight: normal;
+	padding: 4px 4px 4px 7px;
+	width: 100%;
 }

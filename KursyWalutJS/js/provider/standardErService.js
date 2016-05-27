@@ -171,9 +171,9 @@ var StandardErService = WinJS.Class.define(
                 var work = [];
                 var iEnd = Math.min(iStart + waitFor, days.length);
 
-                for (var d = iStart; d < iEnd; d++) {
-                    var prog = progress.subPart(d, days.length);
-                    work.push(self.getExchangeRateAsync(currency, days[d], prog));
+                for (var i = iStart; i < iEnd; i++) {
+                    var prog = progress.subPart(i, days.length);
+                    work.push(self.getExchangeRateAsync(currency, days[i], prog));
                 }
 
                 return WinJS.Promise.join(work)
