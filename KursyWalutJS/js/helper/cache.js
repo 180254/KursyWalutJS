@@ -1,14 +1,31 @@
 ﻿"use strict";
 
+/**
+ * Cache class, which store values in local storage (local folder).
+ * @constructor
+ */
 var LsCache = WinJS.Class.define(
+
+    /**
+     * @constructor
+     * @returns {LsCache} 
+     */
     function() {
-        this._cacheUtils = new CacheUtils();
+        this._serializer = new Serializer();
     },
     {
+        /**
+         * (private) Folder to store cached values.
+         * @returns {Windows.Storage.StorageFolder} 
+         */
         _localFolder: function() {
             return Windows.Storage.ApplicationData.current.localFolder;
         },
 
+        /**
+         * @param {string} key 
+         * @returns {WinJS.Promise<T>} 
+         */
         getAsync: function(key) {
             var self = this;
 
@@ -18,20 +35,25 @@ var LsCache = WinJS.Class.define(
                     return Windows.Storage.FileIO.readTextAsync(file);
                 })
                 .then(function(json) {
-                    var value = self._cacheUtils.deserialize(json);
+                    var value = self._serializer.deserialize(json);
                     return WinJS.Promise.wrap(value);
                 }, function() {
                     return WinJS.Promise.wrap(0);
                 });
         },
 
+        /**
+         * @param {string} key 
+         * @param {T} value 
+         * @returns {WinJS.Promise} 
+         */
         storeAsync: function(key, value) {
             var self = this;
 
             return self._localFolder()
                 .createFileAsync(key, Windows.Storage.CreationCollisionOption.replaceExisting)
                 .then(function(file) {
-                    var json = self._cacheUtils.serialize(value);
+                    var json = self._serializer.serialize(value);
                     return Windows.Storage.FileIO.writeTextAsync(file, json);
                 });
         }
@@ -41,20 +63,38 @@ var LsCache = WinJS.Class.define(
     }
 );
 
+/**
+ * Cache class, which store values in memory.
+ * @constructor 
+ */
 var InMemCache = WinJS.Class.define(
+
+    /**
+     * @constructor
+     * @returns {InMemCache} 
+     */
     function() {
-        this._cacheUtils = new CacheUtils();
+        this._serializer = new Serializer();
         this._dict = {};
     },
     {
+        /**
+         * @param {string} key 
+         * @returns {WinJS.Promise<T>} 
+         */
         getAsync: function(key) {
             var json = this._dict[key];
-            var value = this._cacheUtils.deserialize(json);
+            var value = this._serializer.deserialize(json);
             return WinJS.Promise.wrap(value);
         },
 
+        /**
+         * @param {string} key 
+         * @param {T} value 
+         * @returns {WinJS.Promise} 
+         */
         storeAsync: function(key, value) {
-            var json = this._cacheUtils.serialize(value);
+            var json = this._serializer.serialize(value);
             this._dict[key] = json;
             return WinJS.Promise.wrap(0);
         }
@@ -64,7 +104,19 @@ var InMemCache = WinJS.Class.define(
     }
 );
 
-var CacheUtils = WinJS.Class.define(
+/**
+ * Object serializer.<br/>
+ * Objects are serialized as json.<br/>
+ * Note: only properties are serialized.<br/>
+ * Note: objects prototypes serialized and aren't restored during deserialization.<br/>
+ * Except: standard Date class. 
+ */
+var Serializer = WinJS.Class.define(
+
+    /**
+     * @constructor 
+     * @returns {CacheUtils} 
+     */
     function() {
         // Storing dates:
         // - serialize as unix timestamp (miliseconds),
@@ -79,10 +131,18 @@ var CacheUtils = WinJS.Class.define(
         this._valueOf2000 = moment(2000, "YYYY").valueOf();
     },
     {
+        /**
+         * @param {T} obj 
+         * @returns {json<T>} serialized obj 
+         */
         serialize: function(obj) {
             return JSON.stringify(obj);
         },
 
+        /**
+         * @param {json<T>} json 
+         * @returns {T} deserialized obj
+         */
         deserialize: function(json) {
             var self = this;
 

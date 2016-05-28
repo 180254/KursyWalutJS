@@ -1,6 +1,18 @@
 ﻿"use strict";
 
+/**
+ * Decorator for exchange rate provider.<br/>
+ * Now values are cached, and aren't downloaded twice.
+ * @constructor 
+ */
 var CacheErProvider = WinJS.Class.define(
+
+    /**
+     * @constructor 
+     * @param {(Nbp)ErProvider} erProvider 
+     * @param {(InMem|Ls)Cache)} cache 
+     * @returns {CacheErProvider} 
+     */
     function(erProvider, cache) {
         this._erProvider = erProvider;
         this._cache = cache;
@@ -12,6 +24,10 @@ var CacheErProvider = WinJS.Class.define(
         this._resetCacheChanges();
     },
     {
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise} 
+         */
         initCacheAsync: function(progress) {
             var self = this;
             var promises = [];
@@ -34,6 +50,10 @@ var CacheErProvider = WinJS.Class.define(
                 });
         },
 
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise} 
+         */
         flushCacheAsync: function(progress) {
             var self = this;
             var promises = [];
@@ -60,6 +80,10 @@ var CacheErProvider = WinJS.Class.define(
                 });
         },
 
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<number[]>} 
+         */
         getAvailableYearsAsync: function(progress) {
             var self = this;
 
@@ -76,6 +100,11 @@ var CacheErProvider = WinJS.Class.define(
             }
         },
 
+        /**
+         * @param {number} year
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<Date[]>} 
+         */
         getAvailableDaysAsync: function(year, progress) {
             var self = this;
 
@@ -87,6 +116,11 @@ var CacheErProvider = WinJS.Class.define(
                 progress);
         },
 
+        /**
+         * @param {Date} day
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<ExchangeRate[]>} 
+         */
         getExchangeRatesAsync: function(day, progress) {
             var self = this;
 
@@ -98,6 +132,14 @@ var CacheErProvider = WinJS.Class.define(
                 progress);
         },
 
+        /**
+         * @param {string} dictName 
+         * @param {Object<string, T>} dict 
+         * @param {string} key 
+         * @param {function() : WinJS.Promise<T>} valuePromiseFunc 
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise}
+         */
         _getOrCalculateAsync: function(dictName, dict, key, valuePromiseFunc, progress) {
             var self = this;
 
@@ -114,6 +156,9 @@ var CacheErProvider = WinJS.Class.define(
             });
         },
 
+        /**
+         * @returns {void} 
+         */
         _resetCacheChanges: function() {
             this._cacheChanged["_availYears"] = false;
             this._cacheChanged["_yearToDays"] = false;

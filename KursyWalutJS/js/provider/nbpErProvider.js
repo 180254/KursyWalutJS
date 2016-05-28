@@ -1,6 +1,16 @@
 ﻿"use strict";
 
+/**
+ * ExchangeRate from NBP provider.
+ * @constructor 
+ */
 var NbpErProvider = WinJS.Class.define(
+
+    /**
+     * @constructor 
+     * @param {(Ls|InMem)Cache} cache 
+     * @returns {(Nbp)ErProvider} 
+     */
     function(cache) {
         this._cache = cache;
         this._extractor = new NbpErExtractor();
@@ -9,6 +19,10 @@ var NbpErProvider = WinJS.Class.define(
 
     },
     {
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise} 
+         */
         initCacheAsync: function(progress) {
             var self = this;
 
@@ -22,6 +36,10 @@ var NbpErProvider = WinJS.Class.define(
                 });
         },
 
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise} 
+         */
         flushCacheAsync: function(progress) {
             var self = this;
 
@@ -35,6 +53,10 @@ var NbpErProvider = WinJS.Class.define(
             });
         },
 
+        /**
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<number[]>} 
+         */
         getAvailableYearsAsync: function(progress) {
             var startYear = 2002;
             var endYear = moment().year();
@@ -45,6 +67,11 @@ var NbpErProvider = WinJS.Class.define(
             });
         },
 
+        /**
+         * @param {number} year
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<Date[]>} 
+         */
         getAvailableDaysAsync: function(year, progress) {
             var self = this;
 
@@ -65,6 +92,11 @@ var NbpErProvider = WinJS.Class.define(
 
         },
 
+        /**
+         * @param {Date} day
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<ExchangeRate[]>} 
+         */
         getExchangeRatesAsync: function(day, progress) {
             var self = this;
 
@@ -89,6 +121,10 @@ var NbpErProvider = WinJS.Class.define(
                 });
         },
 
+        /**
+         * @param {number} year 
+         * @returns {WinJS.Promise<string[]>} 
+         */
         _downloadFilenamesForYearAsync: function(year) {
             var self = this;
 
@@ -103,6 +139,10 @@ var NbpErProvider = WinJS.Class.define(
                 });
         },
 
+        /**
+         * @param {string[]} filenames 
+         * @returns {WinJS.Promise<Date[]>} 
+         */
         _parseAndCacheDates: function(filenames) {
             var self = this;
 

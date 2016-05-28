@@ -1,6 +1,18 @@
 ﻿"use strict";
 
+/**
+ * Helper to simplify usage of er providers.
+ * @constructor 
+ */
 var ProviderHelper = WinJS.Class.define(
+    /**
+     * @constructor 
+     * @param {(LsCache|InMemCache)} cache 
+     * @param {Object} progressParams 
+     * @param {number} progressParams.max 
+     * @param {function()} progressParams.observer 
+     * @returns {ProviderHelper} 
+     */
     function(cache, progressParams) {
         var nbpProvider = new NbpErProvider(cache);
         var cacheProvider = new CacheErProvider(nbpProvider, cache);
@@ -10,6 +22,9 @@ var ProviderHelper = WinJS.Class.define(
         this._cacheAlreadyInit = false;
     },
     {
+        /**
+         * @returns {ProviderHelper2} 
+         */
         helper: function() {
             return new ProviderHelper2(this);
         }
@@ -18,20 +33,32 @@ var ProviderHelper = WinJS.Class.define(
     
     }
 );
+
+/**
+ * Helper to simplify usage of er providers.<br/>
+ * Instance for one sequence of actions (progress from 0% to 100%).
+ * @constructor 
+ */
 var ProviderHelper2 = WinJS.Class.define(
+    /**
+     * @constructor 
+     * @param {ProviderHelper} providerHelper 
+     * @returns {ProviderHelper2} 
+     */
     function(providerHelper) {
         this._providerHelper = providerHelper;
 
-        this._progress = new Progress(
-            this._providerHelper._progressParams.max,
-            this._providerHelper._progressParams.callback
-        );
+        this._progress = new Progress(this._providerHelper._progressParams.max);
+        this._progress.addObserver(this._providerHelper._progressParams.observer);
         this._progress.reportProgress(0.00);
 
         this.erService = this._providerHelper._erService;
         this.progress = this._progress.subPercent(0.05, 0.95);
     },
     {
+        /**
+         * @returns {WinJS.Promise} 
+         */
         initCacheAsync: function() {
             var self = this;
             var promise = WinJS.Promise.wrap(0);
@@ -49,6 +76,9 @@ var ProviderHelper2 = WinJS.Class.define(
             });
         },
 
+        /**
+         * @returns {WinJS.Promise} 
+         */
         flushCacheAsync: function() {
             var self = this;
 

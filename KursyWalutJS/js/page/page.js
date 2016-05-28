@@ -6,14 +6,17 @@ var AppGo = function() {
 
     var pHelper = new ProviderHelper(
         new InMemCache(),
-        { max: 10000, callback: VmAction.updateProgressBar }
+        { max: 10000, observer: VmAction.updateProgressBar }
     );
 
+    /**
+     * @param {Date} date 
+     */
     var avgReload = function(date) {
         console.log("AvgReload.Init");
         VmAction.disableAll();
 
-        var erRandomizer = new ErRandomizer(Vm.AvgExchangeRates);
+        var erRandomizer = new ErsRandomizer(Vm.AvgExchangeRates);
         erRandomizer.start();
 
         var newErs = null;
@@ -46,8 +49,8 @@ var AppGo = function() {
 
     using(pHelper.helper(), function(pHelp) {
         console.log("Init.Start");
-        Vm.VmAction.AvgPickerChangedHandlers.push(avgReload);
-        Vm.VmAction.AvgListTapHandlers.push(function(currency) { console.log(currency); });
+        Vm.VmAction.AvgDateChangedListeners.push(avgReload);
+        Vm.VmAction.AvgListTappedListeners.push(function(currency) { console.log(currency); });
 
         var initDate = null;
         pHelp.initCacheAsync()
