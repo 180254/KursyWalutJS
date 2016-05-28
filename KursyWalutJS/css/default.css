@@ -23,6 +23,10 @@
 	height: 99% !important;
 }
 
+.input-daterange input {
+	border-radius: 0 !important;
+}
+
 /* ----------------------------------------------------- */
 
 #avg-pivot .row-1 {
@@ -37,11 +41,8 @@
 
 #avg-pivot .row-3 {
 	height: 15px;
+	padding-bottom: 15px;
 	padding-top: 5px;
-}
-
-#avg-pivot .row-4 {
-	height: 15px;
 }
 
 .avg-item {
@@ -59,6 +60,24 @@
 
 .avg-item .col-3 {
 	width: calc(50% - 15px);
+}
+
+/* ----------------------------------------------------- */
+
+#history-pivot .row-1 {
+	height: calc(100% - 85px);
+	padding-top: 5px;
+}
+
+#history-pivot .row-2 {
+	height: 40px;
+	padding-top: 5px;
+}
+
+#history-pivot .row-3 {
+	height: 15px;
+	padding-bottom: 15px;
+	padding-top: 5px;
 }
 
 /* ----------------------------------------------------- */
@@ -85,13 +104,30 @@
 	color: ghostwhite;
 	font-family: Verdana, Geneva, sans-serif;
 	font-weight: normal;
-	padding: 5px 5px 5px 12px;
-	width: 100%;
+	text-align: center;
 }
 
 .calendar-date-picker:disabled {
 	color: gray;
 }
+
+#avg-picker {
+	padding: 5px 5px 5px 5px;
+	width: 100%;
+}
+
+#history-picker-range .calendar-date-picker {
+	padding: 5px 0 5px 0;
+	width: calc(50% - 16.5px);
+}
+
+#history-picker-addon {
+	display: inline-block;
+	text-align: center;
+	width: 24px;
+}
+
+/* ----------------------------------------------------- */
 
 .disabled {
 	opacity: 0.4;

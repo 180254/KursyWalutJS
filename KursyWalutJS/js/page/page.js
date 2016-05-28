@@ -4,6 +4,10 @@ var AppGo = function() {
     console.log("App.Start");
     VmAction.disableAll();
 
+    $("#history-picker-range").datepicker({
+    
+    });
+
     var pHelper = new ProviderHelper(
         new InMemCache(),
         { max: 10000, observer: VmAction.updateProgressBar }

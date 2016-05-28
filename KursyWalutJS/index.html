@@ -28,9 +28,9 @@
 					<div id="avg-list" class="disableable" data-win-control="WinJS.UI.ListView"
                         data-win-options="{
                             itemDataSource: Vm.AvgExchangeRates.dataSource,
-                            itemTemplate: select('.avg-item-template'),	
+                            itemTemplate: select('.avg-item-template'),
                             selectionMode: 'none',
-                            tapBehavior: 'invokeOnly',	
+                            tapBehavior: 'invokeOnly',
                             oniteminvoked: Vm.VmAction.onAvgListTapped,
                             layout: { type: WinJS.UI.ListLayout }
                         }">
@@ -46,12 +46,22 @@
 						<div class="bar" style="width: 0%;"></div>
 					</div>
 				</div>
-
-				<div class="row-4"></div>
 			</div>
 
 			<div id="history-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Historia kursu' }">
-				ASD
+				<div class="row-1"></div>
+				<div class="row-2">
+					<div id="history-picker-range" class="input-daterange">
+                        <input type="text" class="calendar-date-picker disableable" name="history-start" readonly="readonly"  />
+                        <span id="history-picker-addon">do</span>
+                        <input type="text" class="calendar-date-picker disableable" name="history-end" readonly="readonly"  />
+                    </div>
+				</div>
+				<div class="row-3">
+					<div class="progress">
+						<div class="bar" style="width: 0%;"></div>
+					</div>
+				</div>
 			</div>
 
 		</div>
