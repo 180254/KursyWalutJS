@@ -72,9 +72,10 @@ WinJS.Namespace.define("Vm", {
     VmAction: new VmAction(),
 
     replace: function(bindList, newList) {
-        bindList.length = 0;
-        newList.forEach(function(item) {
-            bindList.push(item);
+        bindList.length = newList.length;
+
+        newList.forEach(function(item, i) {
+            bindList.setAt(i, item);
         });
     }
 });

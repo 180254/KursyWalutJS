@@ -23,15 +23,22 @@ var ErRandomizer = WinJS.Class.define(
         _go: function() {
             var self = this;
 
-            if (self.started) {
-                for (var i = 0; i < self.ers.length; i++) {
+            if (self.started && self.ers.length > 0) {
+                var $avgList = $("#avg-list .win-viewport");
+                var erHeight = $(".avg-item:first").closest(".win-container").outerHeight(true);
+
+                var iFirstVisibleEr = Math.floor($avgList.scrollTop() / erHeight);
+                var iCountVisibleEr = Math.ceil($avgList.outerHeight() / erHeight);
+                var iLastVisibleEr = Math.min(iFirstVisibleEr + iCountVisibleEr, self.ers.length);
+
+                for (var i = iFirstVisibleEr; i < iLastVisibleEr; i++) {
                     var oldEr = self.ers.getAt(i);
-                    var diff = getRandomArbitrary(-1 * oldEr.averageRate, 1 * oldEr.averageRate);
+                    var diff = getRandomArbitrary(-0.5 * oldEr.averageRate, 0.5 * oldEr.averageRate);
                     var newEr = new ExchangeRate(oldEr.dat, oldEr.currency, oldEr.averageRate + diff);
                     self.ers.setAt(i, newEr);
                 }
 
-                if (self.started && self.ers.length > 0) {
+                if (self.started) {
                     setTimeout(function() {
                         self._go();
                     }, this.timeMs);
