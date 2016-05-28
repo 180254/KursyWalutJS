@@ -84,6 +84,33 @@ var VmAction = WinJS.Class.define(
         },
 
         /**
+         * @param {Date} startDate 
+         * @param {Date} endDate 
+         * @returns {void} 
+         */
+        initHistoryPickerRange: function(startDate, endDate) {
+            var $historyPickerRange = $("#history-picker-range");
+
+            $historyPickerRange.datepicker({
+                format: "dd-mm-yyyy",
+                maxViewMode: 2,
+                todayBtn: "linked",
+                language: "pl",
+                forceParse: false,
+                autoclose: true,
+
+                startDate: Utils.first(Vm.AllDays),
+                endDate: Utils.last(Vm.AllDays),
+            });
+
+            var $historyPickers = $historyPickerRange.children(".calendar-date-picker");
+            var endDay2 = VmAction.isProperDay(endDate) ? endDate : Utils.last(Vm.AllDays);
+
+            $historyPickers.eq(0).datepicker("setDate", startDate);
+            $historyPickers.eq(1).datepicker("setDate", endDay2);
+        },
+
+        /**
          * @returns {void} 
          */
         enableAll: function() {
@@ -102,7 +129,10 @@ var VmAction = WinJS.Class.define(
          * @returns {boolean} 
          */
         isProperDay: function(date) {
-            return Vm.AllDays.map(Number).indexOf(+date) > -1;
+            if (Vm.AllDays.length !== Vm.AllDaysNumber.length) {
+                Vm.AllDaysNumber = Vm.AllDays.map(Number);
+            }
+            return Vm.AllDaysNumber.indexOf(+date) > -1;
         },
 
         /**
@@ -119,6 +149,7 @@ var VmAction = WinJS.Class.define(
 
 WinJS.Namespace.define("Vm", {
     AllDays: [],
+    AllDaysNumber: [],
     AvgExchangeRates: new WinJS.Binding.List(),
     VmAction: new VmAction(),
 

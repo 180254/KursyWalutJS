@@ -97,7 +97,7 @@ var Progress = WinJS.Class.define(
          * @param {number} value
          * @returns {void} 
          */
-        _notifyChange: function (value) {
+        _notifyChange: function(value) {
             var self = this;
 
             var change = value - this._lastNotified;

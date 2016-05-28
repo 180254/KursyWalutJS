@@ -4,10 +4,6 @@ var AppGo = function() {
     console.log("App.Start");
     VmAction.disableAll();
 
-    $("#history-picker-range").datepicker({
-    
-    });
-
     var pHelper = new ProviderHelper(
         new InMemCache(),
         { max: 10000, observer: VmAction.updateProgressBar }
@@ -68,7 +64,14 @@ var AppGo = function() {
                 return pHelp.flushCacheAsync();
             })
             .done(function() {
-                VmAction.initAvgPicker(initDate);
+                VmAction.initAvgPicker(
+                    initDate
+                );
+                VmAction.initHistoryPickerRange(
+                    moment().subtract(1, "year").startOf("day").toDate(),
+                    moment().startOf("day").toDate()
+                );
+
                 console.log("Init.Done");
             }, function(e) {
                 console.log("Init.Fail");

@@ -30,12 +30,12 @@
 /* ----------------------------------------------------- */
 
 #avg-pivot .row-1 {
-	height: calc(100% - 85px);
+	height: calc(100% - 75px);
 	padding-top: 5px;
 }
 
 #avg-pivot .row-2 {
-	height: 40px;
+	height: 30px;
 	padding-top: 5px;
 }
 
@@ -65,20 +65,44 @@
 /* ----------------------------------------------------- */
 
 #history-pivot .row-1 {
-	height: calc(100% - 85px);
+	height: calc(100% - 110px);
 	padding-top: 5px;
 }
 
 #history-pivot .row-2 {
-	height: 40px;
+	height: 30px;
 	padding-top: 5px;
 }
 
 #history-pivot .row-3 {
+	height: 30px;
+	padding-top: 5px;
+}
+
+#history-pivot .row-4 {
 	height: 15px;
 	padding-bottom: 15px;
 	padding-top: 5px;
 }
+
+#history-draw-button {
+	background-color: #6c4a15;
+	border: 1px groove #ece3e3;
+	color: #ece3e3;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 0.88em;
+	height: calc(100% - 5px);
+	margin: 3px 0 3px 0;
+	padding: 2px 5px 2px 15px;
+	width: 100%;
+}
+
+#history-draw-button:active {
+	background-color: rgba(108, 74, 21, 0.4);
+	border: 1px dashed #ece3e3;
+	color: blanchedalmond;
+}
+
 
 /* ----------------------------------------------------- */
 
@@ -104,7 +128,6 @@
 	color: ghostwhite;
 	font-family: Verdana, Geneva, sans-serif;
 	font-weight: normal;
-	text-align: center;
 }
 
 .calendar-date-picker:disabled {
@@ -112,7 +135,7 @@
 }
 
 #avg-picker {
-	padding: 5px 5px 5px 5px;
+	padding: 5px 5px 5px 15px;
 	width: 100%;
 }
 

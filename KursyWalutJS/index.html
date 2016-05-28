@@ -50,14 +50,20 @@
 
 			<div id="history-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Historia kursu' }">
 				<div class="row-1"></div>
+
 				<div class="row-2">
 					<div id="history-picker-range" class="input-daterange">
-                        <input type="text" class="calendar-date-picker disableable" name="history-start" readonly="readonly"  />
-                        <span id="history-picker-addon">do</span>
-                        <input type="text" class="calendar-date-picker disableable" name="history-end" readonly="readonly"  />
-                    </div>
+						<input type="text" class="calendar-date-picker disableable" name="history-start" readonly="readonly" />
+						<span id="history-picker-addon">do</span>
+						<input type="text" class="calendar-date-picker disableable" name="history-end" readonly="readonly" />
+					</div>
 				</div>
+
 				<div class="row-3">
+					<button id="history-draw-button" class="disableable">Rysuj historię</button>
+				</div>
+
+				<div class="row-4">
 					<div class="progress">
 						<div class="bar" style="width: 0%;"></div>
 					</div>
