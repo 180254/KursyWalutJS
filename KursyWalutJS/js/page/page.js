@@ -20,20 +20,26 @@ var AppGo = function() {
         var erRandomizer = new ErsRandomizer(Vm.AvgExchangeRates);
         erRandomizer.start();
 
+        var newErs;
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
                 .then(function() {
                     return pHelp2.erService.getExchangeRatesAsync(date, pHelp2.progress);
                 })
-                .then(function() {
+                .then(function(ers) {
+                    newErs = ers;
+
                     erRandomizer.stop();
                     var promises = [pHelp2.flushCacheAsync(), erRandomizer.waitUntilStopped()];
+
                     return WinJS.Promise.join(promises);
                 }, function(e) {
                     erRandomizer.stop();
                     return WinJS.Promise.wrapError(e);
                 })
                 .done(function() {
+                    Vm.replace(Vm.AvgExchangeRates, newErs);
+
                     VmAction.enableAll();
                     console.log("onAvgReload.Done");
                 }, function(e) {
