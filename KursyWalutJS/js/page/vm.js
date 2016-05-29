@@ -55,17 +55,6 @@ var VmAction = WinJS.Class.define(
         initAvgPicker: function(date) {
             var $avgPicker = $("#avg-picker");
 
-            var onChangeDate = function(e) {
-                var eventDay = e.date;
-
-                if (VmAction.isProperDay(eventDay)) {
-                    Vm.VmAction.onAvgDateChanged(eventDay);
-                } else {
-                    var lastDay = Utils.last(Vm.AllDays);
-                    $avgPicker.datepicker("setDate", lastDay);
-                }
-            };
-
             $avgPicker.datepicker({
                 format: "dd.mm.yyyy",
                 maxViewMode: 2,
@@ -78,7 +67,16 @@ var VmAction = WinJS.Class.define(
                 endDate: Utils.last(Vm.AllDays),
                 beforeShowDay: VmAction.isProperDay
 
-            }).on("changeDate", onChangeDate);
+            }).on("changeDate", function(e) {
+                var eventDay = e.date;
+
+                if (VmAction.isProperDay(eventDay)) {
+                    Vm.VmAction.onAvgDateChanged(eventDay);
+                } else {
+                    var lastDay = Utils.last(Vm.AllDays);
+                    $avgPicker.datepicker("setDate", lastDay);
+                }
+            });
 
             $avgPicker.datepicker("setDate", date);
         },
@@ -91,6 +89,9 @@ var VmAction = WinJS.Class.define(
         initHistoryPickerRange: function(startDate, endDate) {
             var $historyPickerRange = $("#history-picker-range");
 
+            var firstDay = Utils.first(Vm.AllDays);
+            var lastDay = Utils.last(Vm.AllDays);
+
             $historyPickerRange.datepicker({
                 format: "dd-mm-yyyy",
                 maxViewMode: 2,
@@ -99,12 +100,12 @@ var VmAction = WinJS.Class.define(
                 forceParse: false,
                 autoclose: true,
 
-                startDate: Utils.first(Vm.AllDays),
-                endDate: Utils.last(Vm.AllDays),
+                startDate: firstDay,
+                endDate: lastDay
             });
 
-            var $historyPickers = $historyPickerRange.children(".calendar-date-picker");
-            var endDay2 = VmAction.isProperDay(endDate) ? endDate : Utils.last(Vm.AllDays);
+            var $historyPickers = $historyPickerRange.children(".calendar-date-picker");;
+            var endDay2 = endDate <= lastDay ? endDate : lastDay;
 
             $historyPickers.eq(0).datepicker("setDate", startDate);
             $historyPickers.eq(1).datepicker("setDate", endDay2);

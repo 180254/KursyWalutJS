@@ -2,7 +2,6 @@
 
 var AppGo = function() {
     console.log("App.Start");
-    VmAction.disableAll();
 
     var pHelper = new ProviderHelper(
         new InMemCache(),
@@ -10,72 +9,87 @@ var AppGo = function() {
     );
 
     /**
+     * 
      * @param {Date} date 
+     * @returns {void} 
      */
-    var avgReload = function(date) {
-        console.log("AvgReload.Init");
+    var onAvgReload = function(date) {
+        console.log("onAvgReload.Start");
         VmAction.disableAll();
 
         var erRandomizer = new ErsRandomizer(Vm.AvgExchangeRates);
         erRandomizer.start();
 
-        var newErs = null;
-
-        using(pHelper.helper(), function(pHelp) {
-            pHelp.initCacheAsync()
+        using(pHelper.helper2(), function(pHelp2) {
+            pHelp2.initCacheAsync()
                 .then(function() {
-                    return pHelp.erService.getExchangeRatesAsync(date, pHelp.progress);
+                    return pHelp2.erService.getExchangeRatesAsync(date, pHelp2.progress);
                 })
-                .then(function(ers) {
-                    newErs = ers;
+                .then(function() {
                     erRandomizer.stop();
-                    return erRandomizer.waitUntilStopped();
-                })
-                .then(function() {
-                    Vm.replace(Vm.AvgExchangeRates, newErs);
-                    return pHelp.flushCacheAsync();
+                    var promises = [pHelp2.flushCacheAsync(), erRandomizer.waitUntilStopped()];
+                    return WinJS.Promise.join(promises);
+                }, function(e) {
+                    erRandomizer.stop();
+                    return WinJS.Promise.wrapError(e);
                 })
                 .done(function() {
                     VmAction.enableAll();
-                    console.log("AvgReload.Done");
+                    console.log("onAvgReload.Done");
                 }, function(e) {
-                    erRandomizer.stop();
-                    console.log("AvgReload.Fail");
+                    VmAction.enableAll();
+                    console.log("onAvgReload.Fail");
                     console.log(e);
                 });
         });
     };
 
+    var onAvgListTapped = function(currency) {
+        console.log(currency);
+    };
 
-    using(pHelper.helper(), function(pHelp) {
-        console.log("Init.Start");
-        Vm.VmAction.AvgDateChangedListeners.push(avgReload);
-        Vm.VmAction.AvgListTappedListeners.push(function(currency) { console.log(currency); });
+    var init = function() {
+        console.log("init.Start");
+        VmAction.disableAll();
 
-        var initDate = null;
-        pHelp.initCacheAsync()
-            .then(function() {
-                var prog = pHelp.progress.subPercent(0.00, 0.80);
-                return pHelp.erService.getAllAvailableDaysAsync(prog);
-            })
-            .then(function(allDays) {
-                Vm.AllDays = allDays;
-                initDate = Utils.last(allDays);
-                return pHelp.flushCacheAsync();
-            })
-            .done(function() {
-                VmAction.initAvgPicker(
-                    initDate
-                );
-                VmAction.initHistoryPickerRange(
-                    moment().subtract(1, "year").startOf("day").toDate(),
-                    moment().startOf("day").toDate()
-                );
+        using(pHelper.helper2(), function(pHelp2) {
+            pHelp2.initCacheAsync()
+                .then(function() {
+                    var prog = pHelp2.progress.subPercent(0.00, 0.60);
+                    return pHelp2.erService.getAllAvailableDaysAsync(prog);
+                })
+                .then(function(allDays) {
+                    Vm.AllDays = allDays;
+                    var initDate = Utils.last(allDays);
 
-                console.log("Init.Done");
-            }, function(e) {
-                console.log("Init.Fail");
-                console.log(e);
-            });
-    });
+                    VmAction.initAvgPicker(
+                        initDate
+                    );
+                    VmAction.initHistoryPickerRange(
+                        moment().subtract(1, "year").startOf("day").toDate(),
+                        moment().startOf("day").toDate()
+                    );
+
+                    Vm.VmAction.AvgDateChangedListeners.push(onAvgReload);
+                    Vm.VmAction.AvgListTappedListeners.push(onAvgListTapped);
+
+                    var prog = pHelp2.progress.subPercent(0.60, 1.00);
+                    return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
+                })
+                .then(function(ers) {
+                    Vm.replace(Vm.AvgExchangeRates, ers);
+                    return pHelp2.flushCacheAsync();
+                })
+                .done(function() {
+                    VmAction.enableAll();
+                    console.log("init.Done");
+                }, function(e) {
+                    VmAction.enableAll();
+                    console.log("init.Fail");
+                    console.log(e);
+                });
+        });
+    };
+
+    init();
 };
