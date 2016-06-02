@@ -12,9 +12,9 @@
   "dependencies": {
     "winjs": "^4.4.0",
     "moment": "^2.13.0",
-    "winjs-grid": "^0.9.0",
     "jquery": "^2.2.4",
     "bootstrap-datepicker": "^1.6.1",
-    "winjs-localization": "^4.4.0"
+    "winjs-localization": "^4.4.0",
+    "syncfusion-javascript": "^14.1.46"
   }
 }
