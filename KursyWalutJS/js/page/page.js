@@ -4,8 +4,13 @@ var AppGo = function() {
     console.log("App.Start");
 
     var pHelper = new ProviderHelper(
-        new InMemCache(),
-        { max: 10000, observer: VmAction.updateProgressBar }
+        new InMemCache(), {
+            max: 10000,
+            observer: function(progress, value) {
+                var valuePercent = (value / progress.maxValue * 100);
+                Vm.m.progressPercent_s(valuePercent);
+            }
+        }
     );
 
     /**
@@ -15,9 +20,9 @@ var AppGo = function() {
      */
     var onAvgReload = function(date) {
         console.log("onAvgReload.Start");
-        VmAction.disableAll();
+        Vm.m.uiEnabled_s(false);
 
-        var erRandomizer = new ErsRandomizer(Vm.AvgExchangeRates);
+        var erRandomizer = new ErsRandomizer(Vm.m.AvgExchangeRates);
         erRandomizer.start();
 
         var newErs;
@@ -38,12 +43,12 @@ var AppGo = function() {
                     return WinJS.Promise.wrapError(e);
                 })
                 .done(function() {
-                    Vm.replace(Vm.AvgExchangeRates, newErs);
+                    Vm.replace(Vm.m.AvgExchangeRates, newErs);
 
-                    VmAction.enableAll();
+                    Vm.m.uiEnabled_s(true);
                     console.log("onAvgReload.Done");
                 }, function(e) {
-                    VmAction.enableAll();
+                    Vm.m.uiEnabled_s(true);
                     console.log("onAvgReload.Fail");
                     console.log(e);
                 });
@@ -51,46 +56,55 @@ var AppGo = function() {
     };
 
     var onAvgListTapped = function(currency) {
-        console.log(currency);
+        if (!Vm.m.hisPivotVisible_g()) {
+            Vm.m.hisPivotVisible_s(true);
+            Vm.m.progressPercent_s(100);
+            Vm.m.uiEnabled_s(true);
+        }
+
+        Vm.m.HistoryCurrency = currency;
+        Vm.m.pivotHeader_s(currency);
+        Vm.m.currentPivot_s(1);
     };
 
     var init = function() {
         console.log("init.Start");
-        VmAction.disableAll();
+        Vm.m.uiEnabled_s(false);
 
-        using(pHelper.helper2(), function(pHelp2) {
+        using(pHelper.helper2(), function (pHelp2) {
             pHelp2.initCacheAsync()
                 .then(function() {
                     var prog = pHelp2.progress.subPercent(0.00, 0.60);
                     return pHelp2.erService.getAllAvailableDaysAsync(prog);
                 })
                 .then(function(allDays) {
-                    Vm.AllDays = allDays;
+                    Vm.m.AllDays = allDays;
                     var initDate = Utils.last(allDays);
 
-                    VmAction.initAvgPicker(
+                    Vm.m.initAvgPicker(
                         initDate
                     );
-                    VmAction.initHistoryPickerRange(
+                    Vm.m.initHisPickers(
                         moment().subtract(1, "year").startOf("day").toDate(),
                         moment().startOf("day").toDate()
                     );
 
-                    Vm.VmAction.AvgDateChangedListeners.push(onAvgReload);
-                    Vm.VmAction.AvgListTappedListeners.push(onAvgListTapped);
+                    Vm.Listen.AvgDateChanged.push(onAvgReload);
+                    Vm.Listen.AvgListTapped.push(onAvgListTapped);
 
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
                 })
                 .then(function(ers) {
-                    Vm.replace(Vm.AvgExchangeRates, ers);
+                    Vm.replace(Vm.m.AvgExchangeRates, ers);
                     return pHelp2.flushCacheAsync();
                 })
-                .done(function() {
-                    VmAction.enableAll();
+                .done(function () {
+                    Vm.m.hisPivotVisible_s(false);
+                    Vm.m.uiEnabled_s(true);
                     console.log("init.Done");
                 }, function(e) {
-                    VmAction.enableAll();
+                    Vm.m.uiEnabled_s(true);
                     console.log("init.Fail");
                     console.log(e);
                 });

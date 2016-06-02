@@ -21,23 +21,23 @@
 			</div>
 		</div>
 
-		<div data-win-control="WinJS.UI.Pivot" data-win-options="{ selectedIndex: 0 }">
+		<div id="pivot-container" data-win-control="WinJS.UI.Pivot" data-win-options="{ selectedIndex: 0 }">
 
 			<div id="avg-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Średnie kursy' }">
 				<div class="row-1">
 					<div id="avg-list" class="disableable" data-win-control="WinJS.UI.ListView"
                         data-win-options="{
-                            itemDataSource: Vm.AvgExchangeRates.dataSource,
+                            itemDataSource: Vm.m.AvgExchangeRates.dataSource,
                             itemTemplate: select('.avg-item-template'),
                             selectionMode: 'none',
                             tapBehavior: 'invokeOnly',
-                            oniteminvoked: Vm.VmAction.onAvgListTapped,
+                            oniteminvoked: Vm.Listen.onAvgListTapped,
                             layout: { type: WinJS.UI.ListLayout }
                         }">
 					</div>
 				</div>
 
-				<div class="row-2">
+                <div class="row-2">
 					<input type="text" id="avg-picker" class="calendar-date-picker disableable" readonly="readonly" />
 				</div>
 
@@ -49,7 +49,9 @@
 			</div>
 
 			<div id="history-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Historia kursu' }">
-				<div class="row-1"></div>
+				<div class="row-1">
+		            <div id="chartcontainer"></div>
+				</div>
 
 				<div class="row-2">
 					<div id="history-picker-range" class="input-daterange">
@@ -83,6 +85,7 @@
 			<script src="bower_components/jquery/dist/jquery.js"></script>
 			<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
 			<script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
+			<script src="bower_components/syncfusion-javascript/Scripts/web/ej.web.all.min.js"></script>
 
 			<script src="js/model/currency.js"></script>
 			<script src="js/model/exchangeRate.js"></script>

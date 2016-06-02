@@ -3,14 +3,14 @@
 /**
  * @constructor 
  */
-var VmAction = WinJS.Class.define(
+var VmListen = WinJS.Class.define(
     /**
      * @constructor 
      * @returns {VmAction} 
      */
     function() {
-        this.AvgListTappedListeners = [];
-        this.AvgDateChangedListeners = [];
+        this.AvgListTapped = [];
+        this.AvgDateChanged = [];
 
         WinJS.Utilities.markSupportedForProcessing(this.onAvgListTapped);
         WinJS.Utilities.markSupportedForProcessing(this.onAvgDateChanged);
@@ -32,9 +32,8 @@ var VmAction = WinJS.Class.define(
          * @returns {void} 
          */
         onAvgListTapped: function(event) {
-            var self = Vm.VmAction;
             var currency = event.detail.itemPromise._value.data.currency;
-            self._notifyListeners(self.AvgListTappedListeners, currency);
+            Vm.Listen._notifyListeners(Vm.Listen.AvgListTapped, currency);
         },
 
         /**
@@ -42,18 +41,160 @@ var VmAction = WinJS.Class.define(
          * @returns {void} 
          */
         onAvgDateChanged: function(event) {
-            var self = Vm.VmAction;
             var date = event;
-            self._notifyListeners(self.AvgDateChangedListeners, date);
+            Vm.Listen._notifyListeners(Vm.Listen.AvgDateChanged, date);
         }
     },
     {
-        /**
-         * @param {Date} date 
-         * @returns {void} 
-         */
+    
+    }
+);
+
+var VmM = WinJS.Class.define(
+    function() {
+
+    },
+    {
+        AllDays: [],
+        AllDaysNumber: [],
+        AvgExchangeRates: new WinJS.Binding.List(),
+
+        DatesBackup: [null, null],
+        HistoryCurrency: null,
+        HistoryPivot: null,
+
+        // ---------------------------------------------------------------------------
+
+        isProperDay: function(date) {
+            var self = Vm.m;
+            if (self.AllDays.length !== self.AllDaysNumber.length) {
+                self.AllDaysNumber = self.AllDays.map(Number);
+            }
+            return self.AllDaysNumber.indexOf(+date) > -1;
+        },
+
+        // ---------------------------------------------------------------------------
+
+        avgPicker: function() {
+            return $("#avg-picker");
+        },
+        avgDate_g() {
+            return this.avgPicker().datepicker("getDate");
+        },
+        avgDate_s(date) {
+            this.avgPicker().datepicker("setDate", date);
+        },
+
+        // ---------------------------------------------------------------------------
+
+        hisPivotVisible_g() {
+            var self = this;
+            return self.HistoryPivot === null;
+        },
+        hisPivotVisible_s(visible) {
+            var self = this;
+            if (visible) this.pivotContainer().items.push(self.HistoryPivot);
+            self.HistoryPivot = visible ? null : this.pivotContainer().items.pop();
+        },
+
+        hisPickers: function() {
+            return $("#history-picker-range").children(".calendar-date-picker");
+        },
+        hisDates_g() {
+            var $historyPickers = this.hisPickers();
+            return [
+                $historyPickers.eq(0).datepicker("getDate"),
+                $historyPickers.eq(1).datepicker("getDate")
+            ];
+        },
+        hisDates_s(dates) {
+            var $historyPickers = this.hisPickers();
+            if (dates[0]) $historyPickers.eq(0).datepicker("setDate", dates[0]);
+            if (dates[1]) $historyPickers.eq(1).datepicker("setDate", dates[1]);
+        },
+
+        // ---------------------------------------------------------------------------
+
+        uiEnabled_g() {
+            return $(".disableable").hasClass("disabled");
+        },
+        uiEnabled_s(enabled) {
+            if (enabled) $(".disableable").removeClass("disabled");
+            else $(".disableable").addClass("disabled");
+        },
+
+        // ---------------------------------------------------------------------------
+
+        pivotHeader: function() {
+            return $(".win-pivot-header").eq(1);
+        },
+        pivotHeader_g() {
+            return this.pivotHeader().text();
+        },
+        pivotHeader_s(currency) {
+            var historyPivot = this.pivotHeader();
+            var oldValue = historyPivot.text();
+            var newValue = oldValue.replace(/^(.*?) ?[A-Z]*?$/g, "$1 " + currency.code);
+            historyPivot.text(newValue);
+        },
+
+        // ---------------------------------------------------------------------------
+
+        pivotContainer: function() {
+            return document.querySelector("#pivot-container").winControl;
+        },
+        currentPivot_g() {
+            var piCo = this.pivotContainer();
+            return piCo ? piCo.selectedIndex : undefined;
+        },
+        currentPivot_s(index) {
+            var piCo = this.pivotContainer();
+            if (piCo) piCo.selectedIndex = index;
+        },
+
+        // ---------------------------------------------------------------------------
+
+        progressBars: function() {
+            return $(".progress > .bar");
+        },
+        progressPercent_g() {
+            return this.progressBars().eq(0).css("width");
+        },
+        progressPercent_s(value) {
+            this.progressBars().css("width", value + "%");
+        },
+
+        // ---------------------------------------------------------------------------
+
+
+        avgDateBackup: function() {
+            this.DatesBackup[0] = this.avgDate_g;
+        },
+        avgDateRestore: function() {
+            this.avgDate_g = this.DatesBackup[0];
+        },
+
+        hisDatesBackup: function() {
+            this.DatesBackup[1] = this.HisDates;
+        },
+        hisDatesRestore: function() {
+            this.HisDates = this.DatesBackup[1];
+        },
+
+        allDatesBackup: function() {
+            this.avgDateBackup();
+            this.hisDatesBackup();
+        },
+        allDatesRestore: function() {
+            this.avgDateRestore();
+            this.hisDatesRestore();
+        },
+
+        // ---------------------------------------------------------------------------
+
         initAvgPicker: function(date) {
-            var $avgPicker = $("#avg-picker");
+            var self = this;
+            var $avgPicker = this.avgPicker();
 
             $avgPicker.datepicker({
                 format: "dd.mm.yyyy",
@@ -63,34 +204,31 @@ var VmAction = WinJS.Class.define(
                 forceParse: false,
                 autoclose: true,
 
-                startDate: Utils.first(Vm.AllDays),
-                endDate: Utils.last(Vm.AllDays),
-                beforeShowDay: VmAction.isProperDay
+                startDate: Utils.first(self.AllDays),
+                endDate: Utils.last(self.AllDays),
+                beforeShowDay: self.isProperDay
 
             }).on("changeDate", function(e) {
                 var eventDay = e.date;
 
-                if (VmAction.isProperDay(eventDay)) {
-                    Vm.VmAction.onAvgDateChanged(eventDay);
+                if (self.isProperDay(eventDay)) {
+                    Vm.Listen.onAvgDateChanged(eventDay);
                 } else {
-                    var lastDay = Utils.last(Vm.AllDays);
+                    var lastDay = Utils.last(self.AllDays);
+                    self.avgDate_g = lastDay;
                     $avgPicker.datepicker("setDate", lastDay);
                 }
             });
 
-            $avgPicker.datepicker("setDate", date);
+            self.avgDate_s(date);
         },
 
-        /**
-         * @param {Date} startDate 
-         * @param {Date} endDate 
-         * @returns {void} 
-         */
-        initHistoryPickerRange: function(startDate, endDate) {
+        initHisPickers: function(fromDate, endDate) {
+            var self = this;
             var $historyPickerRange = $("#history-picker-range");
 
-            var firstDay = Utils.first(Vm.AllDays);
-            var lastDay = Utils.last(Vm.AllDays);
+            var firstDay = Utils.first(self.AllDays);
+            var lastDay = Utils.last(self.AllDays);
 
             $historyPickerRange.datepicker({
                 format: "dd-mm-yyyy",
@@ -104,55 +242,20 @@ var VmAction = WinJS.Class.define(
                 endDate: lastDay
             });
 
-            var $historyPickers = $historyPickerRange.children(".calendar-date-picker");;
-            var endDay2 = endDate <= lastDay ? endDate : lastDay;
-
-            $historyPickers.eq(0).datepicker("setDate", startDate);
-            $historyPickers.eq(1).datepicker("setDate", endDay2);
-        },
-
-        /**
-         * @returns {void} 
-         */
-        enableAll: function() {
-            $(".disableable").removeClass("disabled");
-        },
-
-        /**
-         * @returns {void} 
-         */
-        disableAll: function() {
-            $(".disableable").addClass("disabled");
-        },
-
-        /**
-         * @param {Date} date 
-         * @returns {boolean} 
-         */
-        isProperDay: function(date) {
-            if (Vm.AllDays.length !== Vm.AllDaysNumber.length) {
-                Vm.AllDaysNumber = Vm.AllDays.map(Number);
-            }
-            return Vm.AllDaysNumber.indexOf(+date) > -1;
-        },
-
-        /**
-         * @param {Progress} progress 
-         * @param {number} value 
-         * @returns {void} 
-         */
-        updateProgressBar: function(progress, value) {
-            var valuePercent = (value / progress.maxValue * 100) + "%";
-            $(".progress > .bar").css("width", valuePercent);
+            self.hisDates_s([
+                fromDate,
+                endDate <= lastDay ? endDate : lastDay
+            ]);
         }
+    },
+    {
+    
     }
 );
 
 WinJS.Namespace.define("Vm", {
-    AllDays: [],
-    AllDaysNumber: [],
-    AvgExchangeRates: new WinJS.Binding.List(),
-    VmAction: new VmAction(),
+    Listen: new VmListen(),
+    m: new VmM(),
 
     /**
      * @param {WinJS.Binding.List<T>} bindList 
