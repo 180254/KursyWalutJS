@@ -58,7 +58,6 @@ var Progress = WinJS.Class.define(
         subPercent: function(percentFrom, percentTo) {
             return new Progress(
                 this._computePercent(percentTo - percentFrom),
-                this._callback,
                 this
             );
         },
