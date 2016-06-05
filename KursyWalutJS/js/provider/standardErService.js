@@ -16,6 +16,9 @@ var StandardErService = WinJS.Class.define(
 
     },
     {
+
+        // --------------------------------------------------------------------------
+
         /**
          * @param {Progress} progress 
          * @returns {WinJS.Promise} 
@@ -56,6 +59,17 @@ var StandardErService = WinJS.Class.define(
         getAvailableDaysAsync: function(year, progress) {
             return this._erProvider.getAvailableDaysAsync(year, progress);
         },
+
+        /**
+         * @param {Date} day
+         * @param {Progress} progress 
+         * @returns {WinJS.Promise<ExchangeRate[]>} 
+         */
+        getExchangeRatesAsync: function(day, progress) {
+            return this._erProvider.getExchangeRatesAsync(day, progress);
+        },
+
+        // --------------------------------------------------------------------------
 
         /**
          * @param {Progress} progress 
@@ -120,14 +134,6 @@ var StandardErService = WinJS.Class.define(
                 });
         },
 
-        /**
-         * @param {Date} day
-         * @param {Progress} progress 
-         * @returns {WinJS.Promise<ExchangeRate[]>} 
-         */
-        getExchangeRatesAsync: function(day, progress) {
-            return this._erProvider.getExchangeRatesAsync(day, progress);
-        },
 
         /**
          * @param {Currency} currency
@@ -150,37 +156,36 @@ var StandardErService = WinJS.Class.define(
         },
 
         /**
-         * @param {Currency} currency 
          * @param {Date} startDay 
          * @param {DayDate} endDay 
          * @param {number} expectedSize 
          * @param {Progress} progress 
          * @returns {WinJS.Promise<ExchangeRate[]>} 
          */
-        getExchangeRateAvaragedHistoryAsync: function(currency, startDay, endDay, expectedSize, progress) {
-            var self = this;
+        getAvaragedDaysAsync:
+            function(startDay, endDay, expectedSize, progress) {
+                var self = this;
 
-            return self.
-                _getDaysBetweenYearsAsync(startDay.getFullYear(), endDay.getFullYear(), progress.subPercent(0.00, 0.20))
-                .then(function(availableDays) {
-                    var properDays = availableDays.filter(function(day) {
-                        return (day >= startDay) && (day <= endDay);
+                return self.
+                    _getDaysBetweenYearsAsync(startDay.getFullYear(), endDay.getFullYear(),
+                        progress.subPercent(0.00, 0.80))
+                    .then(function(availableDays) {
+                        progress.reportProgress(0.80);
+
+                        var properDays = availableDays.filter(function(day) {
+                            return (day >= startDay) && (day <= endDay);
+                        });
+
+                        progress.reportProgress(0.90);
+                        return WinJS.Promise.wrap(properDays);
+                    })
+                    .then(function(properDays) {
+                        var averagedDays = Utils.averaged(properDays, expectedSize);
+                        progress.reportProgress(1.00);
+
+                        return WinJS.Promise.wrap(averagedDays);
                     });
-
-                    return WinJS.Promise.wrap(properDays);
-                })
-                .then(function(properDays) {
-                    var averagedDays = Utils.averaged(properDays, expectedSize);
-                    return WinJS.Promise.wrap(averagedDays);
-                })
-                .then(function(averagedDays) {
-                    return self._getExchangeRatesInDaysAsync(averagedDays, currency, progress.subPercent(0.20, 1.00));
-                })
-                .then(function(erInDays) {
-                    progress.reportProgress(1.00);
-                    return WinJS.Promise.wrap(erInDays);
-                });
-        },
+            },
 
         /**
          * @param {number} startYear 
@@ -213,9 +218,10 @@ var StandardErService = WinJS.Class.define(
          * @param {Date[]} days 
          * @param {Currency} currency 
          * @param {Progress} progress 
+         * @param {ExchangeRate[]} ers
          * @returns {WinJS.Promise<ExchangeRate[]>} 
          */
-        _getExchangeRatesInDaysAsync: function(days, currency, progress) {
+        getExchangeRatesInDaysAsync: function(days, currency, ers, progress) {
             var self = this;
             var waitFor = 30;
             var waitForMax = 100;
@@ -236,7 +242,6 @@ var StandardErService = WinJS.Class.define(
                 timeStart = new Date();
             };
 
-            var results = [];
             var loop = function(iStart) {
                 var work = [];
                 var iEnd = Math.min(iStart + waitFor, days.length);
@@ -248,15 +253,16 @@ var StandardErService = WinJS.Class.define(
 
                 return WinJS.Promise.join(work)
                     .then(function(result) {
-                        results.push(result);
+                        Array.prototype.push.apply(ers, result);
+
                         logDownloadProgress(iEnd);
                         adjustWaitFor();
+
 
                         if (iEnd !== days.length) {
                             return loop(iEnd);
                         } else {
-                            var flattenResults = Utils.flatArray(results);
-                            return WinJS.Promise.wrap(flattenResults);
+                            return WinJS.Promise.wrap(ers);
                         }
                     });
             };

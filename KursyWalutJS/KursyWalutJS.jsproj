@@ -154,6 +154,8 @@
     <Content Include="images\StoreLogo.png" />
     <Content Include="images\Wide310x150Logo.scale-200.png" />
     <Content Include="js\friendly\ersrand.js" />
+    <Content Include="js\friendly\livechart.js" />
+    <Content Include="js\friendly\fancyloop.js" />
     <Content Include="js\helper\cache.js" />
     <Content Include="js\helper\progress.js" />
     <Content Include="js\helper\providerh.js" />

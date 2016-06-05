@@ -139,6 +139,37 @@ var Utils = WinJS.Class.define(
             return array[array.length - 1];
         },
 
+        /**
+         * Clone an array
+         * 
+         * @param {T[]} array 
+         * @returns {T[]} 
+         */
+        cloneArray: function(array) {
+            return array.slice();
+        },
+
+        /**
+         * Get random element from not-empty array.
+         * 
+         * @param {T[]} array 
+         * @returns {T} 
+         */
+        randomElement: function(array) {
+            return array[this.getRandomInt(0, array.length)];
+        },
+
+        /**
+         * Skip undefined values in array.
+         * 
+         * @param {T[]} array 
+         * @returns {T[]} - copy without undefined 
+         */
+        skipUndefined: function(array) {
+            return array.filter(function(element) {
+                return element !== undefined;
+            });
+        },
 
         /**
          * This functions is to ensure that data has length approximately "expected length".<br/>

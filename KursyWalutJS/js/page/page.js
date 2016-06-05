@@ -74,78 +74,42 @@ var AppGo = function() {
         console.log("onAvgListTapped.Done");
     };
 
+
     /**
-     * @param {ExchangeRate[]} ersHis 
-     * @returns {WinJS.Promise<>} 
+     * @returns {void} 
      */
-    var drawHistory = function(ersHis) {
-        var chartContainer = $("#chartcontainer");
-
-        chartContainer.ejChart({
-            title: {
-                text: "Historia waluty " + Utils.first(ersHis).currency.code,
-                font: { color: "#CCC2C2" }
-            },
-
-            primaryXAxis: {
-                font: { color: "#CCC2C2" },
-//                labelFormat: "dd-MM-yyyy"
-            },
-
-            primaryYAxis: {
-                font: { color: "#CCC2C2" },
-            },
-
-            size: {
-                width: chartContainer.width().toString(),
-                height: chartContainer.height().toString()
-            },
-
-            enableCanvasRendering: true,
-            locale: "pl-PL",
-            legend: { visible: false },
-            zooming: { enable: true },
-
-            series: [
-                {
-                    type: "line",
-                    lineJoin: "round",
-                    tooltip: { visible: true },
-
-                    dataSource: ersHis,
-                    xName: "day",
-                    yName: "averageRate"
-                }
-            ]
-        });
-
-        return WinJS.Promise.wrap(0);
-    };
-
     var onHisDrawButtonClicked = function() {
         console.log("onHisDrawButtonClicked.Start");
         Vm.m.uiEnabled_s(false);
 
+        var currency = Vm.m.HistoryCurrency;
+        var hisDates = Vm.m.hisDates_g();
+        var expectedSize = $("#chartcontainer").width() * 1.1;
+
+        var liveChart = new LiveChart(currency);
+
         using(pHelper.helper2(), function(pHelp2) {
-            var currency = Vm.m.HistoryCurrency;
-            var hisDates = Vm.m.hisDates_g();
-            var expectedSize = $("#chartcontainer").width() * 1.1;
+            pHelp2.erService.getAvaragedDaysAsync(
+                    hisDates[0], hisDates[1], expectedSize,
+                    pHelp2.progress.subPercent(0.00, 0.10))
+                .then(function(days) {
+                    liveChart.setDays(days);
+                    liveChart.start();
 
-
-            var prog = pHelp2.progress.subPercent(0.00, 0.90);
-            pHelp2.erService.getExchangeRateAvaragedHistoryAsync(
-                    currency, hisDates[0], hisDates[1], expectedSize, prog)
-                .then(function(ersHis) {
-                    return drawHistory(ersHis);
+                    return pHelp2.erService.getExchangeRatesInDaysAsync(
+                        days, currency, liveChart.Ers,
+                        pHelp2.progress.subPercent(0.10, 1.00));
                 })
                 .then(function() {
-                    return pHelp2.flushCacheAsync();
+                    liveChart.stop();
+                    return [pHelp2.flushCacheAsync(), liveChart.waitUntilStopped()];
                 })
                 .done(function() {
                     Vm.m.uiEnabled_s(true);
                     console.log("onHisDrawButtonClicked.Done");
                 }, function(e) {
                     Vm.m.uiEnabled_s(true);
+                    liveChart.stop();
                     console.log("onHisDrawButtonClicked.Fail");
                     console.log(e);
                 });
@@ -205,4 +169,4 @@ var AppGo = function() {
     };
 
     init();
-};
+};;
