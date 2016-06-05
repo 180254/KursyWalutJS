@@ -9,12 +9,12 @@ var AppGo = function() {
             observer: function(progress, value) {
                 var valuePercent = (value / progress.maxValue * 100);
                 Vm.m.progressPercent_s(valuePercent);
+                console.log("progress-"+valuePercent);
             }
         }
     );
 
     /**
-     * 
      * @param {Date} date 
      * @returns {void} 
      */
@@ -55,7 +55,13 @@ var AppGo = function() {
         });
     };
 
+    /**
+     * @param {Currency} currency 
+     * @returns {void} 
+     */
     var onAvgListTapped = function(currency) {
+        console.log("onAvgListTapped.Start");
+
         if (!Vm.m.hisPivotVisible_g()) {
             Vm.m.hisPivotVisible_s(true);
             Vm.m.progressPercent_s(100);
@@ -65,6 +71,86 @@ var AppGo = function() {
         Vm.m.HistoryCurrency = currency;
         Vm.m.pivotHeader_s(currency);
         Vm.m.currentPivot_s(1);
+
+        console.log("onAvgListTapped.Done");
+    };
+
+    /**
+     * @param {ExchangeRate[]} ersHis 
+     * @returns {WinJS.Promise<>} 
+     */
+    var drawHistory = function(ersHis) {
+        var chartContainer = $("#chartcontainer");
+
+        chartContainer.ejChart({
+            title: {
+                text: "Historia waluty " + Utils.first(ersHis).currency.code,
+                font: { color: "#CCC2C2" }
+            },
+
+            primaryXAxis: {
+                font: { color: "#CCC2C2" },
+//                labelFormat: "dd-MM-yyyy"
+            },
+
+            primaryYAxis: {
+                font: { color: "#CCC2C2" },
+            },
+
+            size: {
+                width: chartContainer.width().toString(),
+                height: chartContainer.height().toString()
+            },
+
+            enableCanvasRendering: true,
+            locale: "pl-PL",
+            legend: { visible: false },
+            zooming: { enable: true },
+
+            series: [
+                {
+                    type: "line",
+                    lineJoin: "round",
+                    tooltip: { visible: true },
+
+                    dataSource: ersHis,
+                    xName: "day",
+                    yName: "averageRate"
+                }
+            ]
+        });
+
+        return WinJS.Promise.wrap(0);
+    };
+
+    var onHisDrawButtonClicked = function() {
+        console.log("onHisDrawButtonClicked.Start");
+        Vm.m.uiEnabled_s(false);
+
+        using(pHelper.helper2(), function(pHelp2) {
+            var currency = Vm.m.HistoryCurrency;
+            var hisDates = Vm.m.hisDates_g();
+            var expectedSize = $("#chartcontainer").width() * 1.1;
+
+
+            var prog = pHelp2.progress.subPercent(0.00, 0.90);
+            pHelp2.erService.getExchangeRateAvaragedHistoryAsync(
+                    currency, hisDates[0], hisDates[1], expectedSize, prog)
+                .then(function(ersHis) {
+                    return drawHistory(ersHis);
+                })
+                .then(function() {
+                    return pHelp2.flushCacheAsync();
+                })
+                .done(function() {
+                    Vm.m.uiEnabled_s(true);
+                    console.log("onHisDrawButtonClicked.Done");
+                }, function(e) {
+                    Vm.m.uiEnabled_s(true);
+                    console.log("onHisDrawButtonClicked.Fail");
+                    console.log(e);
+                });
+        });
     };
 
     var init = function() {
@@ -92,15 +178,13 @@ var AppGo = function() {
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
-                    Vm.Listen.SaveChartClicked.push(function() {
+                    Vm.Listen.BarSaveChartClicked.push(function() {
                         console.log("SaveChartClicked");
                     });
-                    Vm.Listen.SyncAllClicked.push(function() {
+                    Vm.Listen.BarSyncAllClicked.push(function() {
                         console.log("SyncAllClicked");
                     });
-                    Vm.Listen.DrawButtonClicked.push(function () {
-                        console.log("DrawButtonClicked");
-                    });
+                    Vm.Listen.HisDrawButtonClicked.push(onHisDrawButtonClicked);
 
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);

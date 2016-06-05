@@ -11,15 +11,15 @@ var VmListen = WinJS.Class.define(
     function() {
         this.AvgListTapped = [];
         this.AvgDateChanged = [];
-        this.DrawButtonClicked = [];
-        this.SyncAllClicked = [];
-        this.SaveChartClicked = [];
+        this.HisDrawButtonClicked = [];
+        this.BarSyncAllClicked = [];
+        this.BarSaveChartClicked = [];
 
         WinJS.Utilities.markSupportedForProcessing(this.doAvgListTapped);
         WinJS.Utilities.markSupportedForProcessing(this.doAvgDateChanged);
-        WinJS.Utilities.markSupportedForProcessing(this.doDrawButtonClicked);
-        WinJS.Utilities.markSupportedForProcessing(this.doSyncAllClicked);
-        WinJS.Utilities.markSupportedForProcessing(this.doSaveChartClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doHisDrawButtonClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doBarSyncAllClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doBarSaveChartClicked);
 
     },
     {
@@ -55,22 +55,22 @@ var VmListen = WinJS.Class.define(
         /**
          * @returns {void} 
          */
-        doDrawButtonClicked: function() {
-            Vm.Listen._notifyListeners(Vm.Listen.DrawButtonClicked);
+        doHisDrawButtonClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.HisDrawButtonClicked);
         },
 
         /**
          * @returns {void} 
          */
-        doSyncAllClicked: function() {
-            Vm.Listen._notifyListeners(Vm.Listen.SyncAllClicked);
+        doBarSyncAllClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.BarSyncAllClicked);
         },
 
         /**
          * @returns {void} 
          */
-        doSaveChartClicked: function() {
-            Vm.Listen._notifyListeners(Vm.Listen.SaveChartClicked);
+        doBarSaveChartClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.BarSaveChartClicked);
         }
     },
     {
@@ -291,7 +291,7 @@ var VmM = WinJS.Class.define(
 
         initDrawButton: function() {
             $("#history-draw-button").on("click", function() {
-                Vm.Listen.doDrawButtonClicked();
+                Vm.Listen.doHisDrawButtonClicked();
             });
         }
     },

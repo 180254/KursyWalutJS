@@ -68,6 +68,8 @@
     <Content Include="bower_components\jquery\dist\jquery.min.js" />
     <Content Include="bower_components\jquery\dist\jquery.min.map" />
     <Content Include="bower_components\moment\min\moment.min.js" />
+    <Content Include="bower_components\syncfusion-javascript\Content\ejthemes\mobile\ej.mobile.all.min.css" />
+    <Content Include="bower_components\syncfusion-javascript\Scripts\i18n\ej.culture.pl-PL.min.js" />
     <Content Include="bower_components\syncfusion-javascript\Scripts\web\ej.web.all-vsdoc.js" />
     <Content Include="bower_components\syncfusion-javascript\Scripts\web\ej.web.all.min.js" />
     <Content Include="bower_components\syncfusion-javascript\Scripts\web\ej.web.all.min.map" />

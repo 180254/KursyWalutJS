@@ -24,7 +24,7 @@ var ExchangeRate = WinJS.Class.define(
          */
         toString: function() {
             return "[day: " +
-                this.day.format() +
+                moment(this.day).format("YYYY-MM-DD") +
                 ", currency" +
                 this.currency +
                 ", averageRate: " +
