@@ -11,9 +11,14 @@ var VmListen = WinJS.Class.define(
     function() {
         this.AvgListTapped = [];
         this.AvgDateChanged = [];
+        this.SyncAllClicked = [];
+        this.SaveChartClicked = [];
 
         WinJS.Utilities.markSupportedForProcessing(this.onAvgListTapped);
         WinJS.Utilities.markSupportedForProcessing(this.onAvgDateChanged);
+        WinJS.Utilities.markSupportedForProcessing(this.onSyncAllClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.onSaveChartClicked);
+
     },
     {
         /**
@@ -43,6 +48,20 @@ var VmListen = WinJS.Class.define(
         onAvgDateChanged: function(event) {
             var date = event;
             Vm.Listen._notifyListeners(Vm.Listen.AvgDateChanged, date);
+        },
+
+        /**
+         * @returns {void} 
+         */
+        onSyncAllClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.SyncAllClicked);
+        },
+
+        /**
+         * @returns {void} 
+         */
+        onSaveChartClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.SaveChartClicked);
         }
     },
     {
@@ -75,14 +94,14 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
-        avgPicker: function() {
+        _avgPicker: function() {
             return $("#avg-picker");
         },
         avgDate_g() {
-            return this.avgPicker().datepicker("getDate");
+            return this._avgPicker().datepicker("getDate");
         },
         avgDate_s(date) {
-            this.avgPicker().datepicker("setDate", date);
+            this._avgPicker().datepicker("setDate", date);
         },
 
         // ---------------------------------------------------------------------------
@@ -93,22 +112,22 @@ var VmM = WinJS.Class.define(
         },
         hisPivotVisible_s(visible) {
             var self = this;
-            if (visible) this.pivotContainer().items.push(self.HistoryPivot);
-            self.HistoryPivot = visible ? null : this.pivotContainer().items.pop();
+            if (visible) this._pivotContainer().items.push(self.HistoryPivot);
+            self.HistoryPivot = visible ? null : this._pivotContainer().items.pop();
         },
 
-        hisPickers: function() {
+        _hisPickers: function() {
             return $("#history-picker-range").children(".calendar-date-picker");
         },
         hisDates_g() {
-            var $historyPickers = this.hisPickers();
+            var $historyPickers = this._hisPickers();
             return [
                 $historyPickers.eq(0).datepicker("getDate"),
                 $historyPickers.eq(1).datepicker("getDate")
             ];
         },
         hisDates_s(dates) {
-            var $historyPickers = this.hisPickers();
+            var $historyPickers = this._hisPickers();
             if (dates[0]) $historyPickers.eq(0).datepicker("setDate", dates[0]);
             if (dates[1]) $historyPickers.eq(1).datepicker("setDate", dates[1]);
         },
@@ -125,14 +144,14 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
-        pivotHeader: function() {
+        _pivotHeader: function() {
             return $(".win-pivot-header").eq(1);
         },
         pivotHeader_g() {
-            return this.pivotHeader().text();
+            return this._pivotHeader().text();
         },
         pivotHeader_s(currency) {
-            var historyPivot = this.pivotHeader();
+            var historyPivot = this._pivotHeader();
             var oldValue = historyPivot.text();
             var newValue = oldValue.replace(/^(.*?) ?[A-Z]*?$/g, "$1 " + currency.code);
             historyPivot.text(newValue);
@@ -140,28 +159,41 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
-        pivotContainer: function() {
+        _pivotContainer: function() {
             return document.querySelector("#pivot-container").winControl;
         },
         currentPivot_g() {
-            var piCo = this.pivotContainer();
+            var piCo = this._pivotContainer();
             return piCo ? piCo.selectedIndex : undefined;
         },
         currentPivot_s(index) {
-            var piCo = this.pivotContainer();
+            var piCo = this._pivotContainer();
             if (piCo) piCo.selectedIndex = index;
         },
 
         // ---------------------------------------------------------------------------
 
-        progressBars: function() {
+        _appBar: function() {
+            return document.querySelector("#appBar").winControl;
+        },
+
+        appBarOpened_g: function() {
+            return this._appBar().opened = false;
+        },
+
+        appBarOpened_s: function(opened) {
+            return this._appBar().opened = opened;
+        },
+
+        // ---------------------------------------------------------------------------
+        _progressBars: function() {
             return $(".progress > .bar");
         },
         progressPercent_g() {
-            return this.progressBars().eq(0).css("width");
+            return this._progressBars().eq(0).css("width").slice(0, -1);
         },
         progressPercent_s(value) {
-            this.progressBars().css("width", value + "%");
+            this._progressBars().css("width", value + "%");
         },
 
         // ---------------------------------------------------------------------------
@@ -194,7 +226,7 @@ var VmM = WinJS.Class.define(
 
         initAvgPicker: function(date) {
             var self = this;
-            var $avgPicker = this.avgPicker();
+            var $avgPicker = this._avgPicker();
 
             $avgPicker.datepicker({
                 format: "dd.mm.yyyy",
