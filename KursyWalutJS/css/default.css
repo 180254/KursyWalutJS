@@ -107,6 +107,10 @@
 	color: blanchedalmond;
 }
 
+#chartcontainer {
+	height: 100%;
+	width: 100%;
+}
 
 /* ----------------------------------------------------- */
 

@@ -4,9 +4,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>KursyWalutJS</title>
-		<link href="bower_components/winjs/css/ui-dark.css" rel="stylesheet" />
+		<link href="bower_components/winjs/css/ui-dark.min.css" rel="stylesheet" />
 		<link href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" />
-        <link href="bower_components/syncfusion-javascript/Content/ejthemes/mobile/ej.mobile.all.min.css" rel="stylesheet" />
 		<link href="css/default.css" rel="stylesheet" />
 	</head>
 
@@ -19,7 +18,7 @@
                         label:'Pobierz wszystko',
                         icon:'importall',
                         section:'primary',
-                        onclick: Vm.Listen.doSyncAllClicked
+                        onclick: Vm.Listen.doBarSyncAllClicked
                      }">
 			</button>
 			<button data-win-control="WinJS.UI.AppBarCommand" class="auto-disable"
@@ -28,7 +27,7 @@
                         label:'Zapisz wykres',
                         icon:'save',
                         section:'primary',
-                        onclick: Vm.Listen.doSaveChartClicked
+                        onclick: Vm.Listen.doBarSaveChartClicked
                      }">
 			</button>
 		</div>
@@ -101,16 +100,23 @@
 		</div>
 
 		<div id="scripts">
-			<script src="bower_components/winjs/js/base.js"></script>
-			<script src="bower_components/winjs/js/ui.js"></script>
+			<script src="bower_components/winjs/js/base.min.js"></script>
+			<script src="bower_components/winjs/js/ui.min.js"></script>
+
 			<script src="bower_components/moment/min/moment.min.js"></script>
 			<script src="bower_components/jquery/dist/jquery.min.js"></script>
-			<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-			<script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
-			<script src="bower_components/syncfusion-javascript/Scripts/web/ej.web.all.min.js"></script>
+            <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+            <script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
+
+            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.core.min.js"></script>
+            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.globalize.min.js"></script>
+            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.data.min.js"></script>
+            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.scroller.min.js"></script>
+            <script src="bower_components/syncfusion-javascript/Scripts/mobile/ej.mobile.core.min.js"></script>
+            <script src="bower_components/syncfusion-javascript/Scripts/datavisualization/ej.chart.min.js"></script>
             <script src="bower_components/syncfusion-javascript/Scripts/i18n/ej.culture.pl-PL.min.js"></script>
 
-			<script src="js/model/currency.js"></script>
+            <script src="js/model/currency.js"></script>
 			<script src="js/model/exchangeRate.js"></script>
 
 			<script src="js/helper/utils.js"></script>

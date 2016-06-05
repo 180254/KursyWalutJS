@@ -9,7 +9,6 @@ var AppGo = function() {
             observer: function(progress, value) {
                 var valuePercent = (value / progress.maxValue * 100);
                 Vm.m.progressPercent_s(valuePercent);
-                console.log("progress-"+valuePercent);
             }
         }
     );
