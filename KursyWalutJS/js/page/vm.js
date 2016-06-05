@@ -144,11 +144,11 @@ var VmM = WinJS.Class.define(
         // ---------------------------------------------------------------------------
 
         uiEnabled_g() {
-            return $(".disableable").hasClass("disabled");
+            return $(".auto-disable").hasClass("disabled");
         },
         uiEnabled_s(enabled) {
-            if (enabled) $(".disableable").removeClass("disabled");
-            else $(".disableable").addClass("disabled");
+            if (enabled) $(".auto-disable").removeClass("disabled");
+            else $(".auto-disable").addClass("disabled");
         },
 
         // ---------------------------------------------------------------------------
