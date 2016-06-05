@@ -71,7 +71,7 @@ var AppGo = function() {
         console.log("init.Start");
         Vm.m.uiEnabled_s(false);
 
-        using(pHelper.helper2(), function (pHelp2) {
+        using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
                 .then(function() {
                     var prog = pHelp2.progress.subPercent(0.00, 0.60);
@@ -91,6 +91,12 @@ var AppGo = function() {
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
+                    Vm.Listen.SaveChartClicked.push(function() {
+                        console.log("SaveChartClicked");
+                    });
+                    Vm.Listen.SyncAllClicked.push(function() {
+                        console.log("SyncAllClicked");
+                    });
 
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
@@ -99,7 +105,7 @@ var AppGo = function() {
                     Vm.replace(Vm.m.AvgExchangeRates, ers);
                     return pHelp2.flushCacheAsync();
                 })
-                .done(function () {
+                .done(function() {
                     Vm.m.hisPivotVisible_s(false);
                     Vm.m.uiEnabled_s(true);
                     console.log("init.Done");
