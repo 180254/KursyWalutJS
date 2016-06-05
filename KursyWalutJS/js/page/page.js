@@ -88,6 +88,7 @@ var AppGo = function() {
                         moment().subtract(1, "year").startOf("day").toDate(),
                         moment().startOf("day").toDate()
                     );
+                    Vm.m.initDrawButton();
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
@@ -96,6 +97,9 @@ var AppGo = function() {
                     });
                     Vm.Listen.SyncAllClicked.push(function() {
                         console.log("SyncAllClicked");
+                    });
+                    Vm.Listen.DrawButtonClicked.push(function () {
+                        console.log("DrawButtonClicked");
                     });
 
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);

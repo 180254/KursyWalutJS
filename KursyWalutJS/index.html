@@ -18,7 +18,7 @@
                         label:'Pobierz wszystko',
                         icon:'importall',
                         section:'primary',
-                        onclick: Vm.Listen.onSyncAllClicked
+                        onclick: Vm.Listen.doSyncAllClicked
                      }">
 			</button>
 			<button data-win-control="WinJS.UI.AppBarCommand" class="disableable"
@@ -27,7 +27,7 @@
                         label:'Zapisz wykres',
                         icon:'save',
                         section:'primary',
-                        onclick: Vm.Listen.onSaveChartClicked
+                        onclick: Vm.Listen.doSaveChartClicked
                      }">
 			</button>
 		</div>
@@ -52,7 +52,7 @@
                             itemTemplate: select('.avg-item-template'),
                             selectionMode: 'none',
                             tapBehavior: 'invokeOnly',
-                            oniteminvoked: Vm.Listen.onAvgListTapped,
+                            oniteminvoked: Vm.Listen.doAvgListTapped,
                             layout: { type: WinJS.UI.ListLayout }
                         }">
 					</div>

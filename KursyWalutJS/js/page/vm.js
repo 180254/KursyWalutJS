@@ -11,13 +11,15 @@ var VmListen = WinJS.Class.define(
     function() {
         this.AvgListTapped = [];
         this.AvgDateChanged = [];
+        this.DrawButtonClicked = [];
         this.SyncAllClicked = [];
         this.SaveChartClicked = [];
 
-        WinJS.Utilities.markSupportedForProcessing(this.onAvgListTapped);
-        WinJS.Utilities.markSupportedForProcessing(this.onAvgDateChanged);
-        WinJS.Utilities.markSupportedForProcessing(this.onSyncAllClicked);
-        WinJS.Utilities.markSupportedForProcessing(this.onSaveChartClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doAvgListTapped);
+        WinJS.Utilities.markSupportedForProcessing(this.doAvgDateChanged);
+        WinJS.Utilities.markSupportedForProcessing(this.doDrawButtonClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doSyncAllClicked);
+        WinJS.Utilities.markSupportedForProcessing(this.doSaveChartClicked);
 
     },
     {
@@ -36,7 +38,7 @@ var VmListen = WinJS.Class.define(
          * @param {T} event 
          * @returns {void} 
          */
-        onAvgListTapped: function(event) {
+        doAvgListTapped: function(event) {
             var currency = event.detail.itemPromise._value.data.currency;
             Vm.Listen._notifyListeners(Vm.Listen.AvgListTapped, currency);
         },
@@ -45,7 +47,7 @@ var VmListen = WinJS.Class.define(
          * @param {T} event 
          * @returns {void} 
          */
-        onAvgDateChanged: function(event) {
+        doAvgDateChanged: function(event) {
             var date = event;
             Vm.Listen._notifyListeners(Vm.Listen.AvgDateChanged, date);
         },
@@ -53,14 +55,21 @@ var VmListen = WinJS.Class.define(
         /**
          * @returns {void} 
          */
-        onSyncAllClicked: function() {
+        doDrawButtonClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.DrawButtonClicked);
+        },
+
+        /**
+         * @returns {void} 
+         */
+        doSyncAllClicked: function() {
             Vm.Listen._notifyListeners(Vm.Listen.SyncAllClicked);
         },
 
         /**
          * @returns {void} 
          */
-        onSaveChartClicked: function() {
+        doSaveChartClicked: function() {
             Vm.Listen._notifyListeners(Vm.Listen.SaveChartClicked);
         }
     },
@@ -244,7 +253,7 @@ var VmM = WinJS.Class.define(
                 var eventDay = e.date;
 
                 if (self.isProperDay(eventDay)) {
-                    Vm.Listen.onAvgDateChanged(eventDay);
+                    Vm.Listen.doAvgDateChanged(eventDay);
                 } else {
                     var lastDay = Utils.last(self.AllDays);
                     self.avgDate_g = lastDay;
@@ -278,6 +287,12 @@ var VmM = WinJS.Class.define(
                 fromDate,
                 endDate <= lastDay ? endDate : lastDay
             ]);
+        },
+
+        initDrawButton: function() {
+            $("#history-draw-button").on("click", function() {
+                Vm.Listen.doDrawButtonClicked();
+            });
         }
     },
     {
