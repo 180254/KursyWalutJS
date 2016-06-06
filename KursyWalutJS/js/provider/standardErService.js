@@ -223,6 +223,11 @@ var StandardErService = WinJS.Class.define(
          */
         getExchangeRatesInDaysAsync: function(days, currency, ers, progress) {
             var self = this;
+
+            if (days.length === 0) {
+                return WinJS.Promise.wrap(ers);
+            }
+
             var waitFor = 30;
             var waitForMax = 100;
             var timePerLoopMs = 2500;

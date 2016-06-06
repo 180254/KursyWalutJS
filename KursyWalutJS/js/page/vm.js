@@ -91,6 +91,9 @@ var VmM = WinJS.Class.define(
         HistoryCurrency: null,
         HistoryPivot: null,
 
+        InitSucessfully: false,
+        HistoryDrawn: false,
+
         // ---------------------------------------------------------------------------
 
         isProperDay: function(date) {

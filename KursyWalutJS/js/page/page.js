@@ -80,12 +80,16 @@ var AppGo = function() {
      */
     var onHisDrawButtonClicked = function() {
         console.log("onHisDrawButtonClicked.Start");
-        Vm.m.uiEnabled_s(false);
 
-        var currency = Vm.m.HistoryCurrency;
         var hisDates = Vm.m.hisDates_g();
-        var expectedSize = $("#chartcontainer").width() * 1.1;
+        if (!hisDates[0] || !hisDates[1]) {
+            console.log("onHisDrawButtonClicked.Stop.hisDateEmpty");
+            return;
+        }
 
+        Vm.m.uiEnabled_s(false);
+        var currency = Vm.m.HistoryCurrency;
+        var expectedSize = $("#chartcontainer").width() * 1.1;
         var liveChart = new LiveChart(currency);
 
         using(pHelper.helper2(), function(pHelp2) {
@@ -104,8 +108,21 @@ var AppGo = function() {
                     liveChart.stop();
                     return [pHelp2.flushCacheAsync(), liveChart.waitUntilStopped()];
                 })
+                .then(function() {
+                    if (liveChart.Ers.length === 0) {
+                        LiveChart.destroy();
+                        new Windows.UI.Popups.MessageDialog(
+                                "Brak notowań kursu dla podanej waluty, w podanym okresie, w bazie NBP.")
+                            .showAsync();
+                    }
+
+                    return WinJS.Promise.wrap(0);
+                })
                 .done(function() {
+                    Vm.m.HistoryDrawn = liveChart.Ers.length > 0;
+                    Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
+
                     console.log("onHisDrawButtonClicked.Done");
                 }, function(e) {
                     Vm.m.uiEnabled_s(true);

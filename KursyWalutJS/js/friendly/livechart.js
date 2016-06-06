@@ -44,8 +44,7 @@ var LiveChart = WinJS.Class.derive(
             var chartContainer = $("#chartcontainer");
 
             // destroy previous chart instance
-            var ejDestroy = chartContainer.data("ejChart");
-            if (ejDestroy) ejDestroy.destroy();
+            LiveChart.destroy();
 
             // ers2 are currently downloaded info
             var ers2 = Utils.cloneArray(self.Ers);
@@ -131,6 +130,10 @@ var LiveChart = WinJS.Class.derive(
         }
     },
     {
-    
+        destroy: function() {
+            var chartContainer = $("#chartcontainer");
+            var ejDestroy = chartContainer.data("ejChart");
+            if (ejDestroy) ejDestroy.destroy();
+        }
     }
 );
