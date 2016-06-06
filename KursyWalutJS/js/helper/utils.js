@@ -269,6 +269,16 @@ var Utils = WinJS.Class.define(
         getElementValue: function(xml, tagName) {
             var element = this.getElement(xml, tagName);
             return element ? element.childNodes[0].nodeValue : null;
+        },
+
+        /**
+         * Show MessageDialog.
+         * 
+         * @param {String} str 
+         * @returns {void} 
+         */
+        message: function(str) {
+            new Windows.UI.Popups.MessageDialog(str).showAsync();
         }
     }
 );

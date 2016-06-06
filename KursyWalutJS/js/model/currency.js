@@ -34,6 +34,7 @@ var Currency = WinJS.Class.define(
          * @returns {boolean} 
          */
         equals: function(curr1, curr2) {
+            if (!curr1 || !curr2) return false;
             return curr1.code === curr2.code;
         },
 

@@ -61,6 +61,13 @@ var AppGo = function() {
     var onAvgListTapped = function(currency) {
         console.log("onAvgListTapped.Start");
 
+        var newCurrencySelected =
+            !Currency.equals(Vm.m.HistoryCurrency, currency) && Vm.m.HistoryPivot === null;
+        if (newCurrencySelected) {
+            LiveChart.destroy();
+            Vm.m.HistoryDrawn = false;
+        }
+
         if (!Vm.m.hisPivotVisible_g()) {
             Vm.m.hisPivotVisible_s(true);
             Vm.m.progressPercent_s(100);
@@ -111,9 +118,7 @@ var AppGo = function() {
                 .then(function() {
                     if (liveChart.Ers.length === 0) {
                         LiveChart.destroy();
-                        new Windows.UI.Popups.MessageDialog(
-                                "Brak notowań kursu dla podanej waluty, w podanym okresie, w bazie NBP.")
-                            .showAsync();
+                        Utils.message("Brak notowań kursu dla podanej waluty, w podanym okresie, w bazie NBP.");
                     }
 
                     return WinJS.Promise.wrap(0);
