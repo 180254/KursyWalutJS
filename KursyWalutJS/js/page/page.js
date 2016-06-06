@@ -219,9 +219,34 @@ var AppGo = function() {
         return true;
     };
 
+    var onBarSyncAllClicked = function() {
+        Vm.m.uiEnabled_s(false);
+        Vm.m.appBarOpened_s(false);
+
+        using(pHelper.helper2(), function(pHelp2) {
+            var prog1 = pHelp2.progress.subPercent(0.00, 0.05);
+            var prog2 = pHelp2.progress.subPercent(0.05, 1.00);
+            var count = 0;
+
+            pHelp2.erService.getAllAvailableDaysAsync(prog1)
+                .then(function(days) {
+                    count = days.length;
+                    return pHelp2.erService.getExchangeRatesInDaysAsync(days, Currency.dummyForCode("USD"), [], prog2);
+                })
+                .then(function() {
+                    return pHelp2.flushCacheAsync();
+                })
+                .done(function() {
+                    Utils.message("Cache został zsynchronizowany z bazą NBP. Wpisów w pamięci: " + count);
+                    Vm.m.uiEnabled_s(true);
+                });
+        });
+    };
+
     var preInit = function() {
         Vm.m.initRetryButton();
-    }
+    };
+
     /**
      * @returns {void} 
      */
@@ -235,7 +260,7 @@ var AppGo = function() {
             Vm.m.uiInitDone_s(true);
             init();
         });
-        
+
 
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
@@ -260,9 +285,7 @@ var AppGo = function() {
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
                     Vm.Listen.BarSaveChartClicked.push(onBarSaveChartClicked);
-                    Vm.Listen.BarSyncAllClicked.push(function() {
-                        console.log("SyncAllClicked");
-                    });
+                    Vm.Listen.BarSyncAllClicked.push(onBarSyncAllClicked);
                     Vm.Listen.HisDrawButtonClicked.push(onHisDrawButtonClicked);
                     Vm.Listen.PivotSelectionChanged.push(onPivotSelectionChanged);
 
