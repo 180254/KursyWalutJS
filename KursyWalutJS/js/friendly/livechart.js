@@ -30,14 +30,13 @@ var LiveChart = WinJS.Class.derive(
         },
 
         /**
-          * @param {Currency} currency
-          * @param {ExchangeRate[]} ers
-          * @returns {WinJS.Promise<>} 
+          * (private) Draw chart loop.
+          * @returns {void} 
           */
         _go: function() {
             var self = this;
 
-            if (!self._started && self.lastDrawnLen === self.days.length) {
+            if (!(self._started || self.lastDrawnLen !== self.days.length)) {
                 self.running = false;
                 return;
             }
@@ -58,7 +57,7 @@ var LiveChart = WinJS.Class.derive(
             }
 
             // ers21 are currently downloaded info with skipped undefined
-            // - undefined means currency doesn't exit in that day
+            // - undefined means currency doesn't exist in that day
             // ers3 are not yet downloaded dummies
             var ers21 = Utils.skipUndefined(ers2);
             var ers3 = [];
@@ -70,7 +69,7 @@ var LiveChart = WinJS.Class.derive(
                     newEr = {
                         day: self.days[i],
                         currency: self.currency,
-                        averageRate: Utils.getRandomArbitrary(1.00, 1.20)
+                        averageRate: Utils.getRandomArbitrary(1.00, 1.05)
                     };
                     ers3.push(newEr);
                 }
@@ -88,9 +87,12 @@ var LiveChart = WinJS.Class.derive(
 
             // remember state
             self.lastDrawnLen = ers2.length;
-            var loadFunc = function() { self.next(self.lastDrawnLen !== self.days.length); };
 
             // go!
+            var onLoad = function() {
+                self.next(self.lastDrawnLen !== self.days.length);
+            };
+
             chartContainer.ejChart({
                 title: { text: "Historia waluty " + this.currency.code, font: { color: "#CCC2C2" } },
                 primaryXAxis: { font: { color: "#CCC2C2" } },
@@ -124,7 +126,7 @@ var LiveChart = WinJS.Class.derive(
                     }
                 ],
 
-                load: loadFunc
+                load: onLoad
             });
         }
     },

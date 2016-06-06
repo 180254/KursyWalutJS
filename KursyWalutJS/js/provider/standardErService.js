@@ -218,7 +218,7 @@ var StandardErService = WinJS.Class.define(
          * @param {Date[]} days 
          * @param {Currency} currency 
          * @param {Progress} progress 
-         * @param {ExchangeRate[]} ers
+         * @param {ExchangeRate[]} ers - array to be filled
          * @returns {WinJS.Promise<ExchangeRate[]>} 
          */
         getExchangeRatesInDaysAsync: function(days, currency, ers, progress) {
