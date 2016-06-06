@@ -230,6 +230,9 @@ var AppGo = function() {
         Vm.m.progressPercent_s(100);
         Utils.messageDialog(msg);
 
+        Vm.m.uiAvgAjaxLoader_s(false);
+        Vm.m.uiHisAjaxLoader_s(false);
+
         if (Vm.m.InitSucessfully) {
             Vm.m.uiEnabled_s(true);
             Vm.m.allDatesRestore();
@@ -284,6 +287,8 @@ var AppGo = function() {
             init();
         });
 
+        Vm.m.uiAvgAjaxLoader_s(true);
+
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
                 .then(function() {
@@ -318,6 +323,7 @@ var AppGo = function() {
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
                 })
                 .then(function(ers) {
+                    Vm.m.uiAvgAjaxLoader_s(false);
                     Vm.replace(Vm.m.AvgExchangeRates, ers);
                     return pHelp2.flushCacheAsync();
                 })

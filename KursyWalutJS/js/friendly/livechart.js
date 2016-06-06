@@ -19,6 +19,9 @@ var LiveChart = WinJS.Class.derive(
         this.currency = currency;
         this.days = null;
         this.lastDrawnLen = 0;
+
+        LiveChart.destroy();
+        Vm.m.uiHisAjaxLoader_s(true);
     },
     {
         /**
@@ -36,15 +39,13 @@ var LiveChart = WinJS.Class.derive(
         _go: function() {
             var self = this;
 
-            if (!(self._started || self.lastDrawnLen !== self.days.length)) {
+            var finalDrawnBefore = self.lastDrawnLen === self.days.length;
+            if (!self._started && finalDrawnBefore) {
                 self.running = false;
                 return;
             }
 
             var chartContainer = $("#chartcontainer");
-
-            // destroy previous chart instance
-            LiveChart.destroy();
 
             // ers2 are currently downloaded info
             var ers2 = Utils.cloneArray(self.Ers);
@@ -62,36 +63,43 @@ var LiveChart = WinJS.Class.derive(
             var ers3 = [];
 
             // fill ers3 with dummy info
-            var i, newEr;
+            var i, startI, newEr, rate;
             if (ers21.length === 0) {
-                for (i = 0; i < self.days.length; i++) {
-                    newEr = {
-                        day: self.days[i],
-                        currency: self.currency,
-                        averageRate: Utils.getRandomArbitrary(1.00, 1.05)
-                    };
-                    ers3.push(newEr);
-                }
-                ers21.push(Utils.first(ers3));
+                rate = Utils.getRandomArbitrary(1.00, 1.05);
+                startI = 0;
             } else {
-                for (i = ers2.length; i < self.days.length; i++) {
-                    newEr = {
-                        day: self.days[i],
-                        currency: self.currency,
-                        averageRate: Utils.randomElement(ers21).averageRate,
-                    };
-                    ers3.push(newEr);
-                }
+                rate = Utils.last(ers21).averageRate;
+                startI = ers2.length;;
+            }
+
+            for (i = startI; i < self.days.length; i++) {
+                newEr = {
+                    day: self.days[i],
+                    currency: self.currency,
+                    averageRate: rate
+                };
+                ers3.push(newEr);
+            }
+
+            if (ers21.length === 0) {
+                ers21.push(Utils.first(ers3));
             }
 
             // remember state
             self.lastDrawnLen = ers2.length;
 
-            // go!
-            var onLoad = function() {
-                self.next(self.lastDrawnLen !== self.days.length);
+            // next iteration
+            var finalDrawnNow = self.lastDrawnLen === self.days.length;
+            var onDone = function() {
+                self.next(!finalDrawnNow);
             };
 
+            // destroy previous chart instance
+            LiveChart.destroy();
+            Vm.m.uiHisAjaxLoader_s(false);
+
+            // go!
+            var zoomingEnabled = finalDrawnNow;
             chartContainer.ejChart({
                 title: { text: "Historia waluty " + this.currency.code, font: { color: "#CCC2C2" } },
                 primaryXAxis: { font: { color: "#CCC2C2" } },
@@ -103,7 +111,7 @@ var LiveChart = WinJS.Class.derive(
                 enableCanvasRendering: true,
                 locale: "pl-PL",
                 legend: { visible: false },
-                zooming: { enable: false },
+                zooming: { enable: zoomingEnabled },
 
                 series: [
                     {
@@ -126,7 +134,7 @@ var LiveChart = WinJS.Class.derive(
                     }
                 ],
 
-                load: onLoad
+                create: onDone
             });
         }
     },

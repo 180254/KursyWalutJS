@@ -193,18 +193,24 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
+        _autoDisable: function() {
+            return $(".auto-disable");
+        },
         uiEnabled_g: function() {
-            return $(".auto-disable").hasClass("auto-disabled");
+            return this._autoDisable().hasClass("auto-disabled");
         },
         uiEnabled_s: function(enabled) {
-            if (enabled) $(".auto-disable").removeClass("auto-disabled");
-            else $(".auto-disable").addClass("auto-disabled");
+            if (enabled) {
+                this._autoDisable().removeClass("auto-disabled");
+            } else {
+                this._autoDisable().addClass("auto-disabled");
+            }
         },
 
         // ---------------------------------------------------------------------------
 
         uiInitDone_g: function() {
-            return $("#retry-button-container").hasClass("hidden");
+            return !$("#retry-button-container").hasClass("hidden");
 
         },
         uiInitDone_s: function(done) {
@@ -216,6 +222,39 @@ var VmM = WinJS.Class.define(
                 $("#retry-button-container").removeClass("hidden");
             }
         },
+
+        // ---------------------------------------------------------------------------
+
+        _uiAvgAjaxLoader: function() {
+            return $("#avg-ajax-loader");
+        },
+        uiAvgAjaxLoader_g: function() {
+            return !this._uiAvgAjaxLoader().hasClass("hidden");
+        },
+        uiAvgAjaxLoader_s: function(visible) {
+            if (visible) {
+                this._uiAvgAjaxLoader().removeClass("hidden");
+            } else {
+                this._uiAvgAjaxLoader().addClass("hidden");
+            }
+        },
+
+        // ---------------------------------------------------------------------------
+
+        _uiHisAjaxLoader: function() {
+            return $("#his-ajax-loader");
+        },
+        uiHisAjaxLoader_g: function() {
+            return !this._uiHisAjaxLoader().hasClass("hidden");
+        },
+        uiHisAjaxLoader_s: function(visible) {
+            if (visible) {
+                this._uiHisAjaxLoader().removeClass("hidden");
+            } else {
+                this._uiHisAjaxLoader().addClass("hidden");
+            }
+        },
+
 
         // ---------------------------------------------------------------------------
 
