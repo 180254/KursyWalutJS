@@ -89,19 +89,27 @@
 	padding-top: 5px;
 }
 
-#history-draw-button {
-	background-color: #6c4a15;
+#history-draw-button, #retry-button {
 	border: 1px groove #ece3e3;
-	color: #ece3e3;
 	font-family: Verdana, Geneva, sans-serif;
-	font-size: 0.88em;
+	font-size: 0.85em;
 	height: calc(100% - 5px);
 	margin: 3px 0 3px 0;
 	padding: 2px 5px 2px 15px;
 	width: 100%;
 }
 
-#history-draw-button:active {
+#history-draw-button {
+	background-color: #6c4a15;
+	color: #ece3e3;
+}
+
+#retry-button {
+	background-color: #993b2b;
+	color: #FFFFE0;
+}
+
+#history-draw-button:active, #retry-button:active {
 	background-color: rgba(108, 74, 21, 0.4);
 	border: 1px dashed #ece3e3;
 	color: blanchedalmond;
@@ -163,4 +171,8 @@
 .disabled, .disabled2 {
 	opacity: 0.4;
 	pointer-events: none;
+}
+
+.hidden {
+	display: none;
 }

@@ -131,11 +131,6 @@ var AppGo = function() {
                     Vm.m.uiEnabled_s(true);
 
                     console.log("onHisDrawButtonClicked.Done");
-                }, function(e) {
-                    Vm.m.uiEnabled_s(true);
-                    liveChart.stop();
-                    console.log("onHisDrawButtonClicked.Fail");
-                    console.log(e);
                 });
         });
     };
@@ -187,12 +182,60 @@ var AppGo = function() {
         });
     };
 
+    var onUnhandledException = function(event) {
+        if (Array.isArray(event.detail.error)) {
+            return true;
+        }
+
+        var errors = Array.isArray(event.detail.error.error)
+            ? event.detail.error.error
+            : [event.detail.error.error];
+
+        var ioException = errors.filter(function(err) {
+                return typeof err.asyncOpType === "string" &&
+                    err.asyncOpType.indexOf("Windows.Web.Http") > -1;
+            }).length >
+            0;
+
+        var msg = ioException
+            ? "Wystąpił problem podczas przetwarzania. " +
+            "Sprawdź dostępność połączenia internetowego. " +
+            "Być może serwis NBP nie jest osiągalny. " +
+            "Proszę spróbować później."
+            : "Wystąpił problem podczas przetwarzania. " +
+            "Proszę spróbować ponownie. " +
+            "W razie dalszych problemów przeinstaluj aplikację i/lub skontaktuj się z autorem.";
+
+        Vm.m.progressPercent_s(0.00);
+        Utils.message(msg);
+
+        if (Vm.m.InitSucessfully) {
+            Vm.m.uiEnabled_s(true);
+            Vm.m.allDatesRestore();
+        } else {
+            Vm.m.uiInitDone_s(false);
+        }
+
+        return true;
+    };
+
+    var preInit = function() {
+        Vm.m.initRetryButton();
+    }
     /**
      * @returns {void} 
      */
     var init = function() {
         console.log("init.Start");
         Vm.m.uiEnabled_s(false);
+
+        Vm.Listen.reset();
+        WinJS.Application.onerror = onUnhandledException;
+        Vm.Listen.RetryButtonClicked.push(function() {
+            Vm.m.uiInitDone_s(true);
+            init();
+        });
+        
 
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
@@ -237,13 +280,10 @@ var AppGo = function() {
                     Vm.m.hisPivotVisible_s(false);
                     Vm.m.uiEnabled_s(true);
                     console.log("init.Done");
-                }, function(e) {
-                    Vm.m.uiEnabled_s(true);
-                    console.log("init.Fail");
-                    console.log(e);
                 });
         });
     };
 
+    preInit();
     init();
 };;

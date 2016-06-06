@@ -9,13 +9,9 @@ var VmListen = WinJS.Class.define(
      * @returns {VmAction} 
      */
     function() {
-        this.AvgListTapped = [];
-        this.AvgDateChanged = [];
-        this.HisDrawButtonClicked = [];
-        this.BarSyncAllClicked = [];
-        this.BarSaveChartClicked = [];
-        this.PivotSelectionChanged = [];
+        this.reset();
 
+        WinJS.Utilities.markSupportedForProcessing(this.doRetryButtonClicked);
         WinJS.Utilities.markSupportedForProcessing(this.doAvgListTapped);
         WinJS.Utilities.markSupportedForProcessing(this.doAvgDateChanged);
         WinJS.Utilities.markSupportedForProcessing(this.doHisDrawButtonClicked);
@@ -24,6 +20,16 @@ var VmListen = WinJS.Class.define(
         WinJS.Utilities.markSupportedForProcessing(this.doPivotSelectionChanged);
     },
     {
+        reset: function() {
+            this.RetryButtonClicked = [];
+            this.AvgListTapped = [];
+            this.AvgDateChanged = [];
+            this.HisDrawButtonClicked = [];
+            this.BarSyncAllClicked = [];
+            this.BarSaveChartClicked = [];
+            this.PivotSelectionChanged = [];
+        },
+
         /**
          * @param {function(T)[]} listeners 
          * @param {T} event 
@@ -33,6 +39,13 @@ var VmListen = WinJS.Class.define(
             listeners.forEach(function(listener) {
                 listener(event);
             });
+        },
+
+        /**
+         * @returns {void} 
+         */
+        doRetryButtonClicked: function() {
+            Vm.Listen._notifyListeners(Vm.Listen.RetryButtonClicked);
         },
 
         /**
@@ -118,10 +131,10 @@ var VmM = WinJS.Class.define(
         _avgPicker: function() {
             return $("#avg-picker");
         },
-        avgDate_g() {
+        avgDate_g: function() {
             return this._avgPicker().datepicker("getDate");
         },
-        avgDate_s(date) {
+        avgDate_s: function(date) {
             this._avgPicker().datepicker("setDate", date);
         },
 
@@ -140,14 +153,14 @@ var VmM = WinJS.Class.define(
         _hisPickers: function() {
             return $("#history-picker-range").children(".calendar-date-picker");
         },
-        hisDates_g() {
+        hisDates_g: function() {
             var $historyPickers = this._hisPickers();
             return [
                 $historyPickers.eq(0).datepicker("getDate"),
                 $historyPickers.eq(1).datepicker("getDate")
             ];
         },
-        hisDates_s(dates) {
+        hisDates_s: function(dates) {
             var $historyPickers = this._hisPickers();
             if (dates[0]) $historyPickers.eq(0).datepicker("setDate", dates[0]);
             if (dates[1]) $historyPickers.eq(1).datepicker("setDate", dates[1]);
@@ -155,12 +168,28 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
-        uiEnabled_g() {
+        uiEnabled_g: function() {
             return $(".auto-disable").hasClass("disabled");
         },
-        uiEnabled_s(enabled) {
+        uiEnabled_s: function(enabled) {
             if (enabled) $(".auto-disable").removeClass("disabled");
             else $(".auto-disable").addClass("disabled");
+        },
+
+        // ---------------------------------------------------------------------------
+
+        uiInitDone_g: function() {
+            return $("#retry-button-container").hasClass("hidden");
+
+        },
+        uiInitDone_s: function(done) {
+            if (done) {
+                $("#avg-picker-container").removeClass("hidden");
+                $("#retry-button-container").addClass("hidden");
+            } else {
+                $("#avg-picker-container").addClass("hidden");
+                $("#retry-button-container").removeClass("hidden");
+            }
         },
 
         // ---------------------------------------------------------------------------
@@ -168,10 +197,10 @@ var VmM = WinJS.Class.define(
         _pivotHeader: function() {
             return $(".win-pivot-header").eq(1);
         },
-        pivotHeader_g() {
+        pivotHeader_g: function() {
             return this._pivotHeader().text();
         },
-        pivotHeader_s(currency) {
+        pivotHeader_s: function(currency) {
             var historyPivot = this._pivotHeader();
             var oldValue = historyPivot.text();
             var newValue = oldValue.replace(/^(.*?) ?[A-Z]*?$/g, "$1 " + currency.code);
@@ -183,11 +212,11 @@ var VmM = WinJS.Class.define(
         _pivotContainer: function() {
             return document.querySelector("#pivot-container").winControl;
         },
-        currentPivot_g() {
+        currentPivot_g: function() {
             var piCo = this._pivotContainer();
             return piCo ? piCo.selectedIndex : undefined;
         },
-        currentPivot_s(index) {
+        currentPivot_s: function(index) {
             var piCo = this._pivotContainer();
             if (piCo) piCo.selectedIndex = index;
         },
@@ -229,10 +258,10 @@ var VmM = WinJS.Class.define(
         _progressBars: function() {
             return $(".progress > .bar");
         },
-        progressPercent_g() {
+        progressPercent_g: function() {
             return this._progressBars().eq(0).css("width").slice(0, -1);
         },
-        progressPercent_s(value) {
+        progressPercent_s: function(value) {
             this._progressBars().css("width", value + "%");
         },
 
@@ -332,6 +361,10 @@ var VmM = WinJS.Class.define(
         },
 
         // ---------------------------------------------------------------------------
+
+        initRetryButton: function() {
+            $("#retry-button").on("click", Vm.Listen.doRetryButtonClicked);
+        },
 
         initOtherEvents: function() {
             // ReSharper disable once Html.EventNotResolved

@@ -1,142 +1,146 @@
 ﻿<!doctype html>
 <html>
 
-	<head>
-		<meta charset="utf-8" />
-		<title>KursyWalutJS</title>
-		<link href="bower_components/winjs/css/ui-dark.min.css" rel="stylesheet" />
-		<link href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" />
-		<link href="css/default.css" rel="stylesheet" />
-	</head>
+<head>
+    <meta charset="utf-8" />
+    <title>KursyWalutJS</title>
+    <link href="bower_components/winjs/css/ui-dark.min.css" rel="stylesheet" />
+    <link href="bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.standalone.min.css" rel="stylesheet" />
+    <link href="css/default.css" rel="stylesheet" />
+</head>
 
-	<body class="win-type-body">
+<body class="win-type-body">
 
-        <div id="appBar" data-win-control="WinJS.UI.AppBar" data-win-options="{placement:'bottom', closedDisplayMode:'minimal'}">
-			<button data-win-control="WinJS.UI.AppBarCommand" class="auto-disable"
-			        data-win-options="{
+    <div id="appBar" data-win-control="WinJS.UI.AppBar" data-win-options="{placement:'bottom', closedDisplayMode:'minimal'}">
+        <button data-win-control="WinJS.UI.AppBarCommand" class="auto-disable"
+            data-win-options="{
                         id:'syncAll',
                         label:'Pobierz wszystko',
                         icon:'importall',
                         section:'primary',
                         onclick: Vm.Listen.doBarSyncAllClicked
                      }">
-			</button>
-			<button data-win-control="WinJS.UI.AppBarCommand" class="auto-disable disabled2"
-			        data-win-options="{
+        </button>
+        <button data-win-control="WinJS.UI.AppBarCommand" class="auto-disable disabled2"
+            data-win-options="{
                         id:'saveChart',
                         label:'Zapisz wykres',
                         icon:'save',
                         section:'primary',
                         onclick: Vm.Listen.doBarSaveChartClicked
                      }">
-			</button>
-		</div>
+        </button>
+    </div>
 
-		<div class="avg-item-template" data-win-control="WinJS.Binding.Template" style="display: none">
-			<div class="avg-item">
-				<span class="col-1">
+    <div class="avg-item-template" data-win-control="WinJS.Binding.Template" style="display: none">
+        <div class="avg-item">
+            <span class="col-1">
                 <img src="#" alt="#" data-win-bind="src: currency Converters.getFlagPath" />
             </span>
-				<span class="col-2" data-win-bind="textContent: currency.code"></span>
-				<span class="col-3" data-win-bind="textContent: averageRate Converters.getNumberFixed4"></span>
-			</div>
-		</div>
+            <span class="col-2" data-win-bind="textContent: currency.code"></span>
+            <span class="col-3" data-win-bind="textContent: averageRate Converters.getNumberFixed4"></span>
+        </div>
+    </div>
 
-		<div id="pivot-container" data-win-control="WinJS.UI.Pivot" data-win-options="{ selectedIndex: 0 }">
+    <div id="pivot-container" data-win-control="WinJS.UI.Pivot" data-win-options="{ selectedIndex: 0 }">
 
-			<div id="avg-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Średnie kursy' }">
-				<div class="row-1">
-					<div id="avg-list" class="auto-disable" data-win-control="WinJS.UI.ListView"
-					     data-win-options="{
-                            itemDataSource: Vm.m.AvgExchangeRates.dataSource,
-                            itemTemplate: select('.avg-item-template'),
-                            selectionMode: 'none',
-                            tapBehavior: 'invokeOnly',
-                            oniteminvoked: Vm.Listen.doAvgListTapped,
-                            layout: { type: WinJS.UI.ListLayout }
-                        }">
-					</div>
-				</div>
+        <div id="avg-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Średnie kursy' }">
+            <div class="row-1">
+                <div id="avg-list" class="auto-disable" data-win-control="WinJS.UI.ListView"
+                    data-win-options="{
+                              itemDataSource: Vm.m.AvgExchangeRates.dataSource,
+                              itemTemplate: select('.avg-item-template'),
+                              selectionMode: 'none',
+                              tapBehavior: 'invokeOnly',
+                              oniteminvoked: Vm.Listen.doAvgListTapped,
+                              layout: { type: WinJS.UI.ListLayout }
+                          }">
+                </div>
+            </div>
 
-				<div class="row-2">
-					<input type="text" id="avg-picker" class="calendar-date-picker auto-disable" readonly="readonly" />
-				</div>
+            <div class="row-2" id="avg-picker-container">
+                <input type="text" id="avg-picker" class="calendar-date-picker auto-disable" readonly="readonly" />
+            </div>
 
-				<div class="row-3">
-					<div class="progress">
-						<div class="bar" style="width: 0%;"></div>
-					</div>
-				</div>
-			</div>
+            <div class="row-2 hidden" id="retry-button-container">
+                <button id="retry-button">Ponów wczytywanie</button>
+            </div>
 
-			<div id="history-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Historia kursu' }">
-				<div class="row-1">
-					<div id="chartcontainer"></div>
-				</div>
+            <div class="row-3">
+                <div class="progress">
+                    <div class="bar" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
 
-				<div class="row-2">
-					<div id="history-picker-range" class="input-daterange">
-						<input id="history-picker-start" name="history-picker-start"
-						       type="text" class="calendar-date-picker auto-disable" readonly="readonly" />
+        <div id="history-pivot" class="pivot-item" data-win-control="WinJS.UI.PivotItem" data-win-options="{ 'header': 'Historia kursu' }">
+            <div class="row-1">
+                <div id="chartcontainer"></div>
+            </div>
 
-						<span id="history-picker-addon">do</span>
+            <div class="row-2">
+                <div id="history-picker-range" class="input-daterange">
+                    <input id="history-picker-start" name="history-picker-start"
+                        type="text" class="calendar-date-picker auto-disable" readonly="readonly" />
 
-						<input id="history-picker-end" name="history-picker-end"
-						       type="text" class="calendar-date-picker auto-disable"readonly="readonly" />
-					</div>
-				</div>
+                    <span id="history-picker-addon" class="auto-closeable">do</span>
 
-				<div class="row-3">
-					<button id="history-draw-button" class="auto-disable">Rysuj historię</button>
-				</div>
+                    <input id="history-picker-end" name="history-picker-end"
+                        type="text" class="calendar-date-picker auto-disable" readonly="readonly" />
+                </div>
+            </div>
 
-				<div class="row-4">
-					<div class="progress">
-						<div class="bar" style="width: 0%;"></div>
-					</div>
-				</div>
-			</div>
+            <div class="row-3">
+                <button id="history-draw-button" class="auto-disable">Rysuj historię</button>
+            </div>
 
-		</div>
+            <div class="row-4">
+                <div class="progress">
+                    <div class="bar" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
 
-		<div id="scripts">
-			<script src="bower_components/winjs/js/base.min.js"></script>
-			<script src="bower_components/winjs/js/ui.min.js"></script>
+    </div>
 
-			<script src="bower_components/moment/min/moment.min.js"></script>
-			<script src="bower_components/jquery/dist/jquery.min.js"></script>
-            <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-            <script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
+    <div id="scripts">
+        <script src="bower_components/winjs/js/base.min.js"></script>
+        <script src="bower_components/winjs/js/ui.min.js"></script>
 
-            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.core.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.globalize.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.data.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/common/ej.scroller.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/mobile/ej.mobile.core.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/datavisualization/ej.chart.min.js"></script>
-            <script src="bower_components/syncfusion-javascript/Scripts/i18n/ej.culture.pl-PL.min.js"></script>
+        <script src="bower_components/moment/min/moment.min.js"></script>
+        <script src="bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pl.min.js"></script>
 
-            <script src="js/model/currency.js"></script>
-			<script src="js/model/exchangeRate.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/common/ej.core.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/common/ej.globalize.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/common/ej.data.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/common/ej.scroller.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/mobile/ej.mobile.core.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/datavisualization/ej.chart.min.js"></script>
+        <script src="bower_components/syncfusion-javascript/Scripts/i18n/ej.culture.pl-PL.min.js"></script>
 
-			<script src="js/helper/utils.js"></script>
-			<script src="js/helper/progress.js"></script>
-			<script src="js/helper/cache.js"></script>
-			<script src="js/helper/providerh.js"></script>
+        <script src="js/model/currency.js"></script>
+        <script src="js/model/exchangeRate.js"></script>
 
-			<script src="js/provider/nbpErExtractor.js"></script>
-			<script src="js/provider/nbpErProvider.js"></script>
-			<script src="js/provider/cacheErProvider.js"></script>
-			<script src="js/provider/standardErService.js"></script>
+        <script src="js/helper/utils.js"></script>
+        <script src="js/helper/progress.js"></script>
+        <script src="js/helper/cache.js"></script>
+        <script src="js/helper/providerh.js"></script>
 
-            <script src="js/friendly/fancyloop.js"></script>
-			<script src="js/friendly/ersrand.js"></script>
-            <script src="js/friendly/livechart.js"></script>
+        <script src="js/provider/nbpErExtractor.js"></script>
+        <script src="js/provider/nbpErProvider.js"></script>
+        <script src="js/provider/cacheErProvider.js"></script>
+        <script src="js/provider/standardErService.js"></script>
 
-			<script src="js/page/vm.js"></script>
-			<script src="js/page/page.js"></script>
-			<script src="js/main.js"></script>
-		</div>
-	</body>
+        <script src="js/friendly/fancyloop.js"></script>
+        <script src="js/friendly/ersrand.js"></script>
+        <script src="js/friendly/livechart.js"></script>
+
+        <script src="js/page/vm.js"></script>
+        <script src="js/page/page.js"></script>
+        <script src="js/main.js"></script>
+    </div>
+</body>
 
 </html>
