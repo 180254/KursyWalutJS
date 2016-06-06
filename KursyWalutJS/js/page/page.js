@@ -125,6 +125,7 @@ var AppGo = function() {
                 })
                 .done(function() {
                     Vm.m.HistoryDrawn = liveChart.Ers.length > 0;
+                    Vm.m.hisSaveEnabled_s(Vm.m.HistoryDrawn);
                     Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
 
@@ -136,6 +137,19 @@ var AppGo = function() {
                     console.log(e);
                 });
         });
+    };
+
+    /**
+     * @returns {void} 
+     */
+    var onPivotSelectionChanged = function(selectedIndex) {
+        var hisPivotSelected = selectedIndex === 1;
+        var hisSaveEnabled = hisPivotSelected && Vm.m.HistoryDrawn;
+        Vm.m.hisSaveEnabled_s(hisSaveEnabled);
+
+        if (Vm.m.DatesBackup[0]) {
+            Vm.m.allDatesRestore();
+        }
     };
 
     var init = function() {
@@ -160,6 +174,7 @@ var AppGo = function() {
                         moment().startOf("day").toDate()
                     );
                     Vm.m.initDrawButton();
+                    Vm.m.initOtherEvents();
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
@@ -170,7 +185,7 @@ var AppGo = function() {
                         console.log("SyncAllClicked");
                     });
                     Vm.Listen.HisDrawButtonClicked.push(onHisDrawButtonClicked);
-
+                    Vm.Listen.PivotSelectionChanged.push(onPivotSelectionChanged);
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
                 })

@@ -160,7 +160,7 @@
 
 /* ----------------------------------------------------- */
 
-.disabled {
+.disabled, .disabled2 {
 	opacity: 0.4;
 	pointer-events: none;
 }

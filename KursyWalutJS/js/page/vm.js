@@ -14,13 +14,14 @@ var VmListen = WinJS.Class.define(
         this.HisDrawButtonClicked = [];
         this.BarSyncAllClicked = [];
         this.BarSaveChartClicked = [];
+        this.PivotSelectionChanged = [];
 
         WinJS.Utilities.markSupportedForProcessing(this.doAvgListTapped);
         WinJS.Utilities.markSupportedForProcessing(this.doAvgDateChanged);
         WinJS.Utilities.markSupportedForProcessing(this.doHisDrawButtonClicked);
         WinJS.Utilities.markSupportedForProcessing(this.doBarSyncAllClicked);
         WinJS.Utilities.markSupportedForProcessing(this.doBarSaveChartClicked);
-
+        WinJS.Utilities.markSupportedForProcessing(this.doPivotSelectionChanged);
     },
     {
         /**
@@ -71,6 +72,14 @@ var VmListen = WinJS.Class.define(
          */
         doBarSaveChartClicked: function() {
             Vm.Listen._notifyListeners(Vm.Listen.BarSaveChartClicked);
+        },
+
+        /**
+         * @param {T} event
+         * @returns {void} 
+         */
+        doPivotSelectionChanged: function(event) {
+            Vm.Listen._notifyListeners(Vm.Listen.PivotSelectionChanged, event.detail.index);
         }
     },
     {
@@ -185,6 +194,24 @@ var VmM = WinJS.Class.define(
 
         // ---------------------------------------------------------------------------
 
+        _hisSaveButton: function() {
+            return $("#saveChart");
+        },
+
+        hisSaveEnabled_g: function() {
+            return this._hisSaveButton().hasClass("disabled2");
+        },
+
+        hisSaveEnabled_s: function(enabled) {
+            if (enabled) {
+                this._hisSaveButton().removeClass("disabled2");
+            } else {
+                this._hisSaveButton().addClass("disabled2");
+            }
+        },
+
+        // ---------------------------------------------------------------------------
+
         _appBar: function() {
             return document.querySelector("#appBar").winControl;
         },
@@ -198,6 +225,7 @@ var VmM = WinJS.Class.define(
         },
 
         // ---------------------------------------------------------------------------
+
         _progressBars: function() {
             return $(".progress > .bar");
         },
@@ -296,6 +324,14 @@ var VmM = WinJS.Class.define(
             $("#history-draw-button").on("click", function() {
                 Vm.Listen.doHisDrawButtonClicked();
             });
+        },
+
+        // ---------------------------------------------------------------------------
+
+        initOtherEvents: function() {
+            // ReSharper disable once Html.EventNotResolved
+            this._pivotContainer().addEventListener(
+                "selectionchanged", Vm.Listen.doPivotSelectionChanged);
         }
     },
     {
