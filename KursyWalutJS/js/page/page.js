@@ -153,6 +153,43 @@ var AppGo = function() {
         }
     };
 
+    /**
+     * @returns {void} 
+     */
+    var onBarSaveChartClicked = function() {
+        var hisDates = Vm.m.hisDates_g();
+
+        var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+        savePicker.suggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.picturesLibrary;
+        savePicker.fileTypeChoices.insert("PNG", [".png"]);
+        savePicker.suggestedFileName =
+            Vm.m.HistoryCurrency.code +
+            "_" +
+            moment(hisDates[0]).format("YYYYMMDD") +
+            "_" +
+            moment(hisDates[1]).format("YYYYMMDD");
+
+        savePicker.pickSaveFileAsync().then(function(file) {
+            if (!file) return;
+            var png = LiveChart.toPNGbytes();
+
+            Windows.Storage.CachedFileManager.deferUpdates(file);
+            Windows.Storage.FileIO.writeBytesAsync(file, png)
+                .done(function() {
+                    Windows.Storage.CachedFileManager.completeUpdatesAsync(file)
+                        .done(function(updateStatus) {
+                            if (updateStatus === Windows.Storage.Provider.FileUpdateStatus.complete) {
+                                Utils.message("Zapisano wykres");
+                            }
+                        });
+                });
+
+        });
+    };
+
+    /**
+     * @returns {void} 
+     */
     var init = function() {
         console.log("init.Start");
         Vm.m.uiEnabled_s(false);
@@ -179,9 +216,7 @@ var AppGo = function() {
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
-                    Vm.Listen.BarSaveChartClicked.push(function() {
-                        console.log("SaveChartClicked");
-                    });
+                    Vm.Listen.BarSaveChartClicked.push(onBarSaveChartClicked);
                     Vm.Listen.BarSyncAllClicked.push(function() {
                         console.log("SyncAllClicked");
                     });

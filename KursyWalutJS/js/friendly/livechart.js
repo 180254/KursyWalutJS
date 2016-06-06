@@ -97,6 +97,7 @@ var LiveChart = WinJS.Class.derive(
                 primaryXAxis: { font: { color: "#CCC2C2" } },
                 primaryYAxis: { font: { color: "#CCC2C2" } },
                 size: { width: chartContainer.width().toString(), height: chartContainer.height().toString() },
+                exporting: { type: "png", mode: "client", fileName: "x" },
 
                 isResponsive: true,
                 enableCanvasRendering: true,
@@ -134,6 +135,20 @@ var LiveChart = WinJS.Class.derive(
             var chartContainer = $("#chartcontainer");
             var ejDestroy = chartContainer.data("ejChart");
             if (ejDestroy) ejDestroy.destroy();
+        },
+
+        toPNGbytes: function() {
+            var base64 = $("#chartcontainer").ejChart("export").toDataURL("image/png").substr(22);
+
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+
+            var array = new Uint8Array(new ArrayBuffer(rawLength));
+            for (var i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+
+            return array;
         }
     }
 );
