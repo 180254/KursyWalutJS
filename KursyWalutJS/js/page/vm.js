@@ -282,7 +282,15 @@ var VmM = WinJS.Class.define(
         },
         currentPivot_s: function(index) {
             var piCo = this._pivotContainer();
-            if (piCo) piCo.selectedIndex = index;
+            if (piCo) {
+                return new WinJS.Promise(function(complete) {
+                    piCo.onitemanimationend = function () {
+                        complete();
+                        piCo.onitemanimationend = null;
+                    };
+                    piCo.selectedIndex = index;
+                });
+            }
         },
 
         // ---------------------------------------------------------------------------

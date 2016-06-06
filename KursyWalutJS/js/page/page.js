@@ -6,6 +6,9 @@ var AppGo = function() {
     var erRandomizer = null;
     var liveChart = null;
 
+    var applicationData = Windows.Storage.ApplicationData.current;
+    var localSettings = applicationData.localSettings;
+
     var pHelper = new ProviderHelper(
         new InMemCache(), {
             max: 10000,
@@ -202,6 +205,42 @@ var AppGo = function() {
         });
     };
 
+    /**
+     * @returns {void} 
+     */
+    var onBarSyncAllClicked = function() {
+        var sw = debug.start("onBarSyncAllClicked");
+        Vm.m.uiEnabled_s(false);
+        Vm.m.appBarOpened_s(false);
+
+        using(pHelper.helper2(), function(pHelp2) {
+            var prog1 = pHelp2.progress.subPercent(0.00, 0.05);
+            var prog2 = pHelp2.progress.subPercent(0.05, 1.00);
+            var count = 0;
+
+            pHelp2.erService.getAllAvailableDaysAsync(prog1)
+                .then(function(days) {
+                    count = days.length;
+
+                    return pHelp2.erService.getExchangeRatesInDaysAsync(
+                        days, Currency.dummyForCode("USD"), [], prog2);
+                })
+                .then(function() {
+                    return pHelp2.flushCacheAsync();
+                })
+                .done(function() {
+                    Utils.messageDialog("Cache został zsynchronizowany z bazą NBP. Wpisów w pamięci: " + count);
+                    Vm.m.uiEnabled_s(true);
+
+                    debug.elapsed("onBarSyncAllClicked", sw);
+                });
+        });
+    };
+
+    /**
+     * @param {Event<WinJS.Application.onerror>} event 
+     * @returns {void} 
+     */
     var onUnhandledException = function(event) {
         if (typeof event.detail.error.preventDefault !== "function") {
             return true;
@@ -244,33 +283,19 @@ var AppGo = function() {
         return true;
     };
 
-    var onBarSyncAllClicked = function() {
-        var sw = debug.start("onBarSyncAllClicked");
-        Vm.m.uiEnabled_s(false);
-        Vm.m.appBarOpened_s(false);
+    var onSuspending = function() {
+        var sw = debug.start("onSuspending");
+        var hisDates = Vm.m.hisDates_g();
 
-        using(pHelper.helper2(), function(pHelp2) {
-            var prog1 = pHelp2.progress.subPercent(0.00, 0.05);
-            var prog2 = pHelp2.progress.subPercent(0.05, 1.00);
-            var count = 0;
+        localSettings.values["currentPivot"] = Vm.m.currentPivot_g();
+        localSettings.values["avgDate"] = Vm.m.avgDate_g().valueOf();
+        localSettings.values["hisPivot"] = Vm.m.HistoryPivot === null;
+        localSettings.values["hisCurrency"] = Vm.m.HistoryCurrency ? Vm.m.HistoryCurrency.code : null;
+        localSettings.values["hisDrawn"] = Vm.m.HistoryDrawn;
+        localSettings.values["hisDates[0]"] = hisDates[0] ? hisDates[0].valueOf() : null;
+        localSettings.values["hisDates[1]"] = hisDates[1] ? hisDates[1].valueOf() : null;
 
-            pHelp2.erService.getAllAvailableDaysAsync(prog1)
-                .then(function(days) {
-                    count = days.length;
-
-                    return pHelp2.erService.getExchangeRatesInDaysAsync(
-                        days, Currency.dummyForCode("USD"), [], prog2);
-                })
-                .then(function() {
-                    return pHelp2.flushCacheAsync();
-                })
-                .done(function() {
-                    Utils.messageDialog("Cache został zsynchronizowany z bazą NBP. Wpisów w pamięci: " + count);
-                    Vm.m.uiEnabled_s(true);
-
-                    debug.elapsed("onBarSyncAllClicked", sw);
-                });
-        });
+        debug.elapsed("onSuspending", sw);
     };
 
     /**
@@ -288,24 +313,39 @@ var AppGo = function() {
         });
 
         Vm.m.uiAvgAjaxLoader_s(true);
+        Vm.m.uiHisAjaxLoader_s(true);
 
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
                 .then(function() {
-                    var prog = pHelp2.progress.subPercent(0.00, 0.60);
+                    var prog = pHelp2.progress.subPercent(0.00, 0.30);
                     return pHelp2.erService.getAllAvailableDaysAsync(prog);
                 })
                 .then(function(allDays) {
                     Vm.m.AllDays = allDays;
-                    var initDate = Utils.last(allDays);
+                    var initDate = localSettings.values["avgDate"]
+                        ? new Date(localSettings.values["avgDate"])
+                        : Utils.last(allDays);
 
                     Vm.m.initAvgPicker(
                         initDate
                     );
+
                     Vm.m.initHisPickers(
-                        moment().subtract(1, "year").startOf("day").toDate(),
-                        moment().startOf("day").toDate()
+                        localSettings.values["hisDates[0]"]
+                        ? new Date( localSettings.values["hisDates[0]"] )
+                        : moment().subtract(1, "year").startOf("day").toDate(),
+                        //
+                        localSettings.values["hisDates[1]"]
+                        ? new Date( localSettings.values["hisDates[1]"] )
+                        : moment().startOf("day").toDate()
                     );
+
+                    if (localSettings.values["hisCurrency"]) {
+                        Vm.m.HistoryCurrency = Currency.dummyForCode(localSettings.values["hisCurrency"]);
+                        Vm.m.pivotHeader_s(Vm.m.HistoryCurrency);
+                    }
+
                     Vm.m.initDrawButton();
                     Vm.m.initPivotSelectionChange();
 
@@ -319,22 +359,72 @@ var AppGo = function() {
                     Vm.m.allDatesBackup();
                     Vm.m.InitSucessfully = true;
 
-                    var prog = pHelp2.progress.subPercent(0.60, 1.00);
-                    return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
+                    var prog1 = localSettings.values["hisDrawn"]
+                        ? pHelp2.progress.subPercent(0.30, 0.70)
+                        : pHelp2.progress.subPercent(0.30, 1.00);
+                    return pHelp2.erService.getExchangeRatesAsync(initDate, prog1);
                 })
                 .then(function(ers) {
                     Vm.m.uiAvgAjaxLoader_s(false);
                     Vm.replace(Vm.m.AvgExchangeRates, ers);
+
+                    if (localSettings.values["hisDrawn"]) {
+                        Vm.m.HistoryDrawn = localSettings.values["hisDrawn"];
+
+                        var hisDates = Vm.m.hisDates_g();
+                        var currency = Vm.m.HistoryCurrency;
+                        var expectedSize = $("#chartcontainer").width() * 1.1;
+
+                        return Vm.m.currentPivot_s(1)
+                            .then(function() {
+                                return pHelp2.erService.getAvaragedDaysAsync(
+                                    hisDates[0], hisDates[1], expectedSize,
+                                    pHelp2.progress.subPercent(0.70, 0.85));
+                            })
+                            .then(function(days) {
+                                return pHelp2.erService.getExchangeRatesInDaysAsync(
+                                    days, currency, [],
+                                    pHelp2.progress.subPercent(0.85, 1.00));
+                            });
+                    } else {
+                        return WinJS.Promise.wrap(0);
+                    }
+
+                })
+                .then(function(ers) {
+                    Vm.m.uiHisAjaxLoader_s(false);
+
+                    if (localSettings.values["hisDrawn"]) {
+                        return new WinJS.Promise(function(complete) {
+                            LiveChart.draw(Vm.m.HistoryCurrency, ers, [], true, function() {
+                                complete();
+                            });
+                        });
+                    } else {
+                        return WinJS.Promise.wrap(0);
+                    }
+                })
+                .then(function() {
+                    if (typeof localSettings.values["currentPivot"] == "number" &&
+                        Vm.m.currentPivot_g() !== localSettings.values["currentPivot"]) {
+                        return Vm.m.currentPivot_s(localSettings.values["currentPivot"]);
+                    } else {
+                        return WinJS.Promise.wrap(0);
+                    }
+                }).then(function() {
+                    if (!localSettings.values["hisPivot"]) {
+                        Vm.m.hisPivotVisible_s(false);
+                    }
                     return pHelp2.flushCacheAsync();
                 })
                 .done(function() {
-                    Vm.m.hisPivotVisible_s(false);
                     Vm.m.uiEnabled_s(true);
                     debug.elapsed("init", sw);
                 });
         });
     };
 
+    WinJS.Application.oncheckpoint = onSuspending;
     WinJS.Application.onerror = onUnhandledException;
     init();
 };;

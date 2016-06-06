@@ -100,8 +100,14 @@ var LiveChart = WinJS.Class.derive(
 
             // go!
             var zoomingEnabled = finalDrawnNow;
+            LiveChart.draw(this.currency, ers21, ers3, zoomingEnabled, onDone);
+        }
+    },
+    {
+        draw: function(currency, series1, series2, zooming, ondone) {
+            var chartContainer = $("#chartcontainer");
             chartContainer.ejChart({
-                title: { text: "Historia waluty " + this.currency.code, font: { color: "#CCC2C2" } },
+                title: { text: "Historia waluty " + currency.code, font: { color: "#CCC2C2" } },
                 primaryXAxis: { font: { color: "#CCC2C2" } },
                 primaryYAxis: { font: { color: "#CCC2C2" } },
                 size: { width: chartContainer.width().toString(), height: chartContainer.height().toString() },
@@ -111,14 +117,14 @@ var LiveChart = WinJS.Class.derive(
                 enableCanvasRendering: true,
                 locale: "pl-PL",
                 legend: { visible: false },
-                zooming: { enable: zoomingEnabled },
+                zooming: { enable: zooming },
 
                 series: [
                     {
                         type: "line",
                         lineJoin: "round",
                         tooltip: { visible: true },
-                        dataSource: ers21,
+                        dataSource: series1,
                         xName: "day",
                         yName: "averageRate"
                     },
@@ -126,7 +132,7 @@ var LiveChart = WinJS.Class.derive(
                         type: "line",
                         lineJoin: "round",
                         tooltip: { visible: false },
-                        dataSource: ers3,
+                        dataSource: series2,
                         xName: "day",
                         yName: "averageRate",
                         fill: "#ACED80",
@@ -134,11 +140,10 @@ var LiveChart = WinJS.Class.derive(
                     }
                 ],
 
-                create: onDone
+                create: ondone
             });
-        }
-    },
-    {
+        },
+
         destroy: function() {
             var chartContainer = $("#chartcontainer");
             var ejDestroy = chartContainer.data("ejChart");
