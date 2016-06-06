@@ -285,6 +285,7 @@ var VmM = WinJS.Class.define(
 
                 if (self.isProperDay(eventDay)) {
                     Vm.Listen.doAvgDateChanged(eventDay);
+                    Vm.m.avgDateBackup();
                 } else {
                     var lastDay = Utils.last(self.AllDays);
                     self.avgDate_g = lastDay;
@@ -312,6 +313,10 @@ var VmM = WinJS.Class.define(
 
                 startDate: firstDay,
                 endDate: lastDay
+            }).on("changeDate", function() {
+                if (!Vm.m.HistoryDrawn) {
+                    Vm.m.hisDatesBackup();
+                }
             });
 
             self.hisDates_s([

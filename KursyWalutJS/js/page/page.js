@@ -44,6 +44,7 @@ var AppGo = function() {
                 .done(function() {
                     Vm.replace(Vm.m.AvgExchangeRates, newErs);
 
+                    Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
                     console.log("onAvgReload.Done");
                 }, function(e) {
@@ -186,6 +187,10 @@ var AppGo = function() {
                     });
                     Vm.Listen.HisDrawButtonClicked.push(onHisDrawButtonClicked);
                     Vm.Listen.PivotSelectionChanged.push(onPivotSelectionChanged);
+
+                    Vm.m.allDatesBackup();
+                    Vm.m.InitSucessfully = true;
+
                     var prog = pHelp2.progress.subPercent(0.60, 1.00);
                     return pHelp2.erService.getExchangeRatesAsync(initDate, prog);
                 })
