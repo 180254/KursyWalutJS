@@ -17,18 +17,14 @@ var StandardErService = WinJS.Class.define(
     },
     {
 
-        // --------------------------------------------------------------------------
+        // --------PROVIDER-METHODS---------------------------------------------------
 
         /**
          * @param {Progress} progress 
          * @returns {WinJS.Promise} 
          */
         initCacheAsync: function(progress) {
-            return this._erProvider.initCacheAsync(progress)
-                .then(function() {
-                    progress.reportProgress(1.00);
-                    return WinJS.Promise.wrap(0);
-                });
+            return this._erProvider.initCacheAsync(progress);
         },
 
         /**
@@ -36,11 +32,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise} 
          */
         flushCacheAsync: function(progress) {
-            return this._erProvider.flushCacheAsync(progress)
-                .then(function() {
-                    progress.reportProgress(1.00);
-                    return WinJS.Promise.wrap(0);
-                });
+            return this._erProvider.flushCacheAsync(progress);
         },
 
         /**
@@ -69,7 +61,7 @@ var StandardErService = WinJS.Class.define(
             return this._erProvider.getExchangeRatesAsync(day, progress);
         },
 
-        // --------------------------------------------------------------------------
+        // --------SERVICE--METHODS---------------------------------------------------
 
         /**
          * @param {Progress} progress 
@@ -162,30 +154,29 @@ var StandardErService = WinJS.Class.define(
          * @param {Progress} progress 
          * @returns {WinJS.Promise<ExchangeRate[]>} 
          */
-        getAvaragedDaysAsync:
-            function(startDay, endDay, expectedSize, progress) {
-                var self = this;
+        getAvaragedDaysAsync: function(startDay, endDay, expectedSize, progress) {
+            var self = this;
 
-                return self.
-                    _getDaysBetweenYearsAsync(startDay.getFullYear(), endDay.getFullYear(),
-                        progress.subPercent(0.00, 0.80))
-                    .then(function(availableDays) {
-                        progress.reportProgress(0.80);
+            return self.
+                _getDaysBetweenYearsAsync(startDay.getFullYear(), endDay.getFullYear(),
+                    progress.subPercent(0.00, 0.80))
+                .then(function(availableDays) {
+                    progress.reportProgress(0.80);
 
-                        var properDays = availableDays.filter(function(day) {
-                            return (day >= startDay) && (day <= endDay);
-                        });
-
-                        progress.reportProgress(0.90);
-                        return WinJS.Promise.wrap(properDays);
-                    })
-                    .then(function(properDays) {
-                        var averagedDays = Utils.averaged(properDays, expectedSize);
-                        progress.reportProgress(1.00);
-
-                        return WinJS.Promise.wrap(averagedDays);
+                    var properDays = availableDays.filter(function(day) {
+                        return (day >= startDay) && (day <= endDay);
                     });
-            },
+
+                    progress.reportProgress(0.90);
+                    return WinJS.Promise.wrap(properDays);
+                })
+                .then(function(properDays) {
+                    var averagedDays = Utils.averaged(properDays, expectedSize);
+                    progress.reportProgress(1.00);
+
+                    return WinJS.Promise.wrap(averagedDays);
+                });
+        },
 
         /**
          * @param {number} startYear 
@@ -262,7 +253,6 @@ var StandardErService = WinJS.Class.define(
 
                         logDownloadProgress(iEnd);
                         adjustWaitFor();
-
 
                         if (iEnd !== days.length) {
                             return loop(iEnd);

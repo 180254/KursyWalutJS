@@ -9,7 +9,7 @@ var VmListen = WinJS.Class.define(
      * @returns {VmAction} 
      */
     function() {
-        this.reset();
+        this.init();
 
         WinJS.Utilities.markSupportedForProcessing(this.doRetryButtonClicked);
         WinJS.Utilities.markSupportedForProcessing(this.doAvgListTapped);
@@ -20,13 +20,29 @@ var VmListen = WinJS.Class.define(
         WinJS.Utilities.markSupportedForProcessing(this.doPivotSelectionChanged);
     },
     {
-        reset: function() {
+        /**
+         * @returns {void} 
+         */
+        init: function() {
+            /** array of function() */
             this.RetryButtonClicked = [];
+
+            /** array of function(Currency) */
             this.AvgListTapped = [];
+
+            /** array of function(Date) */
             this.AvgDateChanged = [];
+
+            /** array of function() */
             this.HisDrawButtonClicked = [];
+
+            /** array of function() */
             this.BarSyncAllClicked = [];
+
+            /** array of function() */
             this.BarSaveChartClicked = [];
+
+            /** array of function(index:Number) */
             this.PivotSelectionChanged = [];
         },
 
@@ -49,7 +65,8 @@ var VmListen = WinJS.Class.define(
         },
 
         /**
-         * @param {T} event 
+         * @param {Object} event 
+         * @param {Currency} event.detail.itemPromise._value.data.currency 
          * @returns {void} 
          */
         doAvgListTapped: function(event) {
@@ -58,7 +75,7 @@ var VmListen = WinJS.Class.define(
         },
 
         /**
-         * @param {T} event 
+         * @param {T(Date)} event 
          * @returns {void} 
          */
         doAvgDateChanged: function(event) {
@@ -88,7 +105,8 @@ var VmListen = WinJS.Class.define(
         },
 
         /**
-         * @param {T} event
+         * @param {Object} event
+         * @param {Number} event.detail.index
          * @returns {void} 
          */
         doPivotSelectionChanged: function(event) {
@@ -150,6 +168,8 @@ var VmM = WinJS.Class.define(
             self.HistoryPivot = visible ? null : this._pivotContainer().items.pop();
         },
 
+        // ---------------------------------------------------------------------------
+
         _hisPickers: function() {
             return $("#history-picker-range").children(".calendar-date-picker");
         },
@@ -169,11 +189,11 @@ var VmM = WinJS.Class.define(
         // ---------------------------------------------------------------------------
 
         uiEnabled_g: function() {
-            return $(".auto-disable").hasClass("disabled");
+            return $(".auto-disable").hasClass("auto-disabled");
         },
         uiEnabled_s: function(enabled) {
-            if (enabled) $(".auto-disable").removeClass("disabled");
-            else $(".auto-disable").addClass("disabled");
+            if (enabled) $(".auto-disable").removeClass("auto-disabled");
+            else $(".auto-disable").addClass("auto-disabled");
         },
 
         // ---------------------------------------------------------------------------
@@ -228,14 +248,14 @@ var VmM = WinJS.Class.define(
         },
 
         hisSaveEnabled_g: function() {
-            return this._hisSaveButton().hasClass("disabled2");
+            return this._hisSaveButton().hasClass("disabled");
         },
 
         hisSaveEnabled_s: function(enabled) {
             if (enabled) {
-                this._hisSaveButton().removeClass("disabled2");
+                this._hisSaveButton().removeClass("disabled");
             } else {
-                this._hisSaveButton().addClass("disabled2");
+                this._hisSaveButton().addClass("disabled");
             }
         },
 
@@ -297,6 +317,7 @@ var VmM = WinJS.Class.define(
             var self = this;
             var $avgPicker = this._avgPicker();
 
+            $avgPicker.datepicker("destroy");
             $avgPicker.datepicker({
                 format: "dd.mm.yyyy",
                 maxViewMode: 2,
@@ -328,9 +349,13 @@ var VmM = WinJS.Class.define(
         initHisPickers: function(fromDate, endDate) {
             var self = this;
             var $historyPickerRange = $("#history-picker-range");
+            var $historyPickerRangeInputs = $historyPickerRange.find("input");
 
             var firstDay = Utils.first(self.AllDays);
             var lastDay = Utils.last(self.AllDays);
+
+            $historyPickerRangeInputs.eq(0).datepicker("destroy");
+            $historyPickerRangeInputs.eq(1).datepicker("destroy");
 
             $historyPickerRange.datepicker({
                 format: "dd-mm-yyyy",
@@ -355,22 +380,29 @@ var VmM = WinJS.Class.define(
         },
 
         initDrawButton: function() {
-            $("#history-draw-button").on("click", function() {
-                Vm.Listen.doHisDrawButtonClicked();
-            });
+            var $historyDrawButton = $("#history-draw-button");
+            $historyDrawButton.unbind("click");
+            $historyDrawButton.on("click", Vm.Listen.doHisDrawButtonClicked);
         },
-
-        // ---------------------------------------------------------------------------
 
         initRetryButton: function() {
-            $("#retry-button").on("click", Vm.Listen.doRetryButtonClicked);
+            var $retryButton = $("#retry-button");
+            $retryButton.unbind("click");
+            $retryButton.on("click", Vm.Listen.doRetryButtonClicked);
         },
 
-        initOtherEvents: function() {
+        initPivotSelectionChange: function() {
+            // ReSharper disable once Html.EventNotResolved
+            WinJS.Application.removeEventListener(
+                "selectionchanged", Vm.Listen.doPivotSelectionChanged, false);
+
             // ReSharper disable once Html.EventNotResolved
             this._pivotContainer().addEventListener(
                 "selectionchanged", Vm.Listen.doPivotSelectionChanged);
         }
+
+        // ---------------------------------------------------------------------------
+
     },
     {
     

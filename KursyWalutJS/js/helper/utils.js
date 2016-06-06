@@ -118,7 +118,7 @@ var Utils = WinJS.Class.define(
         },
 
         /**
-         * First element of array.
+         * First element of of not-empty array.
          * 
          * @static
          * @param {T[]} array 
@@ -129,7 +129,7 @@ var Utils = WinJS.Class.define(
         },
 
         /**
-         * Last element of array.
+         * Last element of not-empty array.
          * 
          * @static
          * @param {T[]} array 
@@ -140,7 +140,7 @@ var Utils = WinJS.Class.define(
         },
 
         /**
-         * Clone an array
+         * Clone an array.
          * 
          * @param {T[]} array 
          * @returns {T[]} 
@@ -277,7 +277,7 @@ var Utils = WinJS.Class.define(
          * @param {String} str 
          * @returns {void} 
          */
-        message: function(str) {
+        messageDialog: function(str) {
             new Windows.UI.Popups.MessageDialog(str).showAsync();
         }
     }

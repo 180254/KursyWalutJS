@@ -3,6 +3,9 @@
 var AppGo = function() {
     console.log("App.Start");
 
+    var erRandomizer = null;
+    var liveChart = null;
+
     var pHelper = new ProviderHelper(
         new InMemCache(), {
             max: 10000,
@@ -13,15 +16,36 @@ var AppGo = function() {
         }
     );
 
+    var debug = {
+        /**
+         * @param {String} name 
+         * @returns {moment} 
+         */
+        start: function(name) {
+            console.log(name + ".Start");
+            return moment();
+        },
+        /**
+         * @param {String} name 
+         * @param {moment} sw 
+         * @returns {void} 
+         */
+        elapsed: function(name, sw) {
+            var time = moment.utc(moment().diff(sw)).format("HH:mm:ss.SSS");
+            console.log(name + ".Time: " + time);
+        }
+    };
+
+
     /**
      * @param {Date} date 
      * @returns {void} 
      */
     var onAvgReload = function(date) {
-        console.log("onAvgReload.Start");
+        var sw = debug.start("onAvgReload");
         Vm.m.uiEnabled_s(false);
 
-        var erRandomizer = new ErsRandomizer(Vm.m.AvgExchangeRates);
+        erRandomizer = new ErsRandomizer(Vm.m.AvgExchangeRates);
         erRandomizer.start();
 
         var newErs;
@@ -32,25 +56,17 @@ var AppGo = function() {
                 })
                 .then(function(ers) {
                     newErs = ers;
-
                     erRandomizer.stop();
+
                     var promises = [pHelp2.flushCacheAsync(), erRandomizer.waitUntilStopped()];
-
                     return WinJS.Promise.join(promises);
-                }, function(e) {
-                    erRandomizer.stop();
-                    return WinJS.Promise.wrapError(e);
                 })
                 .done(function() {
                     Vm.replace(Vm.m.AvgExchangeRates, newErs);
 
                     Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
-                    console.log("onAvgReload.Done");
-                }, function(e) {
-                    Vm.m.uiEnabled_s(true);
-                    console.log("onAvgReload.Fail");
-                    console.log(e);
+                    debug.elapsed("onAvgReload", sw);
                 });
         });
     };
@@ -60,7 +76,7 @@ var AppGo = function() {
      * @returns {void} 
      */
     var onAvgListTapped = function(currency) {
-        console.log("onAvgListTapped.Start");
+        var sw = debug.start("onAvgListTapped");
 
         var newCurrencySelected =
             !Currency.equals(Vm.m.HistoryCurrency, currency) && Vm.m.HistoryPivot === null;
@@ -79,7 +95,7 @@ var AppGo = function() {
         Vm.m.pivotHeader_s(currency);
         Vm.m.currentPivot_s(1);
 
-        console.log("onAvgListTapped.Done");
+        debug.elapsed("onAvgReload", sw);
     };
 
 
@@ -87,18 +103,17 @@ var AppGo = function() {
      * @returns {void} 
      */
     var onHisDrawButtonClicked = function() {
-        console.log("onHisDrawButtonClicked.Start");
+        var sw = debug.start("onHisDrawButtonClicked");
 
         var hisDates = Vm.m.hisDates_g();
         if (!hisDates[0] || !hisDates[1]) {
-            console.log("onHisDrawButtonClicked.Stop.hisDateEmpty");
             return;
         }
 
         Vm.m.uiEnabled_s(false);
         var currency = Vm.m.HistoryCurrency;
         var expectedSize = $("#chartcontainer").width() * 1.1;
-        var liveChart = new LiveChart(currency);
+        liveChart = new LiveChart(currency);
 
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.erService.getAvaragedDaysAsync(
@@ -114,12 +129,14 @@ var AppGo = function() {
                 })
                 .then(function() {
                     liveChart.stop();
-                    return [pHelp2.flushCacheAsync(), liveChart.waitUntilStopped()];
+
+                    var promises = [pHelp2.flushCacheAsync(), liveChart.waitUntilStopped()];
+                    return WinJS.Promise.join(promises);
                 })
                 .then(function() {
                     if (liveChart.Ers.length === 0) {
                         LiveChart.destroy();
-                        Utils.message("Brak notowań kursu dla podanej waluty, w podanym okresie, w bazie NBP.");
+                        Utils.messageDialog("Brak notowań kursu dla podanej waluty, w podanym okresie, w bazie NBP.");
                     }
 
                     return WinJS.Promise.wrap(0);
@@ -130,7 +147,7 @@ var AppGo = function() {
                     Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
 
-                    console.log("onHisDrawButtonClicked.Done");
+                    debug.elapsed("onHisDrawButtonClicked", sw);
                 });
         });
     };
@@ -164,17 +181,19 @@ var AppGo = function() {
             "_" +
             moment(hisDates[1]).format("YYYYMMDD");
 
+        var sw = debug.start("onBarSaveChartClicked");
         savePicker.pickSaveFileAsync().then(function(file) {
             if (!file) return;
-            var png = LiveChart.toPNGbytes();
+            var pngBytes = LiveChart.toPNGbytes();
 
             Windows.Storage.CachedFileManager.deferUpdates(file);
-            Windows.Storage.FileIO.writeBytesAsync(file, png)
+            Windows.Storage.FileIO.writeBytesAsync(file, pngBytes)
                 .done(function() {
                     Windows.Storage.CachedFileManager.completeUpdatesAsync(file)
                         .done(function(updateStatus) {
                             if (updateStatus === Windows.Storage.Provider.FileUpdateStatus.complete) {
-                                Utils.message("Zapisano wykres");
+                                Utils.messageDialog("Zapisano wykres");
+                                debug.elapsed("onHisDrawButtonClicked", sw);
                             }
                         });
                 });
@@ -187,17 +206,20 @@ var AppGo = function() {
             return true;
         }
 
+        if (erRandomizer != null) erRandomizer.stop();
+        if (liveChart != null) liveChart.stop();
+
+        var sw = debug.start("onUnhandledException");
         var errors = Array.isArray(event.detail.error.error)
             ? event.detail.error.error
             : [event.detail.error.error];
 
-        var ioException = errors.filter(function(err) {
-                return typeof err.asyncOpType === "string" &&
-                    err.asyncOpType.indexOf("Windows.Web.Http") > -1;
-            }).length >
-            0;
+        var isIoException = errors.some(function(err) {
+            return typeof err.asyncOpType === "string" &&
+                err.asyncOpType.indexOf("Windows.Web.Http") > -1;
+        });
 
-        var msg = ioException
+        var msg = isIoException
             ? "Wystąpił problem podczas przetwarzania. " +
             "Sprawdź dostępność połączenia internetowego. " +
             "Być może serwis NBP nie jest osiągalny. " +
@@ -206,8 +228,8 @@ var AppGo = function() {
             "Proszę spróbować ponownie. " +
             "W razie dalszych problemów przeinstaluj aplikację i/lub skontaktuj się z autorem.";
 
-        Vm.m.progressPercent_s(0.00);
-        Utils.message(msg);
+        Vm.m.progressPercent_s(1.00);
+        Utils.messageDialog(msg);
 
         if (Vm.m.InitSucessfully) {
             Vm.m.uiEnabled_s(true);
@@ -216,10 +238,12 @@ var AppGo = function() {
             Vm.m.uiInitDone_s(false);
         }
 
+        debug.elapsed("onUnhandledException", sw);
         return true;
     };
 
     var onBarSyncAllClicked = function() {
+        var sw = debug.start("onBarSyncAllClicked");
         Vm.m.uiEnabled_s(false);
         Vm.m.appBarOpened_s(false);
 
@@ -231,36 +255,35 @@ var AppGo = function() {
             pHelp2.erService.getAllAvailableDaysAsync(prog1)
                 .then(function(days) {
                     count = days.length;
-                    return pHelp2.erService.getExchangeRatesInDaysAsync(days, Currency.dummyForCode("USD"), [], prog2);
+
+                    return pHelp2.erService.getExchangeRatesInDaysAsync(
+                        days, Currency.dummyForCode("USD"), [], prog2);
                 })
                 .then(function() {
                     return pHelp2.flushCacheAsync();
                 })
                 .done(function() {
-                    Utils.message("Cache został zsynchronizowany z bazą NBP. Wpisów w pamięci: " + count);
+                    Utils.messageDialog("Cache został zsynchronizowany z bazą NBP. Wpisów w pamięci: " + count);
                     Vm.m.uiEnabled_s(true);
+
+                    debug.elapsed("onBarSyncAllClicked", sw);
                 });
         });
-    };
-
-    var preInit = function() {
-        Vm.m.initRetryButton();
     };
 
     /**
      * @returns {void} 
      */
     var init = function() {
-        console.log("init.Start");
+        var sw = debug.start("init");
         Vm.m.uiEnabled_s(false);
 
-        Vm.Listen.reset();
-        WinJS.Application.onerror = onUnhandledException;
+        Vm.m.initRetryButton();
+        Vm.Listen.init();
         Vm.Listen.RetryButtonClicked.push(function() {
             Vm.m.uiInitDone_s(true);
             init();
         });
-
 
         using(pHelper.helper2(), function(pHelp2) {
             pHelp2.initCacheAsync()
@@ -280,7 +303,7 @@ var AppGo = function() {
                         moment().startOf("day").toDate()
                     );
                     Vm.m.initDrawButton();
-                    Vm.m.initOtherEvents();
+                    Vm.m.initPivotSelectionChange();
 
                     Vm.Listen.AvgDateChanged.push(onAvgReload);
                     Vm.Listen.AvgListTapped.push(onAvgListTapped);
@@ -302,11 +325,11 @@ var AppGo = function() {
                 .done(function() {
                     Vm.m.hisPivotVisible_s(false);
                     Vm.m.uiEnabled_s(true);
-                    console.log("init.Done");
+                    debug.elapsed("init", sw);
                 });
         });
     };
 
-    preInit();
+    WinJS.Application.onerror = onUnhandledException;
     init();
 };;

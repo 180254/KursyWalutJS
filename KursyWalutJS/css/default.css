@@ -168,7 +168,7 @@
 
 /* ----------------------------------------------------- */
 
-.disabled, .disabled2 {
+.disabled, .auto-disabled {
 	opacity: 0.4;
 	pointer-events: none;
 }

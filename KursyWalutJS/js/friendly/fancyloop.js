@@ -40,7 +40,7 @@ var FancyLoop = WinJS.Class.define(
          */
         next: function(additionalCond) {
             var self = this;
-            var addCond = additionalCond !== undefined ? additionalCond : true;
+            var addCond = additionalCond !== undefined ? additionalCond : false;
 
             if (self._started || addCond) {
                 setTimeout(function() { self._go(); }, this.timeMs);

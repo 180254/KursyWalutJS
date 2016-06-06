@@ -30,21 +30,34 @@ var ErsRandomizer = WinJS.Class.derive(
                 return;
             }
 
-            var $avgList = $("#avg-list .win-viewport");
-            var erHeight = $(".avg-item:first").closest(".win-container").outerHeight(true);
+            WinJS.Promise.timeout(0)
+                .then(function() {
+                    var $avgList = $("#avg-list .win-viewport");
+                    var erHeight = $(".avg-item:first").closest(".win-container").outerHeight(true);
 
-            var iFirstVisibleEr = Math.floor($avgList.scrollTop() / erHeight);
-            var iCountVisibleEr = Math.ceil($avgList.outerHeight() / erHeight) + 1;
-            var iLastVisibleEr = Math.min(iFirstVisibleEr + iCountVisibleEr, self._ers.length);
+                    return WinJS.Promise.wrap({ avgList: $avgList, erHeight: erHeight });
+                })
+                .then(function(p) {
+                    var iFirstVisibleEr = Math.floor(p.avgList.scrollTop() / p.erHeight);
+                    var iCountVisibleEr = Math.ceil(p.avgList.outerHeight() / p.erHeight) + 1;
+                    var iLastVisibleEr = Math.min(iFirstVisibleEr + iCountVisibleEr, self._ers.length);
 
-            var diff = Utils.getRandomArbitrary(-1, 1);
-            for (var i = iFirstVisibleEr; i < iLastVisibleEr; i++) {
-                var oldEr = self._ers.getAt(i);
-                var newEr = new ExchangeRate(oldEr.dat, oldEr.currency, oldEr.averageRate + diff);
-                self._ers.setAt(i, newEr);
-            }
+                    return WinJS.Promise.wrap({ iFirstVisibleEr: iFirstVisibleEr, iLastVisibleEr: iLastVisibleEr });
 
-            self.next();
+                })
+                .then(function(p) {
+                    var diff = Utils.getRandomArbitrary(-1, 1);
+                    for (var i = p.iFirstVisibleEr; i < p.iLastVisibleEr; i++) {
+                        var oldEr = self._ers.getAt(i);
+                        var newEr = new ExchangeRate(oldEr.dat, oldEr.currency, oldEr.averageRate + diff);
+                        self._ers.setAt(i, newEr);
+                    }
+
+                    return WinJS.Promise.wrap(0);
+                })
+                .done(function() {
+                    self.next();;
+                });
         }
     },
     {
