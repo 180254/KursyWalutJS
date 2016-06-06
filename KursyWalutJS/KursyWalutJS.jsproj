@@ -86,8 +86,10 @@
     <Content Include="bower_components\syncfusion-javascript\Scripts\mobile\ej.mobile.core.min.map" />
     <Content Include="bower_components\winjs\css\ui-dark.min.css" />
     <Content Include="bower_components\winjs\fonts\Symbols.ttf" />
+    <Content Include="bower_components\winjs\js\base.js" />
     <Content Include="bower_components\winjs\js\base.min.js" />
     <Content Include="bower_components\winjs\js\base.min.js.map" />
+    <Content Include="bower_components\winjs\js\ui.js" />
     <Content Include="bower_components\winjs\js\ui.min.js" />
     <Content Include="bower_components\winjs\js\ui.min.js.map" />
     <Content Include="bower_components\winjs\js\WinJS.intellisense-setup.js" />

@@ -175,10 +175,15 @@ var VmM = WinJS.Class.define(
         },
         hisDates_g: function() {
             var $historyPickers = this._hisPickers();
-            return [
-                $historyPickers.eq(0).datepicker("getDate"),
-                $historyPickers.eq(1).datepicker("getDate")
-            ];
+
+            if ($historyPickers.length === 0) {
+                return [null, null];
+            } else {
+                return [
+                    $historyPickers.eq(0).datepicker("getDate"),
+                    $historyPickers.eq(1).datepicker("getDate")
+                ];
+            }
         },
         hisDates_s: function(dates) {
             var $historyPickers = this._hisPickers();
@@ -289,17 +294,20 @@ var VmM = WinJS.Class.define(
 
 
         avgDateBackup: function() {
-            this.DatesBackup[0] = this.avgDate_g;
+            this.DatesBackup[0] = this.avgDate_g();
         },
         avgDateRestore: function() {
-            this.avgDate_g = this.DatesBackup[0];
+            if (this.DatesBackup[0] &&
+                this.DatesBackup[0].getTime() !== this.avgDate_g().getTime())
+                this.avgDate_s(this.DatesBackup[0]);
         },
 
         hisDatesBackup: function() {
-            this.DatesBackup[1] = this.HisDates;
+            this.DatesBackup[1] = this.hisDates_g();
         },
         hisDatesRestore: function() {
-            this.HisDates = this.DatesBackup[1];
+            if (this.DatesBackup[1][0])
+                this.hisDates_s(this.DatesBackup[1]);
         },
 
         allDatesBackup: function() {
@@ -335,7 +343,6 @@ var VmM = WinJS.Class.define(
 
                 if (self.isProperDay(eventDay)) {
                     Vm.Listen.doAvgDateChanged(eventDay);
-                    Vm.m.avgDateBackup();
                 } else {
                     var lastDay = Utils.last(self.AllDays);
                     self.avgDate_g = lastDay;

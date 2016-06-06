@@ -181,9 +181,10 @@ var AppGo = function() {
             "_" +
             moment(hisDates[1]).format("YYYYMMDD");
 
-        var sw = debug.start("onBarSaveChartClicked");
+
         savePicker.pickSaveFileAsync().then(function(file) {
             if (!file) return;
+            var sw = debug.start("onBarSaveChartClicked");
             var pngBytes = LiveChart.toPNGbytes();
 
             Windows.Storage.CachedFileManager.deferUpdates(file);
@@ -202,33 +203,31 @@ var AppGo = function() {
     };
 
     var onUnhandledException = function(event) {
-        if (Array.isArray(event.detail.error)) {
+        if (typeof event.detail.error.preventDefault !== "function") {
             return true;
         }
+        var sw = debug.start("onUnhandledException");
 
         if (erRandomizer != null) erRandomizer.stop();
         if (liveChart != null) liveChart.stop();
 
-        var sw = debug.start("onUnhandledException");
         var errors = Array.isArray(event.detail.error.error)
             ? event.detail.error.error
             : [event.detail.error.error];
 
         var isIoException = errors.some(function(err) {
-            return typeof err.asyncOpType === "string" &&
+            return err &&
+                typeof err.asyncOpType === "string" &&
                 err.asyncOpType.indexOf("Windows.Web.Http") > -1;
         });
 
         var msg = isIoException
-            ? "Wystąpił problem podczas przetwarzania. " +
-            "Sprawdź dostępność połączenia internetowego. " +
-            "Być może serwis NBP nie jest osiągalny. " +
-            "Proszę spróbować później."
-            : "Wystąpił problem podczas przetwarzania. " +
-            "Proszę spróbować ponownie. " +
+            ? "Wystąpił problem podczas przetwarzania. Sprawdź dostępność połączenia internetowego.\n" +
+            "Być może serwis NBP nie jest osiągalny. Proszę spróbować później."
+            : "Wystąpił problem podczas przetwarzania. Proszę spróbować ponownie.\n" +
             "W razie dalszych problemów przeinstaluj aplikację i/lub skontaktuj się z autorem.";
 
-        Vm.m.progressPercent_s(1.00);
+        Vm.m.progressPercent_s(100);
         Utils.messageDialog(msg);
 
         if (Vm.m.InitSucessfully) {
