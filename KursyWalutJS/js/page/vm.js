@@ -280,17 +280,19 @@ var VmM = WinJS.Class.define(
             var piCo = this._pivotContainer();
             return piCo ? piCo.selectedIndex : undefined;
         },
-        currentPivot_s: function(index) {
+
+        currentPivotAsync_s: function(index) {
             var piCo = this._pivotContainer();
-            if (piCo) {
-                return new WinJS.Promise(function(complete) {
-                    piCo.onitemanimationend = function () {
-                        complete();
-                        piCo.onitemanimationend = null;
-                    };
-                    piCo.selectedIndex = index;
-                });
-            }
+
+            return new WinJS.Promise(function(complete) {
+                piCo.onitemanimationend = function() {
+                    complete();
+                };
+                piCo.selectedIndex = index;
+            }).then(function() {
+                piCo.onitemanimationend = null;
+                return WinJS.Promise.wrap(0);
+            });
         },
 
         // ---------------------------------------------------------------------------

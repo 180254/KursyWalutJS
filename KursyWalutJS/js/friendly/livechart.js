@@ -18,7 +18,7 @@ var LiveChart = WinJS.Class.derive(
         this.Ers = [];
         this.currency = currency;
         this.days = null;
-        this.lastDrawnLen = 0;
+        this.lastLen = 0;
 
         LiveChart.destroy();
         Vm.m.uiHisAjaxLoader_s(true);
@@ -39,72 +39,100 @@ var LiveChart = WinJS.Class.derive(
         _go: function() {
             var self = this;
 
-            var finalDrawnBefore = self.lastDrawnLen === self.days.length;
-            if (!self._started && finalDrawnBefore) {
+            var finalBefore = self.lastLen === self.days.length;
+            if (!self._started && finalBefore) {
                 self.running = false;
                 return;
             }
-
-            var chartContainer = $("#chartcontainer");
 
             // ers2 are currently downloaded info
             var ers2 = Utils.cloneArray(self.Ers);
 
             // check if is something to draw
-            if (ers2.length === self.lastDrawnLen) {
+            if (ers2.length === self.lastLen) {
                 self.next();
                 return;
             }
 
-            // ers21 are currently downloaded info with skipped undefined
-            // - undefined means currency doesn't exist in that day
-            // ers3 are not yet downloaded dummies
-            var ers21 = Utils.skipUndefined(ers2);
-            var ers3 = [];
-
-            // fill ers3 with dummy info
+            var ers21, ers3;
             var i, startI, newEr, rate;
-            if (ers21.length === 0) {
-                rate = Utils.getRandomArbitrary(1.00, 1.05);
-                startI = 0;
-            } else {
-                rate = Utils.last(ers21).averageRate;
-                startI = ers2.length;;
-            }
+            var finalNow, onDone;
 
-            for (i = startI; i < self.days.length; i++) {
-                newEr = {
-                    day: self.days[i],
-                    currency: self.currency,
-                    averageRate: rate
-                };
-                ers3.push(newEr);
-            }
+//            WinJS.Promise.timeout(0)
+//                .then(function() {
+                    // ers21 are currently downloaded info with skipped undefined
+                    // - undefined means currency doesn't exist in that day
+                    // ers3 are not yet downloaded dummies
+                    ers21 = Utils.skipUndefined(ers2);
+                    ers3 = [];
 
-            if (ers21.length === 0) {
-                ers21.push(Utils.first(ers3));
-            }
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+                    // fill ers3 with dummy info
 
-            // remember state
-            self.lastDrawnLen = ers2.length;
+                    if (ers21.length === 0) {
+                        rate = Utils.getRandomArbitrary(1.00, 1.05);
+                        startI = 0;
+                    } else {
+                        rate = Utils.last(ers21).averageRate;
+                        startI = ers2.length;;
+                    }
 
-            // next iteration
-            var finalDrawnNow = self.lastDrawnLen === self.days.length;
-            var onDone = function() {
-                self.next(!finalDrawnNow);
-            };
+                    for (i = startI; i < self.days.length; i++) {
+                        newEr = {
+                            day: self.days[i],
+                            currency: self.currency,
+                            averageRate: rate
+                        };
+                        ers3.push(newEr);
+                    }
 
-            // destroy previous chart instance
-            LiveChart.destroy();
-            Vm.m.uiHisAjaxLoader_s(false);
+                    if (ers21.length === 0) {
+                        ers21.push(Utils.first(ers3));
+                    }
 
-            // go!
-            var zoomingEnabled = finalDrawnNow;
-            LiveChart.draw(this.currency, ers21, ers3, zoomingEnabled, onDone);
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+                    // remember state
+                    self.lastLen = ers2.length;
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+                    // next iteration
+                    finalNow = self.lastLen === self.days.length;
+                    onDone = function() {
+                        self.next(!finalNow);
+                    };
+
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+                    // destroy previous chart instance
+                    LiveChart.destroy();
+                    Vm.m.uiHisAjaxLoader_s(false);
+
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+                    // go!
+                    var zoomingEnabled = finalNow;
+                    LiveChart.draw(self.currency, ers21, ers3, zoomingEnabled, onDone);
+//                });
+
         }
     },
     {
-        draw: function(currency, series1, series2, zooming, ondone) {
+        /**
+         * @param {Currency} currency 
+         * @param {ExchangeRate[]} series1 
+         * @param {ExchangeRate[]} series2 
+         * @param {boolean} zooming 
+         * @param {function()} callback 
+         * @returns {void} 
+         */
+        draw: function(currency, series1, series2, zooming, callback) {
             var chartContainer = $("#chartcontainer");
             chartContainer.ejChart({
                 title: { text: "Historia waluty " + currency.code, font: { color: "#CCC2C2" } },
@@ -140,16 +168,33 @@ var LiveChart = WinJS.Class.derive(
                     }
                 ],
 
-                create: ondone
+                create: callback
             });
         },
 
+        /**
+         * @returns {WinJS.Promise} 
+         */
+        drawAsync: function(currency, series1, series2, zooming) {
+            return new WinJS.Promise(function(complete, error) {
+                LiveChart.draw(currency, series1, series2, zooming, function() {
+                    complete();
+                });
+            });
+        },
+
+        /**
+         * @returns {void} 
+         */
         destroy: function() {
             var chartContainer = $("#chartcontainer");
             var ejDestroy = chartContainer.data("ejChart");
             if (ejDestroy) ejDestroy.destroy();
         },
 
+        /**
+         * @returns {void} 
+         */
         toPNGbytes: function() {
             var base64 = $("#chartcontainer").ejChart("export").toDataURL("image/png").substr(22);
 

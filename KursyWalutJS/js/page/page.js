@@ -96,7 +96,7 @@ var AppGo = function() {
 
         Vm.m.HistoryCurrency = currency;
         Vm.m.pivotHeader_s(currency);
-        Vm.m.currentPivot_s(1);
+        Vm.m.currentPivotAsync_s(1);
 
         debug.elapsed("onAvgReload", sw);
     };
@@ -375,7 +375,7 @@ var AppGo = function() {
                         var currency = Vm.m.HistoryCurrency;
                         var expectedSize = $("#chartcontainer").width() * 1.1;
 
-                        return Vm.m.currentPivot_s(1)
+                        return Vm.m.currentPivotAsync_s(1)
                             .then(function() {
                                 return pHelp2.erService.getAvaragedDaysAsync(
                                     hisDates[0], hisDates[1], expectedSize,
@@ -395,11 +395,7 @@ var AppGo = function() {
                     Vm.m.uiHisAjaxLoader_s(false);
 
                     if (localSettings.values["hisDrawn"]) {
-                        return new WinJS.Promise(function(complete) {
-                            LiveChart.draw(Vm.m.HistoryCurrency, ers, [], true, function() {
-                                complete();
-                            });
-                        });
+                        return LiveChart.drawAsync(Vm.m.HistoryCurrency, ers, [], true);
                     } else {
                         return WinJS.Promise.wrap(0);
                     }
@@ -407,7 +403,8 @@ var AppGo = function() {
                 .then(function() {
                     if (typeof localSettings.values["currentPivot"] == "number" &&
                         Vm.m.currentPivot_g() !== localSettings.values["currentPivot"]) {
-                        return Vm.m.currentPivot_s(localSettings.values["currentPivot"]);
+
+                        return Vm.m.currentPivotAsync_s(localSettings.values["currentPivot"]);
                     } else {
                         return WinJS.Promise.wrap(0);
                     }
