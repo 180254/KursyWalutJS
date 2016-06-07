@@ -133,6 +133,7 @@ var VmM = WinJS.Class.define(
 
         InitSucessfully: false,
         HistoryDrawn: false,
+        HistoryChartSize: 1,
 
         // ---------------------------------------------------------------------------
 

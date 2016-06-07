@@ -284,6 +284,35 @@ var Utils = WinJS.Class.define(
 );
 
 /**
+ * Wrapping with timeout util.
+ * @constructor 
+ */
+var U = WinJS.Class.define(
+    /**
+     * @constructor 
+     * @returns {void} 
+     */
+    function() {
+    },
+    {
+    
+    },
+    {
+        /**
+         * @param {WinJS.Promise<T>|T} promise 
+         * @returns {WinJS.Promise<T>} 
+         */
+        wp: function(promise) {
+            promise = promise || 0;
+            return WinJS.Promise.timeout()
+                .then(function() {
+                    return WinJS.Promise.as(promise);
+                });
+        }
+    }
+);
+
+/**
  * using keyword.<br/>
  * using(someVarComputer(), function(someVar) {});
  * 
@@ -294,5 +323,5 @@ var Utils = WinJS.Class.define(
 var using = function(arg, func) {
     setTimeout(function() {
         func(arg);
-    }, 1000);
+    }, 0);
 };

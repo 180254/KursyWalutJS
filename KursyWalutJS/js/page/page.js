@@ -10,7 +10,7 @@ var AppGo = function() {
     var localSettings = applicationData.localSettings;
 
     var pHelper = new ProviderHelper(
-        new InMemCache(), {
+        new LsCache(), {
             max: 10000,
             observer: function(progress, value) {
                 var valuePercent = (value / progress.maxValue * 100);
@@ -146,6 +146,7 @@ var AppGo = function() {
                 })
                 .done(function() {
                     Vm.m.HistoryDrawn = liveChart.Ers.length > 0;
+                    Vm.m.HistoryChartSize = expectedSize;
                     Vm.m.hisSaveEnabled_s(Vm.m.HistoryDrawn);
                     Vm.m.allDatesBackup();
                     Vm.m.uiEnabled_s(true);
@@ -292,6 +293,7 @@ var AppGo = function() {
         localSettings.values["hisPivot"] = Vm.m.HistoryPivot === null;
         localSettings.values["hisCurrency"] = Vm.m.HistoryCurrency ? Vm.m.HistoryCurrency.code : null;
         localSettings.values["hisDrawn"] = Vm.m.HistoryDrawn;
+        localSettings.values["hitChartSize"] = Vm.m.HistoryChartSize;
         localSettings.values["hisDates[0]"] = hisDates[0] ? hisDates[0].valueOf() : null;
         localSettings.values["hisDates[1]"] = hisDates[1] ? hisDates[1].valueOf() : null;
 
@@ -373,7 +375,7 @@ var AppGo = function() {
 
                         var hisDates = Vm.m.hisDates_g();
                         var currency = Vm.m.HistoryCurrency;
-                        var expectedSize = $("#chartcontainer").width() * 1.1;
+                        var expectedSize = localSettings.values["hitChartSize"];
 
                         return Vm.m.currentPivotAsync_s(1)
                             .then(function() {

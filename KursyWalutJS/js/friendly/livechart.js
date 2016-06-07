@@ -60,65 +60,65 @@ var LiveChart = WinJS.Class.derive(
 
 //            WinJS.Promise.timeout(0)
 //                .then(function() {
-                    // ers21 are currently downloaded info with skipped undefined
-                    // - undefined means currency doesn't exist in that day
-                    // ers3 are not yet downloaded dummies
-                    ers21 = Utils.skipUndefined(ers2);
-                    ers3 = [];
+            // ers21 are currently downloaded info with skipped undefined
+            // - undefined means currency doesn't exist in that day
+            // ers3 are not yet downloaded dummies
+            ers21 = Utils.skipUndefined(ers2);
+            ers3 = [];
 
 //                    return WinJS.Promise.wrap(0);
 //                })
 //                .then(function() {
-                    // fill ers3 with dummy info
+            // fill ers3 with dummy info
 
-                    if (ers21.length === 0) {
-                        rate = Utils.getRandomArbitrary(1.00, 1.05);
-                        startI = 0;
-                    } else {
-                        rate = Utils.last(ers21).averageRate;
-                        startI = ers2.length;;
-                    }
+            if (ers21.length === 0) {
+                rate = Utils.getRandomArbitrary(1.00, 1.05);
+                startI = 0;
+            } else {
+                rate = Utils.last(ers21).averageRate;
+                startI = ers2.length;;
+            }
 
-                    for (i = startI; i < self.days.length; i++) {
-                        newEr = {
-                            day: self.days[i],
-                            currency: self.currency,
-                            averageRate: rate
-                        };
-                        ers3.push(newEr);
-                    }
+            for (i = startI; i < self.days.length; i++) {
+                newEr = {
+                    day: self.days[i],
+                    currency: self.currency,
+                    averageRate: rate
+                };
+                ers3.push(newEr);
+            }
 
-                    if (ers21.length === 0) {
-                        ers21.push(Utils.first(ers3));
-                    }
-
-//                    return WinJS.Promise.wrap(0);
-//                })
-//                .then(function() {
-                    // remember state
-                    self.lastLen = ers2.length;
-//                    return WinJS.Promise.wrap(0);
-//                })
-//                .then(function() {
-                    // next iteration
-                    finalNow = self.lastLen === self.days.length;
-                    onDone = function() {
-                        self.next(!finalNow);
-                    };
+            if (ers21.length === 0) {
+                ers21.push(Utils.first(ers3));
+            }
 
 //                    return WinJS.Promise.wrap(0);
 //                })
 //                .then(function() {
-                    // destroy previous chart instance
-                    LiveChart.destroy();
-                    Vm.m.uiHisAjaxLoader_s(false);
+            // remember state
+            self.lastLen = ers2.length;
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+            // next iteration
+            finalNow = self.lastLen === self.days.length;
+            onDone = function() {
+                self.next(!finalNow);
+            };
 
 //                    return WinJS.Promise.wrap(0);
 //                })
 //                .then(function() {
-                    // go!
-                    var zoomingEnabled = finalNow;
-                    LiveChart.draw(self.currency, ers21, ers3, zoomingEnabled, onDone);
+            // destroy previous chart instance
+            LiveChart.destroy();
+            Vm.m.uiHisAjaxLoader_s(false);
+
+//                    return WinJS.Promise.wrap(0);
+//                })
+//                .then(function() {
+            // go!
+            var zoomingEnabled = finalNow;
+            LiveChart.draw(self.currency, ers21, ers3, zoomingEnabled, onDone);
 //                });
 
         }

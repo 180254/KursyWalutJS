@@ -24,7 +24,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise} 
          */
         initCacheAsync: function(progress) {
-            return this._erProvider.initCacheAsync(progress);
+            return U.wp(this._erProvider.initCacheAsync(progress));
         },
 
         /**
@@ -32,7 +32,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise} 
          */
         flushCacheAsync: function(progress) {
-            return this._erProvider.flushCacheAsync(progress);
+            return U.wp(this._erProvider.flushCacheAsync(progress));
         },
 
         /**
@@ -40,7 +40,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise<number[]>} 
          */
         getAvailableYearsAsync: function(progress) {
-            return this._erProvider.getAvailableYearsAsync(progress);
+            return U.wp(this._erProvider.getAvailableYearsAsync(progress));
         },
 
         /**
@@ -49,7 +49,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise<Date[]>} 
          */
         getAvailableDaysAsync: function(year, progress) {
-            return this._erProvider.getAvailableDaysAsync(year, progress);
+            return U.wp(this._erProvider.getAvailableDaysAsync(year, progress));
         },
 
         /**
@@ -58,7 +58,7 @@ var StandardErService = WinJS.Class.define(
          * @returns {WinJS.Promise<ExchangeRate[]>} 
          */
         getExchangeRatesAsync: function(day, progress) {
-            return this._erProvider.getExchangeRatesAsync(day, progress);
+            return U.wp(this._erProvider.getExchangeRatesAsync(day, progress));
         },
 
         // --------SERVICE--METHODS---------------------------------------------------
@@ -80,7 +80,7 @@ var StandardErService = WinJS.Class.define(
                     var firstDay = Utils.first(days);
                     progress.reportProgress(1.00);
 
-                    return WinJS.Promise.wrap(firstDay);
+                    return U.wp(firstDay);
                 });
         },
 
@@ -101,7 +101,7 @@ var StandardErService = WinJS.Class.define(
                     var lastDay = Utils.last(days);
                     progress.reportProgress(1.00);
 
-                    return WinJS.Promise.wrap(lastDay);
+                    return U.wp(lastDay);
                 });
         },
 
@@ -122,7 +122,7 @@ var StandardErService = WinJS.Class.define(
                 })
                 .then(function(days) {
                     progress.reportProgress(1.00);
-                    return WinJS.Promise.wrap(days);
+                    return U.wp(days);
                 });
         },
 
@@ -143,7 +143,7 @@ var StandardErService = WinJS.Class.define(
                         return Currency.equals(er.currency, currency);
                     })[0];
 
-                    return WinJS.Promise.wrap(firstOrDefault);
+                    return U.wp(firstOrDefault);
                 });
         },
 
@@ -168,13 +168,13 @@ var StandardErService = WinJS.Class.define(
                     });
 
                     progress.reportProgress(0.90);
-                    return WinJS.Promise.wrap(properDays);
+                    return U.wp(properDays);
                 })
                 .then(function(properDays) {
                     var averagedDays = Utils.averaged(properDays, expectedSize);
                     progress.reportProgress(1.00);
 
-                    return WinJS.Promise.wrap(averagedDays);
+                    return U.wp(averagedDays);
                 });
         },
 
@@ -196,12 +196,12 @@ var StandardErService = WinJS.Class.define(
                 promises.push(self.getAvailableDaysAsync(year, prog));
             }
 
-            return WinJS.Promise.join(promises)
+            return U.wp(WinJS.Promise.join(promises))
                 .then(function(days) {
                     var flattenDays = Utils.flatArray(days);
                     progress.reportProgress(1.00);
 
-                    return WinJS.Promise.wrap(flattenDays);
+                    return U.wp(flattenDays);
                 });
         },
 
@@ -255,9 +255,9 @@ var StandardErService = WinJS.Class.define(
                         adjustWaitFor();
 
                         if (iEnd !== days.length) {
-                            return loop(iEnd);
+                            return U.wp(loop(iEnd));
                         } else {
-                            return WinJS.Promise.wrap(ers);
+                            return U.wp(ers);
                         }
                     });
             };
