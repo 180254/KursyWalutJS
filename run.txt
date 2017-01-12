@@ -1,0 +1,15 @@
+KursyWalut JS UWP
+
+IDE: Visual Studio 2015+(?)
+It is UWP app, it requires Windows 10.
+
+It uses Bower as dependency manager.
+Bower website: https://bower.io/
+Bower requires node, npm and git.
+
+0. Make sure that Bower is installed.
+1. Install dependencies: run "bower install" in "KursyWalutJS" subdirectory.
+2. Build&run!
+2.1 Choose proper build configuration (default is Debug Any CPU).
+2.2 Rebuild solution.
+2.3 It should work.
